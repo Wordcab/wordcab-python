@@ -23,4 +23,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main(prog_name="wordcab-python")  # pragma: no cover
+    main(prog_name="wordcab")  # pragma: no cover

@@ -54,7 +54,7 @@ or the command-line interface:
 
 ```console
 $ poetry run python
-$ poetry run wordcab-python
+$ poetry run wordcab
 ```
 
 [poetry]: https://python-poetry.org/

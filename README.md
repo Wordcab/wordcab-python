@@ -34,7 +34,7 @@
 You can install _Wordcab Python SDK_ via [pip] from [PyPI]:
 
 ```console
-$ pip install wordcab-python
+$ pip install wordcab
 ```
 
 ## Usage
