@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "wordcab-python"
+name = "wordcab"
 version = "0.0.0"
 description = "Wordcab Python SDK"
 authors = ["Wordcab <info@wordcab.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://github.com/ChainYo/wordcab-python"
-repository = "https://github.com/ChainYo/wordcab-python"
+homepage = "https://github.com/Wordcab/wordcab-python"
+repository = "https://github.com/Wordcab/wordcab-python"
 documentation = "https://wordcab-python.readthedocs.io"
 packages = [
     { include = "wordcab", from = "src" },
@@ -16,7 +16,7 @@ classifiers = [
 ]
 
 [tool.poetry.urls]
-Changelog = "https://github.com/ChainYo/wordcab-python/releases"
+Changelog = "https://github.com/Wordcab/wordcab-python/releases"
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -49,7 +49,7 @@ xdoctest = {extras = ["colors"], version = ">=0.15.10"}
 myst-parser = {version = ">=0.16.1"}
 
 [tool.poetry.scripts]
-wordcab-python = "wordcab.__main__:main"
+wordcab = "wordcab.__main__:main"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

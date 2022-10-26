@@ -6,8 +6,8 @@
 [![License](https://img.shields.io/pypi/l/wordcab-python)][license]
 
 [![Read the documentation at https://wordcab-python.readthedocs.io/](https://img.shields.io/readthedocs/wordcab-python/latest.svg?label=Read%20the%20Docs)][read the docs]
-[![Tests](https://github.com/ChainYo/wordcab-python/workflows/Tests/badge.svg)][tests]
-[![Codecov](https://codecov.io/gh/ChainYo/wordcab-python/branch/main/graph/badge.svg)][codecov]
+[![Tests](https://github.com/Wordcab/wordcab-python/workflows/Tests/badge.svg)][tests]
+[![Codecov](https://codecov.io/gh/Wordcab/wordcab-python/branch/main/graph/badge.svg)][codecov]
 
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)][pre-commit]
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)][black]
@@ -16,8 +16,8 @@
 [status]: https://pypi.org/project/wordcab-python/
 [python version]: https://pypi.org/project/wordcab-python
 [read the docs]: https://wordcab-python.readthedocs.io/
-[tests]: https://github.com/ChainYo/wordcab-python/actions?workflow=Tests
-[codecov]: https://app.codecov.io/gh/ChainYo/wordcab-python
+[tests]: https://github.com/Wordcab/wordcab-python/actions?workflow=Tests
+[codecov]: https://app.codecov.io/gh/Wordcab/wordcab-python
 [pre-commit]: https://github.com/pre-commit/pre-commit
 [black]: https://github.com/psf/black
 
@@ -63,11 +63,11 @@ This project was generated from [@cjolowicz]'s [Hypermodern Python Cookiecutter]
 [@cjolowicz]: https://github.com/cjolowicz
 [pypi]: https://pypi.org/
 [hypermodern python cookiecutter]: https://github.com/cjolowicz/cookiecutter-hypermodern-python
-[file an issue]: https://github.com/ChainYo/wordcab-python/issues
+[file an issue]: https://github.com/Wordcab/wordcab-python/issues
 [pip]: https://pip.pypa.io/
 
 <!-- github-only -->
 
-[license]: https://github.com/ChainYo/wordcab-python/blob/main/LICENSE
-[contributor guide]: https://github.com/ChainYo/wordcab-python/blob/main/CONTRIBUTING.md
+[license]: https://github.com/Wordcab/wordcab-python/blob/main/LICENSE
+[contributor guide]: https://github.com/Wordcab/wordcab-python/blob/main/CONTRIBUTING.md
 [command-line reference]: https://wordcab-python.readthedocs.io/en/latest/usage.html

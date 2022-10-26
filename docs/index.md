@@ -19,5 +19,5 @@ reference
 contributing
 Code of Conduct <codeofconduct>
 License <license>
-Changelog <https://github.com/ChainYo/wordcab-python/releases>
+Changelog <https://github.com/Wordcab/wordcab-python/releases>
 ```
