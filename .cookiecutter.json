@@ -1,0 +1,14 @@
+{
+  "_output_dir": "/home/chainyo/code/wordcab",
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "Thomas Chaigneau",
+  "copyright_year": "2022",
+  "development_status": "Development Status :: 3 - Alpha",
+  "email": "thomas@wordcab.com",
+  "friendly_name": "Wordcab Python SDK",
+  "github_user": "ChainYo",
+  "license": "Apache-2.0",
+  "package_name": "wordcab",
+  "project_name": "wordcab-python",
+  "version": "0.0.0"
+}
