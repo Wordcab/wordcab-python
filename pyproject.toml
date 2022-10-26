@@ -2,7 +2,7 @@
 name = "wordcab-python"
 version = "0.0.0"
 description = "Wordcab Python SDK"
-authors = ["Thomas Chaigneau <thomas@wordcab.com>"]
+authors = ["Wordcab <info@wordcab.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 homepage = "https://github.com/ChainYo/wordcab-python"
