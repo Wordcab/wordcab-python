@@ -1,6 +1,7 @@
 name: Release
 
-on: workflow_dispath
+on:
+  workflow_dispath
   # push:
   #   branches:
   #     - main
