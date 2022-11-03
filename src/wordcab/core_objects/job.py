@@ -18,10 +18,27 @@
 import logging
 from dataclasses import dataclass, field
 
-from .source import Source
+from .source import BaseSource
 
 
 logger = logging.getLogger(__name__)
+
+
+EXTRACT_AVAILABLE_STATUS = [
+    "Deleted", "Error", "Extracting", "ExtractionComplete", "ItemQueued", "Pending", "PreparingExtraction",
+]
+SUMMARIZE_AVAILABLE_STATUS = [
+    "Deleted",
+    "Error",
+    "ItemQueued",
+    "Pending",
+    "PreparingSummary",
+    "PreparingTranscript",
+    "Summarizing",
+    "SummaryComplete",
+    "Transcribing",
+    "TranscriptComplete",
+]
 
 
 @dataclass
@@ -41,7 +58,7 @@ class BaseJob:
     display_name: str
     job_name: str
     settings: JobSettings
-    source: Source
+    source: BaseSource
     time_started: str
     transcript_id: str
     job_status: str = "Pending"
@@ -67,14 +84,11 @@ class BaseJob:
 class ExtractJob(BaseJob):
     """Wordcab API ExtractJob object."""
 
-    AVAILABLE_STATUS = [
-        "Deleted", "Error", "Extracting", "ExtractionComplete", "ItemQueued", "Pending", "PreparingExtraction",
-    ]
-
     def __post_init__(self) -> None:
         """Post-init."""
         super().__post_init__()
         self._job_type = "ExtractJob"
+        self.available_status = EXTRACT_AVAILABLE_STATUS
         
 
 
@@ -82,20 +96,8 @@ class ExtractJob(BaseJob):
 class SummarizeJob(BaseJob):
     """Wordcab API SummarizeJob object."""
 
-    AVAILABLE_STATUS = [
-        "Deleted",
-        "Error",
-        "ItemQueued",
-        "Pending",
-        "PreparingSummary",
-        "PreparingTranscript",
-        "Summarizing",
-        "SummaryComplete",
-        "Transcribing",
-        "TranscriptComplete",
-    ]
-
     def __post_init__(self) -> None:
         """Post-init."""
         super().__post_init__()
         self._job_type = "SummarizeJob"
+        self.available_status = SUMMARIZE_AVAILABLE_STATUS
