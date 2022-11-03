@@ -19,6 +19,7 @@ import logging
 import pytest
 
 from wordcab.core_objects import BaseJob, ExtractJob, JobSettings, Source, SummarizeJob
+from wordcab.core_objects.job import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
 
 
 @pytest.fixture
@@ -64,6 +65,25 @@ def dummy_summarize_job() -> SummarizeJob:
 def empty_job_settings() -> JobSettings:
     """Fixture for an empty JobSettings object."""
     return JobSettings()
+
+
+def test_available_status() -> None:
+    """Test for the available_status property."""
+    assert EXTRACT_AVAILABLE_STATUS == [
+        "Deleted", "Error", "Extracting", "ExtractionComplete", "ItemQueued", "Pending", "PreparingExtraction",
+    ]
+    assert SUMMARIZE_AVAILABLE_STATUS == [
+        "Deleted",
+        "Error",
+        "ItemQueued",
+        "Pending",
+        "PreparingSummary",
+        "PreparingTranscript",
+        "Summarizing",
+        "SummaryComplete",
+        "Transcribing",
+        "TranscriptComplete",
+    ]
 
 
 def test_dummy_job(dummy_job: BaseJob) -> None:
@@ -115,10 +135,8 @@ def test_dummy_extract_job(dummy_extract_job: ExtractJob) -> None:
     assert dummy_extract_job.transcript_id == "dummy_transcript"
 
     assert dummy_extract_job._job_type == "ExtractJob"
-    assert dummy_extract_job.AVAILABLE_STATUS is not None
-    assert dummy_extract_job.AVAILABLE_STATUS == [
-        "Deleted", "Error", "Extracting", "ExtractionComplete", "ItemQueued", "Pending", "PreparingExtraction",
-    ]
+    assert dummy_extract_job.available_status is not None
+    assert dummy_extract_job.available_status == EXTRACT_AVAILABLE_STATUS
     
     assert hasattr(dummy_extract_job, "job_update") and callable(getattr(dummy_extract_job, "job_update"))
 
@@ -135,19 +153,8 @@ def test_dummy_summarize_job(dummy_summarize_job: SummarizeJob) -> None:
     assert dummy_summarize_job.transcript_id == "dummy_transcript"
 
     assert dummy_summarize_job._job_type == "SummarizeJob"
-    assert dummy_summarize_job.AVAILABLE_STATUS is not None
-    assert dummy_summarize_job.AVAILABLE_STATUS == [
-        "Deleted",
-        "Error",
-        "ItemQueued",
-        "Pending",
-        "PreparingSummary",
-        "PreparingTranscript",
-        "Summarizing",
-        "SummaryComplete",
-        "Transcribing",
-        "TranscriptComplete",
-    ]
+    assert dummy_summarize_job.available_status is not None
+    assert dummy_summarize_job.available_status == SUMMARIZE_AVAILABLE_STATUS
     
     assert hasattr(dummy_summarize_job, "job_update") and callable(getattr(dummy_summarize_job, "job_update"))
 
