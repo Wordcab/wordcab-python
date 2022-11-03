@@ -13,4 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Wordcab Python SDK."""
+"""Test suite for the core_objects module."""

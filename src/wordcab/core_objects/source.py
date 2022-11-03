@@ -13,4 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Wordcab Python SDK."""
+"""Wordcab API Source object."""
+
+import logging
+from dataclasses import dataclass, field
+
+
+@dataclass
+class Source:
+    """Source object."""
+
+    source_type: str
+
+    def __post_init__(self) -> None:
+        """Post-init method."""
