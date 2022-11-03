@@ -16,13 +16,35 @@
 """Wordcab API Core Objects."""
 
 from .job import BaseJob, ExtractJob, JobSettings, SummarizeJob
-from .source import BaseSource
+from .source import (
+    AssemblyAISource,
+    AudioSource,
+    BaseSource,
+    DeepgramSource,
+    GenericSource,
+    LocalSource,
+    RemoteSource,
+    RevSource,
+    SignedURLSource,
+    VTTSource,
+    WordcabTranscriptSource,
+)
 
 
 __all__ = [
+    "AssemblyAISource",
+    "AudioSource",
     "BaseJob",
-    "ExtractJob",
-    "JobSettings",
     "BaseSource",
+    "DeepgramSource",
+    "ExtractJob",
+    "GenericSource",
+    "JobSettings",
+    "LocalSource",
+    "RemoteSource",
+    "RevSource",
+    "SignedURLSource",
     "SummarizeJob",
+    "VTTSource",
+    "WordcabTranscriptSource",
 ]
