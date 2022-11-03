@@ -35,13 +35,67 @@ class JobSettings:
 
 
 @dataclass
-class Job:
-    """Wordcab API Job object."""
+class BaseJob:
+    """Wordcab API BaseJob object."""
 
     display_name: str
     job_name: str
-    job_status: str = field(init=False, default="Pending")
-    settings: JobSettings = field(init=False, default_factory=dict)
-    source: Source = field(init=False, default=None)
-    time_started: str = field(init=False, default=None)
-    transcript_id: str = field(init=False, default=None)
+    settings: JobSettings
+    source: Source
+    time_started: str
+    transcript_id: str
+    job_status: str = "Pending"
+
+    def __post_init__(self) -> None:
+        """Post-init method."""
+        logger.info(f"Job {self.job_name} created.")
+
+    def job_update(self, **kwargs) -> None:
+        """Update the job attributes."""
+        for key, value in kwargs.items():
+            if key in self.__dict__:
+                if getattr(self, key) != value:
+                    setattr(self, key, value)
+                    logger.info(f"Job {self.job_name} updated: {key} = {value}")
+                else:
+                    logger.info(f"Job {self.job_name} not updated: {key} = {value}")
+            else:
+                logger.warning(f"Cannot update {key} in {self.job_name}, not a valid attribute.")
+
+
+@dataclass
+class ExtractJob(BaseJob):
+    """Wordcab API ExtractJob object."""
+
+    AVAILABLE_STATUS = [
+        "Deleted", "Error", "Extracting", "ExtractionComplete", "ItemQueued", "Pending", "PreparingExtraction",
+    ]
+
+    def __post_init__(self) -> None:
+        """Post-init."""
+        super().__post_init__()
+        self._job_type = "ExtractJob"
+        
+
+
+@dataclass
+class SummarizeJob(BaseJob):
+    """Wordcab API SummarizeJob object."""
+
+    AVAILABLE_STATUS = [
+        "Deleted",
+        "Error",
+        "ItemQueued",
+        "Pending",
+        "PreparingSummary",
+        "PreparingTranscript",
+        "Summarizing",
+        "SummaryComplete",
+        "Transcribing",
+        "TranscriptComplete",
+    ]
+
+    def __post_init__(self) -> None:
+        """Post-init."""
+        super().__post_init__()
+        self._job_type = "SummarizeJob"

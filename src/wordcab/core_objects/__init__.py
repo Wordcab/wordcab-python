@@ -15,11 +15,13 @@
 
 """Wordcab API Core Objects."""
 
-from .job import Job, JobSettings
+from .job import BaseJob, ExtractJob, JobSettings, SummarizeJob
 from .source import Source
 
 __all__ = [
-    "Job",
+    "BaseJob",
+    "ExtractJob",
     "JobSettings",
-    "Source"
+    "Source",
+    "SummarizeJob",
 ]
