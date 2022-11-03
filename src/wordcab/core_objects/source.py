@@ -23,4 +23,7 @@ from dataclasses import dataclass, field
 class Source:
     """Source object."""
 
-    source_type: str = field(init=False)
+    source_type: str
+
+    def __post_init__(self) -> None:
+        """Post-init method."""
