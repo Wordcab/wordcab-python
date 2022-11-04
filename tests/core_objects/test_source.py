@@ -21,8 +21,6 @@ from pathlib import Path
 from wordcab.core_objects import (
     BaseSource,
     GenericSource,
-    LocalSource,
-    RemoteSource,
 )
 from wordcab.core_objects.source import AVAILABLE_AUDIO_FORMATS
 
@@ -31,18 +29,6 @@ from wordcab.core_objects.source import AVAILABLE_AUDIO_FORMATS
 def dummy_base_source() -> BaseSource:
     """Fixture for a dummy BaseSource object."""
     return BaseSource(source_type="generic")
-
-
-@pytest.fixture
-def dummy_local_source() -> LocalSource:
-    """Fixture for a dummy LocalSource object."""
-    return LocalSource(source_type="generic", filepath=Path(__file__))
-
-
-@pytest.fixture
-def dummy_remote_source() -> RemoteSource:
-    """Fixture for a dummy RemoteSource object."""
-    return RemoteSource(source_type="generic", url="https://example.com")
 
 
 @pytest.fixture
@@ -65,18 +51,6 @@ def test_available_audio_formats() -> None:
 def test_base_source(dummy_base_source: BaseSource) -> None:
     """Test the BaseSource object."""
     assert dummy_base_source.source_type == "generic"
-
-
-def test_local_source(dummy_local_source: LocalSource) -> None:
-    """Test the LocalSource object."""
-    assert dummy_local_source.source_type == "generic"
-    assert dummy_local_source.filepath == Path(__file__)
-
-
-def test_remote_source(dummy_remote_source: RemoteSource) -> None:
-    """Test the RemoteSource object."""
-    assert dummy_remote_source.source_type == "generic"
-    assert dummy_remote_source.url == "https://example.com"
 
 
 def test_generic_source_with_filepath(

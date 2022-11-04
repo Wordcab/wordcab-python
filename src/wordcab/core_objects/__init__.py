@@ -22,13 +22,12 @@ from .source import (
     BaseSource,
     DeepgramSource,
     GenericSource,
-    LocalSource,
-    RemoteSource,
     RevSource,
     SignedURLSource,
     VTTSource,
     WordcabTranscriptSource,
 )
+from .transcript import BaseTranscript, TranscriptUtterance
 
 
 __all__ = [
@@ -36,15 +35,15 @@ __all__ = [
     "AudioSource",
     "BaseJob",
     "BaseSource",
+    "BaseTranscript",
     "DeepgramSource",
     "ExtractJob",
     "GenericSource",
     "JobSettings",
-    "LocalSource",
-    "RemoteSource",
     "RevSource",
     "SignedURLSource",
     "SummarizeJob",
+    "TranscriptUtterance",
     "VTTSource",
     "WordcabTranscriptSource",
 ]
