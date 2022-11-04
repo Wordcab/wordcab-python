@@ -21,40 +21,20 @@ from pathlib import Path
 from wordcab.core_objects import (
     BaseSource,
     GenericSource,
-    LocalSource,
-    RemoteSource,
 )
 from wordcab.core_objects.source import AVAILABLE_AUDIO_FORMATS
 
 
 @pytest.fixture
-def dummy_base_source() -> BaseSource:
-    """Fixture for a dummy BaseSource object."""
-    return BaseSource(source_type="generic")
-
-
-@pytest.fixture
-def dummy_local_source() -> LocalSource:
-    """Fixture for a dummy LocalSource object."""
-    return LocalSource(source_type="generic", filepath=Path(__file__))
-
-
-@pytest.fixture
-def dummy_remote_source() -> RemoteSource:
-    """Fixture for a dummy RemoteSource object."""
-    return RemoteSource(source_type="generic", url="https://example.com")
-
-
-@pytest.fixture
 def dummy_generic_source_with_filepath() -> GenericSource:
     """Fixture for a dummy GenericSource object."""
-    return GenericSource(source_type="generic", filepath=Path(__file__))
+    return GenericSource(filepath=Path(__file__))
 
 
 @pytest.fixture
 def dummy_generic_source_with_url() -> GenericSource:
     """Fixture for a dummy GenericSource object."""
-    return GenericSource(source_type="generic", url="https://example.com")
+    return GenericSource(url="https://example.com")
 
 
 def test_available_audio_formats() -> None:
@@ -62,36 +42,45 @@ def test_available_audio_formats() -> None:
     assert AVAILABLE_AUDIO_FORMATS == [".flac", ".m4a", ".mp3", ".mpga", ".ogg", ".wav"]
 
 
-def test_base_source(dummy_base_source: BaseSource) -> None:
+def test_base_source() -> None:
     """Test the BaseSource object."""
-    assert dummy_base_source.source_type == "generic"
+    with pytest.raises(ValueError):
+        BaseSource()
+        BaseSource(filepath=Path(__file__), url="https://example.com")
+        BaseSource(url="123456")
+    with pytest.raises(TypeError):
+        BaseSource(filepath=123456)
+    with pytest.raises(FileNotFoundError):
+        BaseSource(filepath=Path("/tmp/does_not_exist"))
 
+    base = BaseSource(filepath=Path(__file__))
+    assert base.filepath == Path(__file__)
+    assert base.url is None
+    assert base.source_type == "local"
+    assert base._stem == Path(__file__).stem
+    assert base._suffix == Path(__file__).suffix
 
-def test_local_source(dummy_local_source: LocalSource) -> None:
-    """Test the LocalSource object."""
-    assert dummy_local_source.source_type == "generic"
-    assert dummy_local_source.filepath == Path(__file__)
-
-
-def test_remote_source(dummy_remote_source: RemoteSource) -> None:
-    """Test the RemoteSource object."""
-    assert dummy_remote_source.source_type == "generic"
-    assert dummy_remote_source.url == "https://example.com"
+    base = BaseSource(url="https://example.com")
+    assert base.filepath is None
+    assert base.url == "https://example.com"
+    assert base.source_type == "remote"
 
 
 def test_generic_source_with_filepath(
     dummy_generic_source_with_filepath: GenericSource,
 ) -> None:
     """Test the GenericSource object."""
-    assert dummy_generic_source_with_filepath.source_type == "generic"
     assert dummy_generic_source_with_filepath.filepath == Path(__file__)
     assert dummy_generic_source_with_filepath.url is None
+    assert dummy_generic_source_with_filepath.source_type == "local"
+    assert dummy_generic_source_with_filepath._stem == Path(__file__).stem
+    assert dummy_generic_source_with_filepath._suffix == Path(__file__).suffix
 
 
 def test_generic_source_with_url(
     dummy_generic_source_with_url: GenericSource,
 ) -> None:
     """Test the GenericSource object."""
-    assert dummy_generic_source_with_url.source_type == "generic"
     assert dummy_generic_source_with_url.filepath is None
     assert dummy_generic_source_with_url.url == "https://example.com"
+    assert dummy_generic_source_with_url.source_type == "remote"
