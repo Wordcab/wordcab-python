@@ -33,8 +33,8 @@ class BaseSource:
     """Source object."""
 
     filepath: Union[str, Path] = field(default=None, repr=False)
-    source_type: str = field(init=False)
     url: str = field(default=None, repr=False)
+    source_type: str = field(init=False)
     _stem: str = field(init=False, repr=False)
     _suffix: str = field(init=False, repr=False)
 
