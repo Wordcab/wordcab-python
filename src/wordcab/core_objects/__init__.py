@@ -27,6 +27,7 @@ from .source import (
     VTTSource,
     WordcabTranscriptSource,
 )
+from .stats import Stats
 from .summary import BaseSummary, StructuredSummary
 from .transcript import BaseTranscript, TranscriptUtterance
 
@@ -44,6 +45,7 @@ __all__ = [
     "JobSettings",
     "RevSource",
     "SignedURLSource",
+    "Stats",
     "StructuredSummary",
     "SummarizeJob",
     "TranscriptUtterance",
