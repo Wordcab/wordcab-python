@@ -65,6 +65,11 @@ def test_base_source() -> None:
     assert base.url == "https://example.com"
     assert base.source_type == "remote"
 
+    assert hasattr(base, "_load_file_from_path")
+    assert callable(getattr(base, "_load_file_from_path"))
+    assert hasattr(base, "_load_file_from_url")
+    assert callable(getattr(base, "_load_file_from_url"))
+
 
 def test_generic_source_with_filepath(
     dummy_generic_source_with_filepath: GenericSource,

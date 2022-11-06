@@ -16,6 +16,7 @@
 """Wordcab API Stats object."""
 
 import logging
+import validators
 from dataclasses import dataclass, field
 from typing import List
 
@@ -45,6 +46,9 @@ class Stats:
         """Post-init method."""
         if self.plan not in AVAILABLE_PLAN:
             raise ValueError(f"Plan must be one of {AVAILABLE_PLAN}, not {self.plan}")
+
+        if not validators.email(self.account_email):
+            raise ValueError(f"Please provide a valid email address, not {self.account_email}")
         
         # Check if metered charge is in the right format $X or $X.XX
         if not self.metered_charge.startswith("$"):
