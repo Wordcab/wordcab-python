@@ -27,6 +27,8 @@ logger = logging.getLogger(__name__)
 
 
 AVAILABLE_AUDIO_FORMATS = [".flac", ".m4a", ".mp3", ".mpga", ".ogg", ".wav"]
+AVAILABLE_GENERIC_FORMATS = [".json", ".txt"]
+
 
 @dataclass
 class BaseSource:
@@ -64,23 +66,52 @@ class BaseSource:
                 raise ValueError(f"Please provide a valid URL. {self.url} is not valid.")
             self.source_type = "remote"
 
+    def _load_file_from_path(self) -> bytes:
+        """Load file from local path."""
+        with open(self.filepath, "rb") as f:
+            return f.read()
+
+    def _load_file_from_url(self) -> bytes:
+        """Load file from URL."""
+        raise NotImplementedError("Loading files from URLs is not implemented yet.")
+
 
 @dataclass
 class GenericSource(BaseSource):
     """Generic source object."""
 
+    file_object: bytes = field(init=False, repr=False)
+
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        if self.source_type == "local":
+            if self._suffix not in AVAILABLE_GENERIC_FORMATS:
+                raise ValueError(f"Please provide a valid file format. {self._suffix} is not valid.")
+            else:
+                self.file_object = self._load_file_from_path()
+        
+        if self.source_type == "remote":
+            self.file_object = self._load_file_from_url()
 
 
 @dataclass
 class AudioSource(BaseSource):
     """Audio source object."""
 
+    file_object: bytes = field(init=False, repr=False)
+
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        if self.source_type == "local":
+            if self._suffix not in AVAILABLE_AUDIO_FORMATS:
+                raise ValueError(f"Please provide a valid file format. {self._suffix} is not valid.")
+            else:
+                self.file_object = self._load_file_from_path()
+        
+        if self.source_type == "remote":
+            self.file_object = self._load_file_from_url()
 
 
 @dataclass
@@ -90,6 +121,7 @@ class WordcabTranscriptSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        raise NotImplementedError("Wordcab transcript source is not implemented yet.")
 
 
 @dataclass
@@ -99,6 +131,7 @@ class SignedURLSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        raise NotImplementedError("Signed URL source is not implemented yet.")
 
 
 @dataclass
@@ -108,6 +141,7 @@ class AssemblyAISource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        raise NotImplementedError("AssemblyAI source is not implemented yet.")
 
 
 @dataclass
@@ -117,6 +151,7 @@ class DeepgramSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        raise NotImplementedError("Deepgram source is not implemented yet.")
 
 
 @dataclass
@@ -126,6 +161,7 @@ class RevSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        raise NotImplementedError("Rev.ai source is not implemented yet.")
 
 
 @dataclass
@@ -135,3 +171,4 @@ class VTTSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        raise NotImplementedError("VTT source is not implemented yet.")
