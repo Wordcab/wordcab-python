@@ -19,11 +19,10 @@ import logging
 from dataclasses import dataclass, field
 from typing import Dict, List, Union
 
+from ..config import SUMMARY_TYPES
+
 
 logger = logging.getLogger(__name__)
-
-
-SUMMARY_TYPES = ["conversational", "narrative", "no_speaker", "reason_conclusion"]
 
 
 @dataclass

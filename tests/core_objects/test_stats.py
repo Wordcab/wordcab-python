@@ -106,7 +106,7 @@ def test_stats_init_wrong_timestamps(timestamps: List[str]) -> None:
         )
 
 
-@pytest.mark.parametrize("email", ["azerty", "azerty@", "azerty@gmail", "")
+@pytest.mark.parametrize("email", ["azerty", "azerty@", "azerty@gmail", ""])
 def test_stats_init_wrong_email(email: str) -> None:
     """Test the Stats object init with wrong email."""
     with pytest.raises(ValueError):

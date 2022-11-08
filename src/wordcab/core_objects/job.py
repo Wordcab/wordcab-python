@@ -18,27 +18,11 @@
 import logging
 from dataclasses import dataclass, field
 
+from ..config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
 from .source import BaseSource
 
 
 logger = logging.getLogger(__name__)
-
-
-EXTRACT_AVAILABLE_STATUS = [
-    "Deleted", "Error", "Extracting", "ExtractionComplete", "ItemQueued", "Pending", "PreparingExtraction",
-]
-SUMMARIZE_AVAILABLE_STATUS = [
-    "Deleted",
-    "Error",
-    "ItemQueued",
-    "Pending",
-    "PreparingSummary",
-    "PreparingTranscript",
-    "Summarizing",
-    "SummaryComplete",
-    "Transcribing",
-    "TranscriptComplete",
-]
 
 
 @dataclass
