@@ -17,6 +17,7 @@
 
 import logging
 import pytest
+from typing import Dict, Union
 
 from wordcab.core_objects import BaseTranscript, TranscriptUtterance
 
@@ -66,6 +67,13 @@ def test_transcript_utterance(dummy_transcript_utterance: TranscriptUtterance) -
     assert dummy_transcript_utterance.end_index == 10
     assert isinstance(dummy_transcript_utterance, TranscriptUtterance)
 
+
+@pytest.mark.parametrize("utterance", [[1, "A", 0, 10], ["This is a test", 1, 0, 10], ["This is a test", "A", 10, 0]])
+def test_wrong_transcript_utterance(utterance) -> None:
+    """Test the TranscriptUtterance object."""
+    with pytest.raises((TypeError, ValueError)):
+        TranscriptUtterance(text=utterance[0], speaker=utterance[1], start_index=utterance[2], end_index=utterance[3])
+    
 
 def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
     """Test the BaseTranscript object."""
@@ -138,10 +146,13 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
     assert dummy_full_transcript.speaker_map == {"A": "The Speaker", "B": "The Other Speaker"}
 
 
-def test_speaker_map_creation() -> None:
+@pytest.mark.parametrize("speaker_map", [
+    {1: "The Speaker", 2: "The Other Speaker"},
+    {"A": 1, "B": 2},
+    {"A": "The Speaker", "B": 2},
+    {"A": 1, "B": "The Other Speaker"},
+])
+def test_speaker_map_creation(speaker_map: Dict[Union[str, int], Union[str, int]]) -> None:
     """Test the BaseTranscript object speaker_map creation."""
     with pytest.raises(TypeError):
-        BaseTranscript("transcript_456789", speaker_map={1: "The Speaker", 2: "The Other Speaker"})
-        BaseTranscript("transcript_456789", speaker_map={"A": 1, "B": 2})
-        BaseTranscript("transcript_456789", speaker_map={"A": "The Speaker", "B": 2})
-        BaseTranscript("transcript_456789", speaker_map={"A": 1, "B": "The Other Speaker"})
+        BaseTranscript("transcript_456789", speaker_map=speaker_map)

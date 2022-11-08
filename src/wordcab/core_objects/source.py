@@ -22,12 +22,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Union
 
+from ..config import AVAILABLE_AUDIO_FORMATS, AVAILABLE_GENERIC_FORMATS
+
 
 logger = logging.getLogger(__name__)
-
-
-AVAILABLE_AUDIO_FORMATS = [".flac", ".m4a", ".mp3", ".mpga", ".ogg", ".wav"]
-AVAILABLE_GENERIC_FORMATS = [".json", ".txt"]
 
 
 @dataclass

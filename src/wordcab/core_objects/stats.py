@@ -20,11 +20,10 @@ import validators
 from dataclasses import dataclass, field
 from typing import List
 
+from ..config import AVAILABLE_PLAN
+
 
 logger = logging.getLogger(__name__)
-
-
-AVAILABLE_PLAN = ["free", "paid"]
 
 
 @dataclass
