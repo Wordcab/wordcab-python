@@ -39,13 +39,14 @@ def test_client_no_api_key() -> None:
 
 def test_client_enter_exit(client: Client) -> None:
     """Test client enter and exit methods."""
-    with client:
-        pass
+    with Client(api_key="dummy_api_key") as client:
+        assert client.api_key == "dummy_api_key"
 
 
-def test_client_close(client: Client) -> None:
-    """Test client close method."""
-    client.close()
+def test_request(client: Client) -> None:
+    """Test client request method."""
+    with pytest.raises(ValueError):
+        client.request(method=None)
 
 
 def test_get_stats(client: Client) -> None:
