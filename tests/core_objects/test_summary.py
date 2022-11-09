@@ -67,7 +67,9 @@ def dummy_full_base_summary() -> BaseSummary:
     )
 
 
-def test_empty_structured_summary(dummy_empty_structured_summary: StructuredSummary) -> None:
+def test_empty_structured_summary(
+    dummy_empty_structured_summary: StructuredSummary,
+) -> None:
     """Test the empty StructuredSummary object."""
     assert dummy_empty_structured_summary.end == "00:06:49"
     assert dummy_empty_structured_summary.start == "00:00:00"

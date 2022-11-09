@@ -66,9 +66,7 @@ def test_base_source(tmp_path: Path) -> None:
     assert base.url == "https://example.com"
     assert base.source_type == "remote"
 
-    assert hasattr(base, "_load_file_from_path") and callable(
-        base._load_file_from_path
-    )
+    assert hasattr(base, "_load_file_from_path") and callable(base._load_file_from_path)
     assert hasattr(base, "_load_file_from_url") and callable(base._load_file_from_url)
 
     base = BaseSource(filepath=path)

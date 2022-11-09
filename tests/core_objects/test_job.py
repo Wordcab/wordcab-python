@@ -19,16 +19,13 @@ from pathlib import Path
 
 import pytest
 
+from wordcab.config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
 from wordcab.core_objects import (
     BaseJob,
     BaseSource,
     ExtractJob,
     JobSettings,
     SummarizeJob,
-)
-from wordcab.config import (
-    EXTRACT_AVAILABLE_STATUS,
-    SUMMARIZE_AVAILABLE_STATUS,
 )
 
 
@@ -120,7 +117,7 @@ def test_dummy_job(dummy_job: BaseJob) -> None:
     assert hasattr(dummy_job, "job_update") and callable(dummy_job.job_update)
 
 
-def test_job_update(dummy_job: BaseJob, caplog: pytest.LogCaptureFixture) -> None: 
+def test_job_update(dummy_job: BaseJob, caplog: pytest.LogCaptureFixture) -> None:
     """Test for the job_update method."""
     assert dummy_job.job_update is not None
     assert callable(dummy_job.job_update)
@@ -134,14 +131,6 @@ def test_job_update(dummy_job: BaseJob, caplog: pytest.LogCaptureFixture) -> Non
         dummy_job.job_update(parameters={"job_status": "Pending"})
         assert dummy_job.job_status == before_status
         assert "Job dummy_job not updated: job_status = Pending" in caplog.text
-    with pytest.raises(TypeError):
-        dummy_job.job_update(
-            {
-                "time_started": "dummy_time",
-                "transcript_id": "dummy_transcript",
-                "job_status": "dummy_status",
-            }
-        )
     with caplog.at_level(logging.WARNING):
         dummy_job.job_update(parameters={"new_jobsssss": "coder"})
         assert (

@@ -35,7 +35,10 @@ class Client:
         return self
 
     def __exit__(
-        self, exception_type: Optional[Exception], exception_value: Optional[Exception], traceback: Optional[Exception]
+        self,
+        exception_type: Optional[Exception],
+        exception_value: Optional[Exception],
+        traceback: Optional[Exception],
     ) -> None:
         """Exit the client context."""
         pass
