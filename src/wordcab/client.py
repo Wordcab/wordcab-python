@@ -33,13 +33,15 @@ class Client(object):
         """Enter the client context."""
         return self
 
-    def __exit__(self):
+    def __exit__(self, exception_type, exception_value, traceback):
         """Exit the client context."""
-        self.close()
-
-    def close(self):
-        """Close the client."""
         pass
+
+    def request(self, method: str, **kwargs):
+        """Make a request to the Wordcab API."""
+        if not method:
+            raise ValueError("You must specify a method.")
+        return getattr(self, method)(**kwargs)
 
     def get_stats(self):
         """Get the stats of the account."""
