@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +15,9 @@
 """Test suite for the summary dataclasses."""
 
 import logging
-import pytest
 from typing import List, Union
+
+import pytest
 
 from wordcab.core_objects import BaseSummary, StructuredSummary
 
@@ -67,7 +67,9 @@ def dummy_full_base_summary() -> BaseSummary:
     )
 
 
-def test_empty_structured_summary(dummy_empty_structured_summary: StructuredSummary):
+def test_empty_structured_summary(
+    dummy_empty_structured_summary: StructuredSummary,
+) -> None:
     """Test the empty StructuredSummary object."""
     assert dummy_empty_structured_summary.end == "00:06:49"
     assert dummy_empty_structured_summary.start == "00:00:00"
@@ -77,24 +79,67 @@ def test_empty_structured_summary(dummy_empty_structured_summary: StructuredSumm
     assert dummy_empty_structured_summary.timestamps_start == 0
     assert dummy_empty_structured_summary.transcript_segment == {}
     assert hasattr(dummy_empty_structured_summary, "_convert_timestamp")
-    assert callable(getattr(dummy_empty_structured_summary, "_convert_timestamp"))
+    assert callable(dummy_empty_structured_summary._convert_timestamp)
 
 
 @pytest.mark.parametrize(
-    "params", [
-        ["00:06:49", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 409001],
-        ["00:06:49", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409001, 0],
+    "params",
+    [
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            "<p>This is a test.</p>",
+            409000,
+            409001,
+        ],
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            "<p>This is a test.</p>",
+            409001,
+            0,
+        ],
         ["00:06:49", "000000", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         ["000649", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         [405, "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         ["00:06:49", 0, "This is a test.", "<p>This is a test.</p>", 409000, 0],
-        ["00:06:49", "00:00:00", ["This is a test."], "<p>This is a test.</p>", 409000, 0],
-        ["00:06:49", "00:00:00", "This is a test.", ["<p>This is a test.</p>"], 409000, 0],
-        ["00:06:49", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000.25, 0],
-        ["00:06:49", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0.0],
-    ]
+        [
+            "00:06:49",
+            "00:00:00",
+            ["This is a test."],
+            "<p>This is a test.</p>",
+            409000,
+            0,
+        ],
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            ["<p>This is a test.</p>"],
+            409000,
+            0,
+        ],
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            "<p>This is a test.</p>",
+            409000.25,
+            0,
+        ],
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            "<p>This is a test.</p>",
+            409000,
+            0.0,
+        ],
+    ],
 )
-def test_typerror_structured_summary(params: List[Union[str, int, float]]):
+def test_typerror_structured_summary(params: List[Union[str, int, float]]) -> None:
     """Test the wrong StructuredSummary object."""
     with pytest.raises((TypeError, ValueError)):
         StructuredSummary(
@@ -103,34 +148,37 @@ def test_typerror_structured_summary(params: List[Union[str, int, float]]):
             summary=params[2],
             summary_html=params[3],
             timestamps_end=params[4],
-            timestamps_start=params[5]
+            timestamps_start=params[5],
         )
 
 
-def test_empty_base_summary(dummy_empty_base_summary: BaseSummary):
+def test_empty_base_summary(dummy_empty_base_summary: BaseSummary) -> None:
     """Test the empty BaseSummary object."""
     assert dummy_empty_base_summary.summary_id == "summary_123456"
     assert dummy_empty_base_summary.job_status == "job_status"
     assert dummy_empty_base_summary.process_time == "00:00:00"
-    assert dummy_empty_base_summary.display_name == None
-    assert dummy_empty_base_summary.job_name == None
-    assert dummy_empty_base_summary.speaker_map == None
-    assert dummy_empty_base_summary.source == None
-    assert dummy_empty_base_summary.summary == None
-    assert dummy_empty_base_summary.summary_type == None
-    assert dummy_empty_base_summary.transcript_id == None
-    assert dummy_empty_base_summary.time_started == None
-    assert dummy_empty_base_summary.time_completed == None
+    assert dummy_empty_base_summary.display_name is None
+    assert dummy_empty_base_summary.job_name is None
+    assert dummy_empty_base_summary.speaker_map is None
+    assert dummy_empty_base_summary.source is None
+    assert dummy_empty_base_summary.summary is None
+    assert dummy_empty_base_summary.summary_type is None
+    assert dummy_empty_base_summary.transcript_id is None
+    assert dummy_empty_base_summary.time_started is None
+    assert dummy_empty_base_summary.time_completed is None
 
 
-def test_full_base_summary(dummy_full_base_summary: BaseSummary):
+def test_full_base_summary(dummy_full_base_summary: BaseSummary) -> None:
     """Test the full BaseSummary object."""
     assert dummy_full_base_summary.summary_id == "summary_123456"
     assert dummy_full_base_summary.job_status == "job_status"
     assert dummy_full_base_summary.process_time == "00:00:00"
     assert dummy_full_base_summary.display_name == "display_name"
     assert dummy_full_base_summary.job_name == "job_name"
-    assert dummy_full_base_summary.speaker_map == {"A": "The Speaker", "B": "The Other Speaker"}
+    assert dummy_full_base_summary.speaker_map == {
+        "A": "The Speaker",
+        "B": "The Other Speaker",
+    }
     assert dummy_full_base_summary.source == "generic"
     assert dummy_full_base_summary.summary == {"test": {"test": "test"}}
     assert dummy_full_base_summary.summary_type == "narrative"
@@ -140,12 +188,25 @@ def test_full_base_summary(dummy_full_base_summary: BaseSummary):
 
 
 @pytest.mark.parametrize(
-    "params", [
-        ["summary_123456", "job_status", "narrative", "2021-01-01T00:00:00", "2021-01-01T00:00:00"],
-        ["summary_123456", "job_status", "new_summary_type", "2021-01-01T00:00:00", "2021-01-01T00:10:00"],
-    ]
+    "params",
+    [
+        [
+            "summary_123456",
+            "job_status",
+            "narrative",
+            "2021-01-01T00:00:00",
+            "2021-01-01T00:00:00",
+        ],
+        [
+            "summary_123456",
+            "job_status",
+            "new_summary_type",
+            "2021-01-01T00:00:00",
+            "2021-01-01T00:10:00",
+        ],
+    ],
 )
-def test_valuerror_base_summary(params: List[str]):
+def test_valuerror_base_summary(params: List[str]) -> None:
     """Test the wrong BaseSummary object."""
     with pytest.raises(ValueError):
         BaseSummary(

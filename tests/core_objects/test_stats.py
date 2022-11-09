@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +15,9 @@
 """Test suite for the stats dataclass."""
 
 import logging
-import pytest
 from typing import List
+
+import pytest
 
 from wordcab.core_objects import Stats
 
@@ -52,7 +52,7 @@ def test_stats_init(dummy_stats: Stats) -> None:
     assert dummy_stats.metered_charge == "$0"
     assert dummy_stats.min_created == "2021-01-01"
     assert dummy_stats.max_created == "2021-02-01"
-    assert dummy_stats.tags == []
+    assert dummy_stats.tags == None
 
 
 @pytest.mark.parametrize("plan", ["professional", "freeee", "proffessional"])

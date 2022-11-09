@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +15,18 @@
 """Test suite for the job dataclasses."""
 
 import logging
-import pytest
 from pathlib import Path
 
-from wordcab.core_objects import BaseJob, ExtractJob, JobSettings, BaseSource, SummarizeJob
-from wordcab.core_objects.job import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
+import pytest
+
+from wordcab.config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
+from wordcab.core_objects import (
+    BaseJob,
+    BaseSource,
+    ExtractJob,
+    JobSettings,
+    SummarizeJob,
+)
 
 
 @pytest.fixture
@@ -71,7 +77,13 @@ def empty_job_settings() -> JobSettings:
 def test_available_status() -> None:
     """Test for the available_status property."""
     assert EXTRACT_AVAILABLE_STATUS == [
-        "Deleted", "Error", "Extracting", "ExtractionComplete", "ItemQueued", "Pending", "PreparingExtraction",
+        "Deleted",
+        "Error",
+        "Extracting",
+        "ExtractionComplete",
+        "ItemQueued",
+        "Pending",
+        "PreparingExtraction",
     ]
     assert SUMMARIZE_AVAILABLE_STATUS == [
         "Deleted",
@@ -102,31 +114,29 @@ def test_dummy_job(dummy_job: BaseJob) -> None:
     assert dummy_job.source.source_type == "local"
     assert dummy_job.time_started == "dummy_time"
     assert dummy_job.transcript_id == "dummy_transcript"
-    
-    assert hasattr(dummy_job, "job_update") and callable(getattr(dummy_job, "job_update"))
+    assert hasattr(dummy_job, "job_update") and callable(dummy_job.job_update)
 
 
-def test_job_update(dummy_job: BaseJob, caplog) -> None:
+def test_job_update(dummy_job: BaseJob, caplog: pytest.LogCaptureFixture) -> None:
     """Test for the job_update method."""
     assert dummy_job.job_update is not None
     assert callable(dummy_job.job_update)
     with caplog.at_level(logging.INFO):
-        dummy_job.job_update(source="dummy_source")
+        dummy_job.job_update(parameters={"source": "dummy_source"})
         assert dummy_job.source == "dummy_source"
         assert "Job dummy_job updated: source = dummy_source" in caplog.text
     with caplog.at_level(logging.INFO):
         before_status = dummy_job.job_status
         assert before_status == "Pending"
-        dummy_job.job_update(job_status="Pending")
+        dummy_job.job_update(parameters={"job_status": "Pending"})
         assert dummy_job.job_status == before_status
         assert "Job dummy_job not updated: job_status = Pending" in caplog.text
-    with pytest.raises(TypeError):
-        dummy_job.job_update(
-            {"time_started": "dummy_time", "transcript_id": "dummy_transcript", "job_status": "dummy_status"}
-        )
     with caplog.at_level(logging.WARNING):
-        dummy_job.job_update(new_jobsssss="new_jobsssss",)
-        assert "Cannot update new_jobsssss in dummy_job, not a valid attribute." in caplog.text
+        dummy_job.job_update(parameters={"new_jobsssss": "coder"})
+        assert (
+            "Cannot update new_jobsssss in dummy_job, not a valid attribute."
+            in caplog.text
+        )
 
 
 def test_dummy_extract_job(dummy_extract_job: ExtractJob) -> None:
@@ -144,12 +154,12 @@ def test_dummy_extract_job(dummy_extract_job: ExtractJob) -> None:
     assert dummy_extract_job.source.source_type == "local"
     assert dummy_extract_job.time_started == "dummy_time"
     assert dummy_extract_job.transcript_id == "dummy_transcript"
-
     assert dummy_extract_job._job_type == "ExtractJob"
     assert dummy_extract_job.available_status is not None
     assert dummy_extract_job.available_status == EXTRACT_AVAILABLE_STATUS
-    
-    assert hasattr(dummy_extract_job, "job_update") and callable(getattr(dummy_extract_job, "job_update"))
+    assert hasattr(dummy_extract_job, "job_update") and callable(
+        dummy_extract_job.job_update
+    )
 
 
 def test_dummy_summarize_job(dummy_summarize_job: SummarizeJob) -> None:
@@ -167,12 +177,12 @@ def test_dummy_summarize_job(dummy_summarize_job: SummarizeJob) -> None:
     assert dummy_summarize_job.source.source_type == "local"
     assert dummy_summarize_job.time_started == "dummy_time"
     assert dummy_summarize_job.transcript_id == "dummy_transcript"
-
     assert dummy_summarize_job._job_type == "SummarizeJob"
     assert dummy_summarize_job.available_status is not None
     assert dummy_summarize_job.available_status == SUMMARIZE_AVAILABLE_STATUS
-    
-    assert hasattr(dummy_summarize_job, "job_update") and callable(getattr(dummy_summarize_job, "job_update"))
+    assert hasattr(dummy_summarize_job, "job_update") and callable(
+        dummy_summarize_job.job_update
+    )
 
 
 def test_empty_job_settings(empty_job_settings: JobSettings) -> None:
