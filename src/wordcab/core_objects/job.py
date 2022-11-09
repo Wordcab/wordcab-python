@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,7 +60,9 @@ class BaseJob:
                 else:
                     logger.info(f"Job {self.job_name} not updated: {key} = {value}")
             else:
-                logger.warning(f"Cannot update {key} in {self.job_name}, not a valid attribute.")
+                logger.warning(
+                    f"Cannot update {key} in {self.job_name}, not a valid attribute."
+                )
 
 
 @dataclass
@@ -73,7 +74,6 @@ class ExtractJob(BaseJob):
         super().__post_init__()
         self._job_type = "ExtractJob"
         self.available_status = EXTRACT_AVAILABLE_STATUS
-        
 
 
 @dataclass

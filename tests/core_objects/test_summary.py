@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +15,9 @@
 """Test suite for the summary dataclasses."""
 
 import logging
-import pytest
 from typing import List, Union
+
+import pytest
 
 from wordcab.core_objects import BaseSummary, StructuredSummary
 
@@ -81,18 +81,61 @@ def test_empty_structured_summary(dummy_empty_structured_summary: StructuredSumm
 
 
 @pytest.mark.parametrize(
-    "params", [
-        ["00:06:49", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 409001],
-        ["00:06:49", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409001, 0],
+    "params",
+    [
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            "<p>This is a test.</p>",
+            409000,
+            409001,
+        ],
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            "<p>This is a test.</p>",
+            409001,
+            0,
+        ],
         ["00:06:49", "000000", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         ["000649", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         [405, "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         ["00:06:49", 0, "This is a test.", "<p>This is a test.</p>", 409000, 0],
-        ["00:06:49", "00:00:00", ["This is a test."], "<p>This is a test.</p>", 409000, 0],
-        ["00:06:49", "00:00:00", "This is a test.", ["<p>This is a test.</p>"], 409000, 0],
-        ["00:06:49", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000.25, 0],
-        ["00:06:49", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0.0],
-    ]
+        [
+            "00:06:49",
+            "00:00:00",
+            ["This is a test."],
+            "<p>This is a test.</p>",
+            409000,
+            0,
+        ],
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            ["<p>This is a test.</p>"],
+            409000,
+            0,
+        ],
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            "<p>This is a test.</p>",
+            409000.25,
+            0,
+        ],
+        [
+            "00:06:49",
+            "00:00:00",
+            "This is a test.",
+            "<p>This is a test.</p>",
+            409000,
+            0.0,
+        ],
+    ],
 )
 def test_typerror_structured_summary(params: List[Union[str, int, float]]):
     """Test the wrong StructuredSummary object."""
@@ -103,7 +146,7 @@ def test_typerror_structured_summary(params: List[Union[str, int, float]]):
             summary=params[2],
             summary_html=params[3],
             timestamps_end=params[4],
-            timestamps_start=params[5]
+            timestamps_start=params[5],
         )
 
 
@@ -130,7 +173,10 @@ def test_full_base_summary(dummy_full_base_summary: BaseSummary):
     assert dummy_full_base_summary.process_time == "00:00:00"
     assert dummy_full_base_summary.display_name == "display_name"
     assert dummy_full_base_summary.job_name == "job_name"
-    assert dummy_full_base_summary.speaker_map == {"A": "The Speaker", "B": "The Other Speaker"}
+    assert dummy_full_base_summary.speaker_map == {
+        "A": "The Speaker",
+        "B": "The Other Speaker",
+    }
     assert dummy_full_base_summary.source == "generic"
     assert dummy_full_base_summary.summary == {"test": {"test": "test"}}
     assert dummy_full_base_summary.summary_type == "narrative"
@@ -140,10 +186,23 @@ def test_full_base_summary(dummy_full_base_summary: BaseSummary):
 
 
 @pytest.mark.parametrize(
-    "params", [
-        ["summary_123456", "job_status", "narrative", "2021-01-01T00:00:00", "2021-01-01T00:00:00"],
-        ["summary_123456", "job_status", "new_summary_type", "2021-01-01T00:00:00", "2021-01-01T00:10:00"],
-    ]
+    "params",
+    [
+        [
+            "summary_123456",
+            "job_status",
+            "narrative",
+            "2021-01-01T00:00:00",
+            "2021-01-01T00:00:00",
+        ],
+        [
+            "summary_123456",
+            "job_status",
+            "new_summary_type",
+            "2021-01-01T00:00:00",
+            "2021-01-01T00:10:00",
+        ],
+    ],
 )
 def test_valuerror_base_summary(params: List[str]):
     """Test the wrong BaseSummary object."""

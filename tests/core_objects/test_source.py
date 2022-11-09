@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +14,11 @@
 
 """Test suite for the source dataclasses."""
 
-import pytest
 from pathlib import Path
 
+import pytest
+
+from wordcab.config import AVAILABLE_AUDIO_FORMATS
 from wordcab.core_objects import (
     AssemblyAISource,
     AudioSource,
@@ -29,7 +30,6 @@ from wordcab.core_objects import (
     VTTSource,
     WordcabTranscriptSource,
 )
-from wordcab.config import AVAILABLE_AUDIO_FORMATS
 
 
 def test_available_audio_formats() -> None:
@@ -42,7 +42,7 @@ def test_base_source(tmp_path) -> None:
     path = f"{tmp_path}/test.txt"
     with open(path, "w") as f:
         f.write("test")
-    
+
     with pytest.raises(ValueError):
         BaseSource()
     with pytest.raises(ValueError):
@@ -109,7 +109,7 @@ def test_audio_source(tmp_path) -> None:
     path = f"{tmp_path}/test.mp3"
     with open(path, "w") as f:
         f.write("test")
-    
+
     audio_source = AudioSource(filepath=Path(path))
     assert audio_source.filepath == Path(path)
     assert audio_source.url is None
@@ -121,7 +121,7 @@ def test_audio_source(tmp_path) -> None:
     aac_path = f"{tmp_path}/test.aac"
     with open(aac_path, "w") as f:
         f.write("test")
-    
+
     with pytest.raises(ValueError):
         AudioSource(filepath=Path(aac_path))
     with pytest.raises(NotImplementedError):

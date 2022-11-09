@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +15,9 @@
 """Test suite for the transcript dataclasses."""
 
 import logging
-import pytest
 from typing import Dict, Union
+
+import pytest
 
 from wordcab.core_objects import BaseTranscript, TranscriptUtterance
 
@@ -68,17 +68,27 @@ def test_transcript_utterance(dummy_transcript_utterance: TranscriptUtterance) -
     assert isinstance(dummy_transcript_utterance, TranscriptUtterance)
 
 
-@pytest.mark.parametrize("utterance", [[1, "A", 0, 10], ["This is a test", 1, 0, 10], ["This is a test", "A", 10, 0]])
+@pytest.mark.parametrize(
+    "utterance",
+    [[1, "A", 0, 10], ["This is a test", 1, 0, 10], ["This is a test", "A", 10, 0]],
+)
 def test_wrong_transcript_utterance(utterance) -> None:
     """Test the TranscriptUtterance object."""
     with pytest.raises((TypeError, ValueError)):
-        TranscriptUtterance(text=utterance[0], speaker=utterance[1], start_index=utterance[2], end_index=utterance[3])
-    
+        TranscriptUtterance(
+            text=utterance[0],
+            speaker=utterance[1],
+            start_index=utterance[2],
+            end_index=utterance[3],
+        )
+
 
 def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
     """Test the BaseTranscript object."""
     assert dummy_empty_transcript.transcript_id == "transcript_456789"
-    assert dummy_empty_transcript.transcript == [TranscriptUtterance("This is a test", "A", 10, 0) for _ in range(10)]
+    assert dummy_empty_transcript.transcript == [
+        TranscriptUtterance("This is a test", "A", 10, 0) for _ in range(10)
+    ]
     assert isinstance(dummy_empty_transcript, BaseTranscript)
     assert dummy_empty_transcript.job_id_set == set()
     assert dummy_empty_transcript.summary_id_set == set()
@@ -104,19 +114,29 @@ def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
     assert dummy_empty_transcript.summary_id_set == {"summary_123456"}
     assert isinstance(dummy_empty_transcript.summary_id_set, set)
 
-    dummy_empty_transcript.update_speaker_map({"A": "The Speaker", "B": "The Other Speaker"})
-    assert dummy_empty_transcript.speaker_map == {"A": "The Speaker", "B": "The Other Speaker"}
+    dummy_empty_transcript.update_speaker_map(
+        {"A": "The Speaker", "B": "The Other Speaker"}
+    )
+    assert dummy_empty_transcript.speaker_map == {
+        "A": "The Speaker",
+        "B": "The Other Speaker",
+    }
     assert isinstance(dummy_empty_transcript.speaker_map, dict)
 
 
 def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
     """Test the BaseTranscript object."""
     assert dummy_full_transcript.transcript_id == "transcript_456789"
-    assert dummy_full_transcript.transcript == [TranscriptUtterance("This is a test", "A", 10, 0) for _ in range(10)]
+    assert dummy_full_transcript.transcript == [
+        TranscriptUtterance("This is a test", "A", 10, 0) for _ in range(10)
+    ]
     assert isinstance(dummy_full_transcript, BaseTranscript)
     assert dummy_full_transcript.job_id_set == {"job_123456"}
     assert dummy_full_transcript.summary_id_set == {"summary_123456"}
-    assert dummy_full_transcript.speaker_map == {"A": "The Speaker", "B": "The Other Speaker"}
+    assert dummy_full_transcript.speaker_map == {
+        "A": "The Speaker",
+        "B": "The Other Speaker",
+    }
 
     assert dummy_full_transcript.transcript[0].text == "This is a test"
     assert dummy_full_transcript.transcript[0].speaker == "A"
@@ -142,17 +162,27 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
 
     dummy_full_transcript.update_speaker_map({})
     assert dummy_full_transcript.speaker_map == {}
-    dummy_full_transcript.update_speaker_map({"A": "The Speaker", "B": "The Other Speaker"})
-    assert dummy_full_transcript.speaker_map == {"A": "The Speaker", "B": "The Other Speaker"}
+    dummy_full_transcript.update_speaker_map(
+        {"A": "The Speaker", "B": "The Other Speaker"}
+    )
+    assert dummy_full_transcript.speaker_map == {
+        "A": "The Speaker",
+        "B": "The Other Speaker",
+    }
 
 
-@pytest.mark.parametrize("speaker_map", [
-    {1: "The Speaker", 2: "The Other Speaker"},
-    {"A": 1, "B": 2},
-    {"A": "The Speaker", "B": 2},
-    {"A": 1, "B": "The Other Speaker"},
-])
-def test_speaker_map_creation(speaker_map: Dict[Union[str, int], Union[str, int]]) -> None:
+@pytest.mark.parametrize(
+    "speaker_map",
+    [
+        {1: "The Speaker", 2: "The Other Speaker"},
+        {"A": 1, "B": 2},
+        {"A": "The Speaker", "B": 2},
+        {"A": 1, "B": "The Other Speaker"},
+    ],
+)
+def test_speaker_map_creation(
+    speaker_map: Dict[Union[str, int], Union[str, int]]
+) -> None:
     """Test the BaseTranscript object speaker_map creation."""
     with pytest.raises(TypeError):
         BaseTranscript("transcript_456789", speaker_map=speaker_map)

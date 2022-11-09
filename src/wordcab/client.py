@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +18,7 @@ import os
 from typing import Optional
 
 
-class Client(object):
+class Client:
     """Wordcab API Client."""
 
     def __init__(self, api_key: Optional[str] = None):
@@ -27,7 +26,9 @@ class Client(object):
         self.api_key = api_key if api_key else os.getenv("WORDCAB_API_KEY")
         if not self.api_key:
             # TODO: Add a better error message with cli login instructions
-            raise ValueError("API Key not found. You must set the WORDCAB_API_KEY environment variable.")
+            raise ValueError(
+                "API Key not found. You must set the WORDCAB_API_KEY environment variable."
+            )
 
     def __enter__(self):
         """Enter the client context."""

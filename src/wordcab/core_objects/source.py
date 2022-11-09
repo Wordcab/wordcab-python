@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +15,11 @@
 """Wordcab API Source object."""
 
 import logging
-import validators
-
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Union
+
+import validators
 
 from ..config import AVAILABLE_AUDIO_FORMATS, AVAILABLE_GENERIC_FORMATS
 
@@ -41,19 +40,29 @@ class BaseSource:
     def __post_init__(self) -> None:
         """Post-init method."""
         if not self.filepath and not self.url:
-            raise ValueError("Please provide either a local or a remote source, respectively `filepath` or `url`.")
+            raise ValueError(
+                "Please provide either a local or a remote source, respectively `filepath` or `url`."
+            )
         if self.filepath and self.url:
-            raise ValueError("Please provide either a local or a remote source, not both `filepath` and `url`.")
+            raise ValueError(
+                "Please provide either a local or a remote source, not both `filepath` and `url`."
+            )
 
         if self.filepath:
-            if not isinstance(self.filepath, Path) and not isinstance(self.filepath, str):
-                raise TypeError(f"The path must be a string or a Path object, not {type(self.filepath)}")
+            if not isinstance(self.filepath, Path) and not isinstance(
+                self.filepath, str
+            ):
+                raise TypeError(
+                    f"The path must be a string or a Path object, not {type(self.filepath)}"
+                )
 
             if isinstance(self.filepath, str):
                 self.filepath = Path(self.filepath)
 
             if not self.filepath.exists():
-                raise FileNotFoundError(f"File {self.filepath} does not exist or is not accessible.")
+                raise FileNotFoundError(
+                    f"File {self.filepath} does not exist or is not accessible."
+                )
 
             self._stem = self.filepath.stem
             self._suffix = self.filepath.suffix
@@ -61,7 +70,9 @@ class BaseSource:
 
         if self.url:
             if not validators.url(self.url):
-                raise ValueError(f"Please provide a valid URL. {self.url} is not valid.")
+                raise ValueError(
+                    f"Please provide a valid URL. {self.url} is not valid."
+                )
             self.source_type = "remote"
 
     def _load_file_from_path(self) -> bytes:
@@ -85,10 +96,12 @@ class GenericSource(BaseSource):
         super().__post_init__()
         if self.source_type == "local":
             if self._suffix not in AVAILABLE_GENERIC_FORMATS:
-                raise ValueError(f"Please provide a valid file format. {self._suffix} is not valid.")
+                raise ValueError(
+                    f"Please provide a valid file format. {self._suffix} is not valid."
+                )
             else:
                 self.file_object = self._load_file_from_path()
-        
+
         if self.source_type == "remote":
             self.file_object = self._load_file_from_url()
 
@@ -104,10 +117,12 @@ class AudioSource(BaseSource):
         super().__post_init__()
         if self.source_type == "local":
             if self._suffix not in AVAILABLE_AUDIO_FORMATS:
-                raise ValueError(f"Please provide a valid file format. {self._suffix} is not valid.")
+                raise ValueError(
+                    f"Please provide a valid file format. {self._suffix} is not valid."
+                )
             else:
                 self.file_object = self._load_file_from_path()
-        
+
         if self.source_type == "remote":
             self.file_object = self._load_file_from_url()
 

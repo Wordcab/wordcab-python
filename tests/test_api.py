@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,19 +38,22 @@ def api_key():
     return "dummy_api_key"
 
 
-@pytest.mark.parametrize("method", [
-    "change_speaker_labels",
-    "delete_job",
-    "get_stats",
-    "list_jobs",
-    "list_summaries",
-    "list_transcripts",
-    "retrieve_job",
-    "retrieve_summary",
-    "retrieve_transcript",
-    "start_extract",
-    "start_summary",
-])
+@pytest.mark.parametrize(
+    "method",
+    [
+        "change_speaker_labels",
+        "delete_job",
+        "get_stats",
+        "list_jobs",
+        "list_summaries",
+        "list_transcripts",
+        "retrieve_job",
+        "retrieve_summary",
+        "retrieve_transcript",
+        "start_extract",
+        "start_summary",
+    ],
+)
 def test_request(api_key: str, method: str) -> None:
     """Test the request function."""
     with pytest.raises(NotImplementedError):

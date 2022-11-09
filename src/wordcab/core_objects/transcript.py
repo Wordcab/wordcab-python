@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,15 +34,21 @@ class TranscriptUtterance:
     def __post_init__(self) -> None:
         """Post-init method"""
         if not isinstance(self.text, str):
-            raise TypeError(f"TranscriptUtterance.text must be a string, not {type(self.text)}")
-        
+            raise TypeError(
+                f"TranscriptUtterance.text must be a string, not {type(self.text)}"
+            )
+
         if not isinstance(self.speaker, str):
-            raise TypeError(f"TranscriptUtterance.speaker must be a string, not {type(self.speaker)}")
+            raise TypeError(
+                f"TranscriptUtterance.speaker must be a string, not {type(self.speaker)}"
+            )
 
         if self.end_index < self.start_index:
-            raise ValueError(f"""
-                TranscriptUtterance.end_index must be greater than or equal to TranscriptUtterance.start_index, 
-                not {self.end_index} < {self.start_index}""")
+            raise ValueError(
+                f"""
+                TranscriptUtterance.end_index must be greater than or equal to TranscriptUtterance.start_index,
+                not {self.end_index} < {self.start_index}"""
+            )
 
 
 @dataclass
@@ -61,9 +66,13 @@ class BaseTranscript:
         if self.speaker_map:
             for key, val in self.speaker_map.items():
                 if not isinstance(key, str):
-                    raise TypeError(f"BaseTranscript.speaker_map keys must be strings, not {type(key)}")
+                    raise TypeError(
+                        f"BaseTranscript.speaker_map keys must be strings, not {type(key)}"
+                    )
                 if not isinstance(val, str):
-                    raise TypeError(f"BaseTranscript.speaker_map values must be strings, not {type(val)}")
+                    raise TypeError(
+                        f"BaseTranscript.speaker_map values must be strings, not {type(val)}"
+                    )
 
     def add_job_id(self, job_id: str) -> None:
         """Add a job ID to the transcript."""
