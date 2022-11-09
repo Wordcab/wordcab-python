@@ -15,7 +15,7 @@
 """Test suite for the transcript dataclasses."""
 
 import logging
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 import pytest
 
@@ -72,7 +72,7 @@ def test_transcript_utterance(dummy_transcript_utterance: TranscriptUtterance) -
     "utterance",
     [[1, "A", 0, 10], ["This is a test", 1, 0, 10], ["This is a test", "A", 10, 0]],
 )
-def test_wrong_transcript_utterance(utterance) -> None:
+def test_wrong_transcript_utterance(utterance: List[Union[str, int]]) -> None:
     """Test the TranscriptUtterance object."""
     with pytest.raises((TypeError, ValueError)):
         TranscriptUtterance(
@@ -99,12 +99,15 @@ def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
     assert dummy_empty_transcript.transcript[0].start_index == 0
     assert dummy_empty_transcript.transcript[0].end_index == 10
 
-    assert hasattr(dummy_empty_transcript, "add_job_id")
-    assert hasattr(dummy_empty_transcript, "add_summary_id")
-    assert hasattr(dummy_empty_transcript, "update_speaker_map")
-    assert callable(getattr(dummy_empty_transcript, "add_job_id"))
-    assert callable(getattr(dummy_empty_transcript, "add_summary_id"))
-    assert callable(getattr(dummy_empty_transcript, "update_speaker_map"))
+    assert hasattr(dummy_empty_transcript, "add_job_id") and callable(
+        dummy_empty_transcript.add_job_id
+    )
+    assert hasattr(dummy_empty_transcript, "add_summary_id") and callable(
+        dummy_empty_transcript.add_summary_id
+    )
+    assert hasattr(dummy_empty_transcript, "update_speaker_map") and callable(
+        dummy_empty_transcript.update_speaker_map
+    )
 
     dummy_empty_transcript.add_job_id("job_123456")
     assert dummy_empty_transcript.job_id_set == {"job_123456"}
@@ -143,12 +146,15 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
     assert dummy_full_transcript.transcript[0].start_index == 0
     assert dummy_full_transcript.transcript[0].end_index == 10
 
-    assert hasattr(dummy_full_transcript, "add_job_id")
-    assert hasattr(dummy_full_transcript, "add_summary_id")
-    assert hasattr(dummy_full_transcript, "update_speaker_map")
-    assert callable(getattr(dummy_full_transcript, "add_job_id"))
-    assert callable(getattr(dummy_full_transcript, "add_summary_id"))
-    assert callable(getattr(dummy_full_transcript, "update_speaker_map"))
+    assert hasattr(dummy_full_transcript, "add_job_id") and callable(
+        dummy_full_transcript.add_job_id
+    )
+    assert hasattr(dummy_full_transcript, "add_summary_id") and callable(
+        dummy_full_transcript.add_summary_id
+    )
+    assert hasattr(dummy_full_transcript, "update_speaker_map") and callable(
+        dummy_full_transcript.update_speaker_map
+    )
 
     dummy_full_transcript.add_job_id("job_123456")
     assert dummy_full_transcript.job_id_set == {"job_123456"}

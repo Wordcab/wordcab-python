@@ -16,7 +16,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from ..config import SUMMARY_TYPES
 
@@ -34,9 +34,9 @@ class StructuredSummary:
     summary_html: str
     timestamps_end: int
     timestamps_start: int
-    transcript_segment: Dict[str, Union[str, int]] = field(default_factory=dict)
+    transcript_segment: Optional[Dict[str, Union[str, int]]] = field(default_factory=dict)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:  # noqa: C901
         """Post-init."""
         if not isinstance(self.end, str):
             raise TypeError(f"end must be a string, not {type(self.end)}")
@@ -87,20 +87,20 @@ class BaseSummary:
 
     job_status: str
     summary_id: str
-    display_name: str = field(default=None)
-    job_name: str = field(default=None)
-    process_time: str = field(default=None)
-    speaker_map: Dict[str, str] = field(default=None)
-    source: str = field(default=None)
-    summary_type: str = field(default=None)
-    summary: Dict[
+    display_name: Optional[str] = field(default=None)
+    job_name: Optional[str] = field(default=None)
+    process_time: Optional[str] = field(default=None)
+    speaker_map: Optional[Dict[str, str]] = field(default=None)
+    source: Optional[str] = field(default=None)
+    summary_type: Optional[str] = field(default=None)
+    summary: Optional[Dict[
         str, Union[Dict[str, str], Dict[str, List[StructuredSummary]]]
-    ] = field(default=None)
-    transcript_id: str = field(default=None)
-    time_started: str = field(default=None)
-    time_completed: str = field(default=None)
+    ]] = field(default=None)
+    transcript_id: Optional[str] = field(default=None)
+    time_started: Optional[str] = field(default=None)
+    time_completed: Optional[str] = field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Post init."""
         if self.summary_type:
             if self.summary_type not in SUMMARY_TYPES:

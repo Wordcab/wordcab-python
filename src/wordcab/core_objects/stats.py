@@ -16,9 +16,9 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
-import validators
+import validators  # type: ignore
 
 from ..config import AVAILABLE_PLAN
 
@@ -36,10 +36,10 @@ class Stats:
     request_count: int
     minutes_summarized: int
     transcripts_summarized: int
-    metered_charge: int
+    metered_charge: str
     min_created: str
     max_created: str
-    tags: List[str] = field(default_factory=list)
+    tags: Optional[List[str]] = field(default=None)
 
     def __post_init__(self) -> None:
         """Post-init method."""

@@ -32,7 +32,7 @@ class TranscriptUtterance:
     start_index: int
 
     def __post_init__(self) -> None:
-        """Post-init method"""
+        """Post-init method."""
         if not isinstance(self.text, str):
             raise TypeError(
                 f"TranscriptUtterance.text must be a string, not {type(self.text)}"
@@ -56,8 +56,8 @@ class BaseTranscript:
     """Transcript object."""
 
     transcript_id: str
-    job_id_set: set = field(default_factory=set)
-    summary_id_set: set = field(default_factory=set)
+    job_id_set: set[str] = field(default_factory=set)
+    summary_id_set: set[str] = field(default_factory=set)
     transcript: List[TranscriptUtterance] = field(default_factory=list)
     speaker_map: Dict[str, str] = field(default_factory=dict)
 
@@ -82,6 +82,6 @@ class BaseTranscript:
         """Add a summary ID to the transcript."""
         self.summary_id_set.add(summary_id)
 
-    def update_speaker_map(self, speaker_map: dict) -> None:
+    def update_speaker_map(self, speaker_map: Dict[str, str]) -> None:
         """Update the speaker map for the transcript."""
         self.speaker_map = speaker_map

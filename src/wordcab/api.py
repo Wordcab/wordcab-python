@@ -14,67 +14,67 @@
 
 """Wordcab API mapping functions."""
 
-from typing import Dict, Optional
+from typing import Optional
 
 from .client import Client
 
 
-def request(method: str, api_key: Optional[str] = None, **kwargs) -> Dict:
+def request(method: str, api_key: Optional[str] = None, **kwargs) -> None:
     """Make a request to the Wordcab API."""
     with Client(api_key=api_key) as client:
         return client.request(method=method, **kwargs)
 
 
-def get_stats(api_key: Optional[str] = None) -> Dict:
+def get_stats(api_key: Optional[str] = None) -> None:
     """Retrieve account stats such as spend and request volume, by timestamp or tag."""
     return request(method="get_stats", api_key=api_key)
 
 
-def start_extract(api_key: Optional[str] = None, **kwargs) -> Dict:
+def start_extract(api_key: Optional[str] = None, **kwargs) -> None:
     """Start an extraction job."""
     return request(method="start_extract", api_key=api_key, **kwargs)
 
 
-def start_summary(api_key: Optional[str] = None, **kwargs) -> Dict:
+def start_summary(api_key: Optional[str] = None, **kwargs) -> None:
     """Start a summary job."""
     return request(method="start_summary", api_key=api_key, **kwargs)
 
 
-def list_jobs(api_key: Optional[str] = None) -> Dict:
+def list_jobs(api_key: Optional[str] = None) -> None:
     """Retrieve a list of jobs."""
     return request(method="list_jobs", api_key=api_key)
 
 
-def retrieve_job(api_key: Optional[str] = None, **kwargs) -> Dict:
+def retrieve_job(api_key: Optional[str] = None, **kwargs) -> None:
     """Retrieve a job."""
     return request(method="retrieve_job", api_key=api_key, **kwargs)
 
 
-def delete_job(api_key: Optional[str] = None, **kwargs) -> Dict:
+def delete_job(api_key: Optional[str] = None, **kwargs) -> None:
     """Delete a job."""
     return request(method="delete_job", api_key=api_key, **kwargs)
 
 
-def list_transcripts(api_key: Optional[str] = None) -> Dict:
+def list_transcripts(api_key: Optional[str] = None) -> None:
     """Retrieve a list of transcripts."""
     return request(method="list_transcripts", api_key=api_key)
 
 
-def retrieve_transcript(api_key: Optional[str] = None, **kwargs) -> Dict:
+def retrieve_transcript(api_key: Optional[str] = None, **kwargs) -> None:
     """Retrieve a transcript."""
     return request(method="retrieve_transcript", api_key=api_key, **kwargs)
 
 
-def change_speaker_labels(api_key: Optional[str] = None, **kwargs) -> Dict:
+def change_speaker_labels(api_key: Optional[str] = None, **kwargs) -> None:
     """Change speaker labels."""
     return request(method="change_speaker_labels", api_key=api_key, **kwargs)
 
 
-def list_summaries(api_key: Optional[str] = None) -> Dict:
+def list_summaries(api_key: Optional[str] = None) -> None:
     """Retrieve a list of summaries."""
     return request(method="list_summaries", api_key=api_key)
 
 
-def retrieve_summary(api_key: Optional[str] = None, **kwargs) -> Dict:
+def retrieve_summary(api_key: Optional[str] = None, **kwargs) -> None:
     """Retrieve a summary."""
     return request(method="retrieve_summary", api_key=api_key, **kwargs)

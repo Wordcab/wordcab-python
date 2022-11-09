@@ -17,7 +17,7 @@
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
 import validators
 
@@ -31,8 +31,8 @@ logger = logging.getLogger(__name__)
 class BaseSource:
     """Source object."""
 
-    filepath: Union[str, Path] = field(default=None, repr=False)
-    url: str = field(default=None, repr=False)
+    filepath: Optional[Union[str, Path]] = field(default=None, repr=False)
+    url: Optional[str] = field(default=None, repr=False)
     source_type: str = field(init=False)
     _stem: str = field(init=False, repr=False)
     _suffix: str = field(init=False, repr=False)

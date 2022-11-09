@@ -26,7 +26,7 @@ from wordcab.core_objects import (
     JobSettings,
     SummarizeJob,
 )
-from wordcab.core_objects.job import (
+from wordcab.config import (
     EXTRACT_AVAILABLE_STATUS,
     SUMMARIZE_AVAILABLE_STATUS,
 )
@@ -117,24 +117,21 @@ def test_dummy_job(dummy_job: BaseJob) -> None:
     assert dummy_job.source.source_type == "local"
     assert dummy_job.time_started == "dummy_time"
     assert dummy_job.transcript_id == "dummy_transcript"
-
-    assert hasattr(dummy_job, "job_update") and callable(
-        getattr(dummy_job, "job_update")
-    )
+    assert hasattr(dummy_job, "job_update") and callable(dummy_job.job_update)
 
 
-def test_job_update(dummy_job: BaseJob, caplog) -> None:
+def test_job_update(dummy_job: BaseJob, caplog: pytest.LogCaptureFixture) -> None: 
     """Test for the job_update method."""
     assert dummy_job.job_update is not None
     assert callable(dummy_job.job_update)
     with caplog.at_level(logging.INFO):
-        dummy_job.job_update(source="dummy_source")
+        dummy_job.job_update(parameters={"source": "dummy_source"})
         assert dummy_job.source == "dummy_source"
         assert "Job dummy_job updated: source = dummy_source" in caplog.text
     with caplog.at_level(logging.INFO):
         before_status = dummy_job.job_status
         assert before_status == "Pending"
-        dummy_job.job_update(job_status="Pending")
+        dummy_job.job_update(parameters={"job_status": "Pending"})
         assert dummy_job.job_status == before_status
         assert "Job dummy_job not updated: job_status = Pending" in caplog.text
     with pytest.raises(TypeError):
@@ -146,9 +143,7 @@ def test_job_update(dummy_job: BaseJob, caplog) -> None:
             }
         )
     with caplog.at_level(logging.WARNING):
-        dummy_job.job_update(
-            new_jobsssss="new_jobsssss",
-        )
+        dummy_job.job_update(parameters={"new_jobsssss": "coder"})
         assert (
             "Cannot update new_jobsssss in dummy_job, not a valid attribute."
             in caplog.text
@@ -170,13 +165,11 @@ def test_dummy_extract_job(dummy_extract_job: ExtractJob) -> None:
     assert dummy_extract_job.source.source_type == "local"
     assert dummy_extract_job.time_started == "dummy_time"
     assert dummy_extract_job.transcript_id == "dummy_transcript"
-
     assert dummy_extract_job._job_type == "ExtractJob"
     assert dummy_extract_job.available_status is not None
     assert dummy_extract_job.available_status == EXTRACT_AVAILABLE_STATUS
-
     assert hasattr(dummy_extract_job, "job_update") and callable(
-        getattr(dummy_extract_job, "job_update")
+        dummy_extract_job.job_update
     )
 
 
@@ -195,13 +188,11 @@ def test_dummy_summarize_job(dummy_summarize_job: SummarizeJob) -> None:
     assert dummy_summarize_job.source.source_type == "local"
     assert dummy_summarize_job.time_started == "dummy_time"
     assert dummy_summarize_job.transcript_id == "dummy_transcript"
-
     assert dummy_summarize_job._job_type == "SummarizeJob"
     assert dummy_summarize_job.available_status is not None
     assert dummy_summarize_job.available_status == SUMMARIZE_AVAILABLE_STATUS
-
     assert hasattr(dummy_summarize_job, "job_update") and callable(
-        getattr(dummy_summarize_job, "job_update")
+        dummy_summarize_job.job_update
     )
 
 

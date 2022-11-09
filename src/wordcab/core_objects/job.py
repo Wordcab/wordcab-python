@@ -16,6 +16,7 @@
 
 import logging
 from dataclasses import dataclass, field
+from typing import Dict, Optional
 
 from ..config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
 from .source import BaseSource
@@ -28,10 +29,10 @@ logger = logging.getLogger(__name__)
 class JobSettings:
     """Wordcab API Job Settings object."""
 
-    ephemeral_data: bool = field(init=False, default=False)
-    pipeline: str = field(init=False, default=None)
-    only_api: bool = field(init=False, default=True)
-    split_long_utterances: bool = field(init=False, default=False)
+    ephemeral_data: Optional[bool] = field(init=False, default=False)
+    pipeline: Optional[str] = field(init=False, default=None)
+    only_api: Optional[bool] = field(init=False, default=True)
+    split_long_utterances: Optional[bool] = field(init=False, default=False)
 
 
 @dataclass
@@ -44,15 +45,15 @@ class BaseJob:
     source: BaseSource
     time_started: str
     transcript_id: str
-    job_status: str = "Pending"
+    job_status: Optional[str] = "Pending"
 
     def __post_init__(self) -> None:
         """Post-init method."""
         logger.info(f"Job {self.job_name} created.")
 
-    def job_update(self, **kwargs) -> None:
+    def job_update(self, parameters: Dict[str, str]) -> None:
         """Update the job attributes."""
-        for key, value in kwargs.items():
+        for key, value in parameters.items():
             if key in self.__dict__:
                 if getattr(self, key) != value:
                     setattr(self, key, value)

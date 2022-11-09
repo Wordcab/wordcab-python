@@ -37,7 +37,7 @@ def test_available_audio_formats() -> None:
     assert AVAILABLE_AUDIO_FORMATS == [".flac", ".m4a", ".mp3", ".mpga", ".ogg", ".wav"]
 
 
-def test_base_source(tmp_path) -> None:
+def test_base_source(tmp_path: Path) -> None:
     """Test the BaseSource object."""
     path = f"{tmp_path}/test.txt"
     with open(path, "w") as f:
@@ -66,17 +66,17 @@ def test_base_source(tmp_path) -> None:
     assert base.url == "https://example.com"
     assert base.source_type == "remote"
 
-    assert hasattr(base, "_load_file_from_path")
-    assert callable(getattr(base, "_load_file_from_path"))
-    assert hasattr(base, "_load_file_from_url")
-    assert callable(getattr(base, "_load_file_from_url"))
+    assert hasattr(base, "_load_file_from_path") and callable(
+        base._load_file_from_path
+    )
+    assert hasattr(base, "_load_file_from_url") and callable(base._load_file_from_url)
 
     base = BaseSource(filepath=path)
     assert base.filepath == Path(path)
     assert isinstance(base.filepath, Path)
 
 
-def test_generic_source_with_filepath(tmp_path) -> None:
+def test_generic_source_with_filepath(tmp_path: Path) -> None:
     """Test the GenericSource object."""
     path = f"{tmp_path}/test.txt"
     with open(path, "w") as f:
@@ -104,7 +104,7 @@ def test_generic_source_with_url() -> None:
         GenericSource(url="https://example.com")
 
 
-def test_audio_source(tmp_path) -> None:
+def test_audio_source(tmp_path: Path) -> None:
     """Test the AudioSource object."""
     path = f"{tmp_path}/test.mp3"
     with open(path, "w") as f:

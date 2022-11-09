@@ -30,60 +30,62 @@ class Client:
                 "API Key not found. You must set the WORDCAB_API_KEY environment variable."
             )
 
-    def __enter__(self):
+    def __enter__(self) -> "Client":
         """Enter the client context."""
         return self
 
-    def __exit__(self, exception_type, exception_value, traceback):
+    def __exit__(
+        self, exception_type: Optional[Exception], exception_value: Optional[Exception], traceback: Optional[Exception]
+    ) -> None:
         """Exit the client context."""
         pass
 
-    def request(self, method: str, **kwargs):
+    def request(self, method: str, **kwargs) -> None:
         """Make a request to the Wordcab API."""
         if not method:
             raise ValueError("You must specify a method.")
         return getattr(self, method)(**kwargs)
 
-    def get_stats(self):
+    def get_stats(self) -> None:
         """Get the stats of the account."""
         raise NotImplementedError
 
-    def start_extract(self):
+    def start_extract(self) -> None:
         """Start an Extraction job."""
         raise NotImplementedError
 
-    def start_summary(self):
+    def start_summary(self) -> None:
         """Start a Summary job."""
         raise NotImplementedError
 
-    def list_jobs(self):
+    def list_jobs(self) -> None:
         """List all jobs."""
         raise NotImplementedError
 
-    def retrieve_job(self):
+    def retrieve_job(self) -> None:
         """Retrieve a job."""
         raise NotImplementedError
 
-    def delete_job(self):
+    def delete_job(self) -> None:
         """Delete a job."""
         raise NotImplementedError
 
-    def list_transcripts(self):
+    def list_transcripts(self) -> None:
         """List all transcripts."""
         raise NotImplementedError
 
-    def retrieve_transcript(self):
+    def retrieve_transcript(self) -> None:
         """Retrieve a transcript."""
         raise NotImplementedError
 
-    def change_speaker_labels(self):
+    def change_speaker_labels(self) -> None:
         """Change the speaker labels of a transcript."""
         raise NotImplementedError
 
-    def list_summaries(self):
+    def list_summaries(self) -> None:
         """List all summaries."""
         raise NotImplementedError
 
-    def retrieve_summary(self):
+    def retrieve_summary(self) -> None:
         """Retrieve a summary."""
         raise NotImplementedError
