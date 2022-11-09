@@ -14,3 +14,8 @@
 # limitations under the License.
 
 """Wordcab Python SDK."""
+
+from .client import Client
+
+
+__all__ = ["Client"]
