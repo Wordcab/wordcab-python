@@ -14,9 +14,10 @@
 
 """Wordcab API mapping functions."""
 
-from typing import Optional
+from typing import List, Optional
 
 from .client import Client
+from .core_objects import Stats
 
 
 def request(method: str, api_key: Optional[str] = None, **kwargs) -> None:
@@ -25,9 +26,36 @@ def request(method: str, api_key: Optional[str] = None, **kwargs) -> None:
         return client.request(method=method, **kwargs)
 
 
-def get_stats(api_key: Optional[str] = None) -> None:
-    """Retrieve account stats such as spend and request volume, by timestamp or tag."""
-    return request(method="get_stats", api_key=api_key)
+def get_stats(
+    min_created: Optional[str] = None,
+    max_created: Optional[str] = None,
+    tags: Optional[List[str]] = None,
+    api_key: Optional[str] = None,
+) -> Stats:
+    """
+    Retrieve account stats such as spend and request volume, by timestamp or tag.
+
+    Parameters
+    ----------
+    min_created : str, optional
+        The minimum limit of the specified time range. The default is None. If
+        None, the minimum limit will be automatically set to a month prior.
+    max_created : str
+        The maximum limit of the specified time range. The default is None. If
+        None, the maximum limit will be automatically set to the current time.
+    tags : list of str, optional
+        A list of tags to filter by. The default is None. If None, no tags will
+        be used to filter the stats.
+    api_key : str, optional
+        The API key to use. The default is None. If None, the API key will be
+        automatically retrieved from the environment variable WORDCAB_API_KEY.
+
+    Returns
+    -------
+    Stats
+        The stats object containing the stats data.
+    """
+    return request(method="get_stats", min_created=min_created, max_created=max_created, tags=tags, api_key=api_key)
 
 
 def start_extract(api_key: Optional[str] = None, **kwargs) -> None:

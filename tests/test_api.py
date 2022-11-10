@@ -14,6 +14,7 @@
 
 """Test suite for the API functions."""
 
+import os
 import pytest
 
 from wordcab import (
@@ -30,6 +31,7 @@ from wordcab import (
     start_extract,
     start_summary,
 )
+from wordcab.core_objects import Stats
 
 
 @pytest.fixture
@@ -43,7 +45,6 @@ def api_key():
     [
         "change_speaker_labels",
         "delete_job",
-        "get_stats",
         "list_jobs",
         "list_summaries",
         "list_transcripts",
@@ -60,10 +61,24 @@ def test_request(api_key: str, method: str) -> None:
         request(method=method, api_key=api_key)
 
 
-def test_get_stats(api_key: str) -> None:
+def test_get_stats() -> None:
     """Test the get_stats function."""
-    with pytest.raises(NotImplementedError):
-        get_stats(api_key=api_key)
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    stats = get_stats(api_key=api_key, min_created="2021-01-01", max_created="2021-01-31")
+    assert isinstance(stats, Stats)
+    assert hasattr(stats, "account_email")
+    assert hasattr(stats, "plan")
+    assert hasattr(stats, "monthly_request_limit")
+    assert hasattr(stats, "request_count")
+    assert hasattr(stats, "minutes_summarized")
+    assert hasattr(stats, "transcripts_summarized")
+    assert hasattr(stats, "metered_charge")
+    assert hasattr(stats, "min_created")
+    assert stats.min_created == "2021-01-01T00:00:00"
+    assert hasattr(stats, "max_created")
+    assert stats.max_created == "2021-01-31T00:00:00"
+    assert hasattr(stats, "tags")
+    assert stats.tags is None
 
 
 def test_list_jobs(api_key: str) -> None:
