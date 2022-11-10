@@ -15,7 +15,10 @@
 """Wordcab API Client."""
 
 import os
-from typing import Optional
+import requests
+from typing import Dict, List, Optional
+
+from .core_objects import Stats
 
 
 class Client:
@@ -49,9 +52,28 @@ class Client:
             raise ValueError("You must specify a method.")
         return getattr(self, method)(**kwargs)
 
-    def get_stats(self) -> None:
+    def get_stats(
+        self,
+        min_created: Optional[str] = None,
+        max_created: Optional[str] = None,
+        tags: Optional[List[str]] = None
+    ) -> Stats:
         """Get the stats of the account."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        params: Dict[str, str] = {}
+        if min_created:
+            params["min_created"] = min_created
+        if max_created:
+            params["max_created"] = max_created
+        if tags:
+            params["tags"] = tags
+
+        r = requests.get("https://wordcab.com/api/v1/me", headers=headers, params=params)
+        
+        if r.status_code == 200:
+            return Stats(**r.json())
+        else:
+            raise ValueError(r.text)
 
     def start_extract(self) -> None:
         """Start an Extraction job."""
