@@ -16,7 +16,7 @@
 
 import os
 import requests
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from .core_objects import Stats
 
@@ -60,7 +60,11 @@ class Client:
     ) -> Stats:
         """Get the stats of the account."""
         headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
-        params={"min_created": min_created, "max_created": max_created}
+        params: Dict[str, str] = {}
+        if min_created:
+            params["min_created"] = min_created
+        if max_created:
+            params["max_created"] = max_created
         if tags:
             params["tags"] = tags
 
