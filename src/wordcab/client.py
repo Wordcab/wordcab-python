@@ -14,11 +14,29 @@
 
 """Wordcab API Client."""
 
+import logging
 import os
-import requests
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
-from .core_objects import Stats
+import requests
+
+from .config import (
+    SOURCE_OBJECT_MAPPING,
+    SUMMARY_LENGTHS_RANGE,
+    SUMMARY_PIPELINES,
+    SUMMARY_TYPES,
+)
+from .core_objects import BaseSource, Stats
+from .utils import (
+    _check_summary_length,
+    _check_summary_pipelines,
+    _format_lengths,
+    _format_pipelines,
+    _format_tags,
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 class Client:
@@ -56,10 +74,13 @@ class Client:
         self,
         min_created: Optional[str] = None,
         max_created: Optional[str] = None,
-        tags: Optional[List[str]] = None
+        tags: Optional[List[str]] = None,
     ) -> Stats:
         """Get the stats of the account."""
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
         params: Dict[str, str] = {}
         if min_created:
             params["min_created"] = min_created
@@ -68,8 +89,10 @@ class Client:
         if tags:
             params["tags"] = tags
 
-        r = requests.get("https://wordcab.com/api/v1/me", headers=headers, params=params)
-        
+        r = requests.get(
+            "https://wordcab.com/api/v1/me", headers=headers, params=params
+        )
+
         if r.status_code == 200:
             return Stats(**r.json())
         else:
@@ -79,9 +102,95 @@ class Client:
         """Start an Extraction job."""
         raise NotImplementedError
 
-    def start_summary(self) -> None:
+    def start_summary(
+        self,
+        source_object: BaseSource,
+        display_name: Optional[str] = None,
+        ephemeral_data: Optional[bool] = False,
+        pipelines: Optional[List[str]] = ["transcribe", "summarize"],
+        split_long_utterances: Optional[bool] = False,
+        summary_type: Optional[str] = None,
+        summary_length: Optional[Union[int, List[int]]] = 3,
+        tags: Optional[Union[str, List[str]]] = None,
+    ) -> None:
         """Start a Summary job."""
-        raise NotImplementedError
+        if not summary_type:
+            raise ValueError(
+                f"You must specify a summary type. Available types are: {', '.join(SUMMARY_TYPES)}"
+            )
+        elif summary_type not in SUMMARY_TYPES:
+            raise ValueError(
+                f"Invalid summary type. Available types are: "
+                + ", ".join(SUMMARY_TYPES)
+            )
+
+        if _check_summary_length(summary_length) is False:
+            raise ValueError(
+                f"""
+                You must specify a valid summary length. Summary length must be an integer or a list of integers.
+                The integer values must be between {SUMMARY_LENGTHS_RANGE[0]} and {SUMMARY_LENGTHS_RANGE[1]}.
+            """
+            )
+        if summary_type == "reason_conclusion" and summary_length:
+            logger.warning(
+                """
+                You have specified a summary length for a reason_conclusion summary but reason_conclusion summaries
+                do not use a summary length. The summary_length parameter will be ignored.
+            """
+            )
+
+        if _check_summary_pipelines(pipelines) is False:
+            raise ValueError(
+                f"""
+                You must specify a valid list of pipelines. Available pipelines are: {", ".join(SUMMARY_PIPELINES)}
+            """
+            )
+
+        if isinstance(source_object, BaseSource) is False:
+            raise ValueError(
+                """
+                You must specify a valid source object to summarize.
+                See https://docs.wordcab.com/docs/accepted-sources for more information.
+            """
+            )
+
+        source = source_object.source
+        if source not in SOURCE_OBJECT_MAPPING.keys():
+            raise ValueError(
+                f"Invalid source: {source}. Source must be one of {SOURCE_OBJECT_MAPPING.keys()}"
+            )
+        if not isinstance(source_object, SOURCE_OBJECT_MAPPING[source]):
+            raise ValueError(
+                f"""
+                Invalid source object: {source_object}. Source object must be of type {SOURCE_OBJECT_MAPPING[source]},
+                but is of type {type(source_object)}.
+            """
+            )
+        if source == "wordcab_transcript":
+            transcript_id = source_object.transcript_id
+        if source == "signed_url":
+            signed_url = source_object.signed_url
+
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
+        params: Dict[str, str] = {
+            "source": source,
+            "ephemeral_data": ephemeral_data,
+            "pipeline": _format_pipelines(pipelines),
+            "split_long_utterances": split_long_utterances,
+            "summary_type": summary_type,
+            "summary_lens": _format_lengths(summary_length),
+        }
+        if display_name:
+            params["display_name"] = display_name
+        if tags:
+            params["tags"] = _format_tags(tags)
+
+        r = requests.post(
+            "https://wordcab.com/api/v1/summarize", headers=headers, params=params
+        )
 
     def list_jobs(self) -> None:
         """List all jobs."""

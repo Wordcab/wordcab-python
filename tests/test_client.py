@@ -15,6 +15,7 @@
 """Test suite for the Wordcab Client."""
 
 import os
+
 import pytest
 
 from wordcab import Client

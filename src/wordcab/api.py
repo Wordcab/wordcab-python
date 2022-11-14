@@ -55,7 +55,13 @@ def get_stats(
     Stats
         The stats object containing the stats data.
     """
-    return request(method="get_stats", min_created=min_created, max_created=max_created, tags=tags, api_key=api_key)
+    return request(
+        method="get_stats",
+        min_created=min_created,
+        max_created=max_created,
+        tags=tags,
+        api_key=api_key,
+    )
 
 
 def start_extract(api_key: Optional[str] = None, **kwargs) -> None:

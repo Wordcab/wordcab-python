@@ -33,6 +33,7 @@ class BaseSource:
 
     filepath: Optional[Union[str, Path]] = field(default=None, repr=False)
     url: Optional[str] = field(default=None, repr=False)
+    source: str = field(init=False)
     source_type: str = field(init=False)
     _stem: str = field(init=False, repr=False)
     _suffix: str = field(init=False, repr=False)
@@ -94,6 +95,7 @@ class GenericSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "generic"
         if self.source_type == "local":
             if self._suffix not in AVAILABLE_GENERIC_FORMATS:
                 raise ValueError(
@@ -115,6 +117,7 @@ class AudioSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "audio"
         if self.source_type == "local":
             if self._suffix not in AVAILABLE_AUDIO_FORMATS:
                 raise ValueError(
@@ -131,9 +134,16 @@ class AudioSource(BaseSource):
 class WordcabTranscriptSource(BaseSource):
     """Wordcab transcript source object."""
 
+    transcript_id: str = None
+
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        if self.transcript_id is None:
+            raise ValueError(
+                "Please provide a `transcript_id` to initialize a WordcabTranscriptSource object."
+            )
+        self.source = "wordcab_transcript"
         raise NotImplementedError("Wordcab transcript source is not implemented yet.")
 
 
@@ -141,9 +151,13 @@ class WordcabTranscriptSource(BaseSource):
 class SignedURLSource(BaseSource):
     """Signed URL source object."""
 
+    signed_url: str = field(init=False)
+
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.signed_url = self.url
+        self.source = "signed_url"
         raise NotImplementedError("Signed URL source is not implemented yet.")
 
 
@@ -154,6 +168,7 @@ class AssemblyAISource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "assembly_ai"
         raise NotImplementedError("AssemblyAI source is not implemented yet.")
 
 
@@ -164,6 +179,7 @@ class DeepgramSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "deepgram"
         raise NotImplementedError("Deepgram source is not implemented yet.")
 
 
@@ -174,6 +190,7 @@ class RevSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "rev_ai"
         raise NotImplementedError("Rev.ai source is not implemented yet.")
 
 
@@ -184,4 +201,5 @@ class VTTSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "vtt"
         raise NotImplementedError("VTT source is not implemented yet.")

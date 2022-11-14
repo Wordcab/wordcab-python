@@ -15,6 +15,7 @@
 """Test suite for the API functions."""
 
 import os
+
 import pytest
 
 from wordcab import (
@@ -64,7 +65,9 @@ def test_request(api_key: str, method: str) -> None:
 def test_get_stats() -> None:
     """Test the get_stats function."""
     api_key = os.environ.get("WORDCAB_API_KEY")
-    stats = get_stats(api_key=api_key, min_created="2021-01-01", max_created="2021-01-31")
+    stats = get_stats(
+        api_key=api_key, min_created="2021-01-01", max_created="2021-01-31"
+    )
     assert isinstance(stats, Stats)
     assert hasattr(stats, "account_email")
     assert hasattr(stats, "plan")
