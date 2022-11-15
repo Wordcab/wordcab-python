@@ -15,14 +15,13 @@
 """Test suite for the job dataclasses."""
 
 import logging
-from pathlib import Path
+from typing import Union
 
 import pytest
 
 from wordcab.config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
 from wordcab.core_objects import (
     BaseJob,
-    BaseSource,
     ExtractJob,
     JobSettings,
     SummarizeJob,
@@ -36,7 +35,7 @@ def dummy_job() -> BaseJob:
         display_name="Dummy Job",
         job_name="dummy_job",
         settings=JobSettings(),
-        source=BaseSource(filepath=Path(__file__)),
+        source="generic",
         time_started="dummy_time",
         transcript_id="dummy_transcript",
     )
@@ -49,7 +48,7 @@ def dummy_extract_job() -> ExtractJob:
         display_name="Dummy Extract Job",
         job_name="dummy_extract_job",
         settings=JobSettings(),
-        source=BaseSource(filepath=Path(__file__)),
+        source="generic",
         time_started="dummy_time",
         transcript_id="dummy_transcript",
     )
@@ -62,7 +61,7 @@ def dummy_summarize_job() -> SummarizeJob:
         display_name="Dummy Summarize Job",
         job_name="dummy_summarize_job",
         settings=JobSettings(),
-        source=BaseSource(filepath=Path(__file__)),
+        source="generic",
         time_started="dummy_time",
         transcript_id="dummy_transcript",
     )
@@ -106,12 +105,7 @@ def test_dummy_job(dummy_job: BaseJob) -> None:
     assert dummy_job.job_name == "dummy_job"
     assert dummy_job.job_status == "Pending"
     assert dummy_job.settings is not None
-    assert dummy_job.source == BaseSource(filepath=Path(__file__))
-    assert dummy_job.source.filepath == Path(__file__)
-    assert dummy_job.source.url is None
-    assert dummy_job.source._stem == Path(__file__).stem
-    assert dummy_job.source._suffix == Path(__file__).suffix
-    assert dummy_job.source.source_type == "local"
+    assert dummy_job.source == "generic"
     assert dummy_job.time_started == "dummy_time"
     assert dummy_job.transcript_id == "dummy_transcript"
     assert hasattr(dummy_job, "job_update") and callable(dummy_job.job_update)
@@ -146,12 +140,7 @@ def test_dummy_extract_job(dummy_extract_job: ExtractJob) -> None:
     assert dummy_extract_job.job_name == "dummy_extract_job"
     assert dummy_extract_job.job_status == "Pending"
     assert dummy_extract_job.settings is not None
-    assert dummy_extract_job.source == BaseSource(filepath=Path(__file__))
-    assert dummy_extract_job.source.filepath == Path(__file__)
-    assert dummy_extract_job.source.url is None
-    assert dummy_extract_job.source._stem == Path(__file__).stem
-    assert dummy_extract_job.source._suffix == Path(__file__).suffix
-    assert dummy_extract_job.source.source_type == "local"
+    assert dummy_extract_job.source == "generic"
     assert dummy_extract_job.time_started == "dummy_time"
     assert dummy_extract_job.transcript_id == "dummy_transcript"
     assert dummy_extract_job._job_type == "ExtractJob"
@@ -169,12 +158,7 @@ def test_dummy_summarize_job(dummy_summarize_job: SummarizeJob) -> None:
     assert dummy_summarize_job.job_name == "dummy_summarize_job"
     assert dummy_summarize_job.job_status == "Pending"
     assert dummy_summarize_job.settings is not None
-    assert dummy_summarize_job.source == BaseSource(filepath=Path(__file__))
-    assert dummy_summarize_job.source.filepath == Path(__file__)
-    assert dummy_summarize_job.source.url is None
-    assert dummy_summarize_job.source._stem == Path(__file__).stem
-    assert dummy_summarize_job.source._suffix == Path(__file__).suffix
-    assert dummy_summarize_job.source.source_type == "local"
+    assert dummy_summarize_job.source == "generic"
     assert dummy_summarize_job.time_started == "dummy_time"
     assert dummy_summarize_job.transcript_id == "dummy_transcript"
     assert dummy_summarize_job._job_type == "SummarizeJob"
@@ -183,6 +167,26 @@ def test_dummy_summarize_job(dummy_summarize_job: SummarizeJob) -> None:
     assert hasattr(dummy_summarize_job, "job_update") and callable(
         dummy_summarize_job.job_update
     )
+
+@pytest.mark.parametrize("source", ["youtube", 123, ""])
+def test_wrong_job_source(source: Union[str, int]) -> None:
+    """Test for a wrong job source."""
+    with pytest.raises(ValueError):
+        BaseJob(display_name="Dummy Job", job_name="dummy_job", source=source, settings=JobSettings())
+    with pytest.raises(ValueError):
+        ExtractJob(
+            display_name="Dummy Extract Job",
+            job_name="dummy_extract_job",
+            source=source,
+            settings=JobSettings(),
+        )
+    with pytest.raises(ValueError):
+        SummarizeJob(
+            display_name="Dummy Summarize Job",
+            job_name="dummy_summarize_job",
+            source=source,
+            settings=JobSettings(),
+        )
 
 
 def test_empty_job_settings(empty_job_settings: JobSettings) -> None:

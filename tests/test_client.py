@@ -14,18 +14,36 @@
 
 """Test suite for the Wordcab Client."""
 
+import logging
 import os
+from pathlib import Path
 
 import pytest
 
 from wordcab import Client
-from wordcab.core_objects import Stats
+from wordcab.core_objects import BaseSource, GenericSource, JobSettings, Stats, SummarizeJob
 
 
 @pytest.fixture
 def client() -> Client:
     """Fixture for a Wordcab Client object."""
     return Client(api_key="dummy_api_key")
+
+
+@pytest.fixture
+def generic_source() -> GenericSource:
+    """Fixture for a GenericSource object."""
+    return GenericSource(
+        filepath=Path("tests/sample_1.txt")
+    )
+
+
+@pytest.fixture
+def base_source() -> BaseSource:
+    """Fixture for a wrong BaseSource object."""
+    return BaseSource(
+        filepath=Path("tests/sample_1.txt")
+    )
 
 
 def test_client_succeeds(client: Client) -> None:
@@ -72,11 +90,75 @@ def test_start_extract(client: Client) -> None:
         client.start_extract()
 
 
-def test_start_summary(client: Client) -> None:
+def test_start_summary(
+    base_source: BaseSource, generic_source: GenericSource, caplog: pytest.LogCaptureFixture
+) -> None:
     """Test client start_summary method."""
-    with pytest.raises(NotImplementedError):
-        client.start_summary()
-
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    with Client(api_key=api_key) as client:
+        with pytest.raises(ValueError):
+            client.start_summary(source_object=generic_source, display_name="test")
+        with pytest.raises(ValueError):
+            client.start_summary(source_object=generic_source, display_name="test", summary_type="invalid")
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object=generic_source, display_name="test", summary_type="reason_conclusion", summary_length=0
+            )
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object=generic_source,
+                display_name="test",
+                summary_type="narrative",
+                summary_length=3,
+                pipelines=["invalid"],
+            )
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object={"invalid": "invalid"},
+                display_name="test",
+                summary_type="narrative",
+                summary_length=3,
+            )
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object=base_source,
+                display_name="test",
+                summary_type="narrative",
+                summary_length=3,
+            )
+        with pytest.raises(ValueError):
+            base_source.source = "generic"
+            client.start_summary(
+                source_object=base_source,
+                display_name="test",
+                summary_type="narrative",
+                summary_length=3,
+            )
+        with caplog.at_level(logging.WARNING):
+            job = client.start_summary(
+                source_object=generic_source,
+                display_name="test",
+                summary_type="reason_conclusion",
+                summary_length=3,
+            )
+            assert (
+                """
+                You have specified a summary length for a reason_conclusion summary but reason_conclusion summaries
+                do not use a summary length. The summary_length parameter will be ignored.
+                """
+                in caplog.text
+            )
+            assert isinstance(job, SummarizeJob)
+            assert job.display_name == "test"
+            assert job.job_name is not None
+            assert job.source == "generic"
+            assert job.settings == JobSettings(
+                ephemeral_data=False,
+                pipeline=["transcribe", "summarize"],
+                split_long_utterances=False,
+                only_api=True,
+            )
+    
 
 def test_list_jobs(client: Client) -> None:
     """Test client list_jobs method."""

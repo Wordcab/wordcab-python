@@ -14,6 +14,7 @@
 
 """Wordcab API Client."""
 
+import json
 import logging
 import os
 from typing import Dict, List, Optional, Union
@@ -26,7 +27,7 @@ from .config import (
     SUMMARY_PIPELINES,
     SUMMARY_TYPES,
 )
-from .core_objects import BaseSource, Stats
+from .core_objects import BaseSource, JobSettings, Stats, SummarizeJob
 from .utils import (
     _check_summary_length,
     _check_summary_pipelines,
@@ -105,8 +106,9 @@ class Client:
     def start_summary(
         self,
         source_object: BaseSource,
-        display_name: Optional[str] = None,
+        display_name: str,
         ephemeral_data: Optional[bool] = False,
+        only_api: Optional[bool] = True,
         pipelines: Optional[List[str]] = ["transcribe", "summarize"],
         split_long_utterances: Optional[bool] = False,
         summary_type: Optional[str] = None,
@@ -159,39 +161,61 @@ class Client:
             raise ValueError(
                 f"Invalid source: {source}. Source must be one of {SOURCE_OBJECT_MAPPING.keys()}"
             )
-        if not isinstance(source_object, SOURCE_OBJECT_MAPPING[source]):
+        if source_object.__class__.__name__ != SOURCE_OBJECT_MAPPING[source]:
             raise ValueError(
                 f"""
                 Invalid source object: {source_object}. Source object must be of type {SOURCE_OBJECT_MAPPING[source]},
                 but is of type {type(source_object)}.
             """
             )
-        if source == "wordcab_transcript":
-            transcript_id = source_object.transcript_id
-        if source == "signed_url":
-            signed_url = source_object.signed_url
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Accept": "application/json",
+            "Content-Type": "application/json",
         }
         params: Dict[str, str] = {
             "source": source,
+            "display_name": display_name,
             "ephemeral_data": ephemeral_data,
+            "only_api": only_api,
             "pipeline": _format_pipelines(pipelines),
             "split_long_utterances": split_long_utterances,
             "summary_type": summary_type,
             "summary_lens": _format_lengths(summary_length),
         }
-        if display_name:
-            params["display_name"] = display_name
         if tags:
             params["tags"] = _format_tags(tags)
 
+        if source == "wordcab_transcript":
+            params["transcript_id"] = source_object.transcript_id
+        if source == "signed_url":
+            params["signed_url"] = source_object.signed_url
+
+        payload = json.dumps(
+            {"transcript": [
+                str(line).replace("\n", "") for line in source_object.file_object.decode("utf-8").splitlines()
+            ]})
         r = requests.post(
-            "https://wordcab.com/api/v1/summarize", headers=headers, params=params
+            "https://wordcab.com/api/v1/summarize", headers=headers, params=params, data=payload
         )
 
+        if r.status_code == 201:
+            logger.info("Summary job started.")
+            return SummarizeJob(
+                display_name=display_name,
+                job_name=r.json()["job_name"],
+                source=source,
+                settings=JobSettings(
+                    ephemeral_data=ephemeral_data,
+                    pipeline=pipelines,
+                    split_long_utterances=split_long_utterances,
+                    only_api=only_api,
+                )
+            )
+        else:
+            raise ValueError(r.text)
+        
     def list_jobs(self) -> None:
         """List all jobs."""
         raise NotImplementedError

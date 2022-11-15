@@ -126,10 +126,10 @@ def test_start_extract(api_key: str) -> None:
         start_extract(api_key=api_key)
 
 
-def test_start_summary(api_key: str) -> None:
-    """Test the start_summary function."""
-    with pytest.raises(NotImplementedError):
-        start_summary(api_key=api_key)
+# def test_start_summary(api_key: str) -> None:
+#     """Test the start_summary function."""
+#     with pytest.raises(NotImplementedError):
+#         start_summary(api_key=api_key)
 
 
 def test_change_speaker_labels(api_key: str) -> None:

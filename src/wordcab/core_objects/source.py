@@ -40,6 +40,7 @@ class BaseSource:
 
     def __post_init__(self) -> None:
         """Post-init method."""
+        self.source = self.__class__.__name__
         if not self.filepath and not self.url:
             raise ValueError(
                 "Please provide either a local or a remote source, respectively `filepath` or `url`."
