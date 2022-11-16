@@ -90,6 +90,10 @@ class BaseSource:
     def prepare_payload(self) -> None:
         """Prepare payload."""
         raise NotImplementedError("Payload preparation is not implemented yet.")
+    
+    def prepare_headers(self) -> None:
+        """Prepare headers."""
+        raise NotImplementedError("Headers preparation is not implemented yet.")
 
 
 @dataclass

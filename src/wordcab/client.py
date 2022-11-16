@@ -106,20 +106,16 @@ class Client:
         self,
         source_object: BaseSource,
         display_name: str,
+        summary_type: str,
         ephemeral_data: Optional[bool] = False,
         only_api: Optional[bool] = True,
         pipelines: Optional[List[str]] = ["transcribe", "summarize"],
         split_long_utterances: Optional[bool] = False,
-        summary_type: Optional[str] = None,
         summary_length: Optional[Union[int, List[int]]] = 3,
         tags: Optional[Union[str, List[str]]] = None,
     ) -> None:
         """Start a Summary job."""
-        if not summary_type:
-            raise ValueError(
-                f"You must specify a summary type. Available types are: {', '.join(SUMMARY_TYPES)}"
-            )
-        elif summary_type not in SUMMARY_TYPES:
+        if summary_type not in SUMMARY_TYPES:
             raise ValueError(
                 f"Invalid summary type. Available types are: {', '.join(SUMMARY_TYPES)}"
             )

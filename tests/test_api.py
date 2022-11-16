@@ -15,6 +15,7 @@
 """Test suite for the API functions."""
 
 import os
+from pathlib import Path
 
 import pytest
 
@@ -32,34 +33,13 @@ from wordcab import (
     start_extract,
     start_summary,
 )
-from wordcab.core_objects import Stats
+from wordcab.core_objects import GenericSource, JobSettings, Stats, SummarizeJob
 
 
 @pytest.fixture
 def api_key():
     """Fixture for the API key."""
     return "dummy_api_key"
-
-
-@pytest.mark.parametrize(
-    "method",
-    [
-        "change_speaker_labels",
-        "delete_job",
-        "list_jobs",
-        "list_summaries",
-        "list_transcripts",
-        "retrieve_job",
-        "retrieve_summary",
-        "retrieve_transcript",
-        "start_extract",
-        "start_summary",
-    ],
-)
-def test_request(api_key: str, method: str) -> None:
-    """Test the request function."""
-    with pytest.raises(NotImplementedError):
-        request(method=method, api_key=api_key)
 
 
 def test_get_stats() -> None:
@@ -126,10 +106,26 @@ def test_start_extract(api_key: str) -> None:
         start_extract(api_key=api_key)
 
 
-# def test_start_summary(api_key: str) -> None:
-#     """Test the start_summary function."""
-#     with pytest.raises(NotImplementedError):
-#         start_summary(api_key=api_key)
+def test_start_summary(api_key: str) -> None:
+    """Test the start_summary function."""
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    source_object = GenericSource(filepath=Path("tests/sample_1.txt"))
+    job = start_summary(
+        source_object=source_object,
+        display_name="test-summary-api",
+        summary_type="conversational",
+        api_key=api_key,
+    )
+    assert isinstance(job, SummarizeJob)
+    assert job.display_name == "test-summary-api"
+    assert job.job_name is not None
+    assert job.source == "generic"
+    assert job.settings == JobSettings(
+        ephemeral_data=False,
+        pipeline=["transcribe", "summarize"],
+        split_long_utterances=False,
+        only_api=True,
+    )
 
 
 def test_change_speaker_labels(api_key: str) -> None:

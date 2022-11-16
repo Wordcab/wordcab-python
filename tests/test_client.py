@@ -115,8 +115,6 @@ def test_start_summary(
     api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
         with pytest.raises(ValueError):
-            client.start_summary(source_object=generic_source_txt, display_name="test")
-        with pytest.raises(ValueError):
             client.start_summary(
                 source_object=generic_source_txt,
                 display_name="test",
@@ -160,59 +158,59 @@ def test_start_summary(
                 summary_length=3,
             )
 
-        # # Test generic source with txt file
-        # txt_job = client.start_summary(
-        #     source_object=generic_source_txt,
-        #     display_name="test-sdk-txt",
-        #     summary_type="reason_conclusion",
-        #     summary_length=3,
-        # )
-        # assert isinstance(txt_job, SummarizeJob)
-        # assert txt_job.display_name == "test-sdk-txt"
-        # assert txt_job.job_name is not None
-        # assert txt_job.source == "generic"
-        # assert txt_job.settings == JobSettings(
-        #     ephemeral_data=False,
-        #     pipeline=["transcribe", "summarize"],
-        #     split_long_utterances=False,
-        #     only_api=True,
-        # )
+        # Test generic source with txt file
+        txt_job = client.start_summary(
+            source_object=generic_source_txt,
+            display_name="test-sdk-txt",
+            summary_type="reason_conclusion",
+            summary_length=3,
+        )
+        assert isinstance(txt_job, SummarizeJob)
+        assert txt_job.display_name == "test-sdk-txt"
+        assert txt_job.job_name is not None
+        assert txt_job.source == "generic"
+        assert txt_job.settings == JobSettings(
+            ephemeral_data=False,
+            pipeline=["transcribe", "summarize"],
+            split_long_utterances=False,
+            only_api=True,
+        )
 
-        # # Test generic source with json file
-        # json_job = client.start_summary(
-        #     source_object=generic_source_json,
-        #     display_name="test-sdk-json",
-        #     summary_type="narrative",
-        #     summary_length=3,
-        # )
-        # assert isinstance(json_job, SummarizeJob)
-        # assert json_job.display_name == "test-sdk-json"
-        # assert json_job.job_name is not None
-        # assert json_job.source == "generic"
-        # assert json_job.settings == JobSettings(
-        #     ephemeral_data=False,
-        #     pipeline=["transcribe", "summarize"],
-        #     split_long_utterances=False,
-        #     only_api=True,
-        # )
+        # Test generic source with json file
+        json_job = client.start_summary(
+            source_object=generic_source_json,
+            display_name="test-sdk-json",
+            summary_type="narrative",
+            summary_length=3,
+        )
+        assert isinstance(json_job, SummarizeJob)
+        assert json_job.display_name == "test-sdk-json"
+        assert json_job.job_name is not None
+        assert json_job.source == "generic"
+        assert json_job.settings == JobSettings(
+            ephemeral_data=False,
+            pipeline=["transcribe", "summarize"],
+            split_long_utterances=False,
+            only_api=True,
+        )
 
-        # # Test audio source
-        # audio_job = client.start_summary(
-        #     source_object=audio_source,
-        #     display_name="test-sdk-audio",
-        #     summary_type="narrative",
-        #     summary_length=3,
-        # )
-        # assert isinstance(audio_job, SummarizeJob)
-        # assert audio_job.display_name == "test-sdk-audio"
-        # assert audio_job.job_name is not None
-        # assert audio_job.source == "audio"
-        # assert audio_job.settings == JobSettings(
-        #     ephemeral_data=False,
-        #     pipeline=["transcribe", "summarize"],
-        #     split_long_utterances=False,
-        #     only_api=True,
-        # )
+        # Test audio source
+        audio_job = client.start_summary(
+            source_object=audio_source,
+            display_name="test-sdk-audio",
+            summary_type="narrative",
+            summary_length=3,
+        )
+        assert isinstance(audio_job, SummarizeJob)
+        assert audio_job.display_name == "test-sdk-audio"
+        assert audio_job.job_name is not None
+        assert audio_job.source == "audio"
+        assert audio_job.settings == JobSettings(
+            ephemeral_data=False,
+            pipeline=["transcribe", "summarize"],
+            split_long_utterances=False,
+            only_api=True,
+        )
 
 
 def test_list_jobs(client: Client) -> None:
