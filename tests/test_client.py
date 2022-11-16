@@ -14,17 +14,51 @@
 
 """Test suite for the Wordcab Client."""
 
+import logging
 import os
+from pathlib import Path
+
 import pytest
 
 from wordcab import Client
-from wordcab.core_objects import Stats
+from wordcab.core_objects import (
+    AudioSource,
+    BaseSource,
+    GenericSource,
+    JobSettings,
+    Stats,
+    SummarizeJob,
+)
 
 
 @pytest.fixture
 def client() -> Client:
     """Fixture for a Wordcab Client object."""
     return Client(api_key="dummy_api_key")
+
+
+@pytest.fixture
+def generic_source_txt() -> GenericSource:
+    """Fixture for a GenericSource object."""
+    return GenericSource(filepath=Path("tests/sample_1.txt"))
+
+
+@pytest.fixture
+def generic_source_json() -> GenericSource:
+    """Fixture for a GenericSource object."""
+    return GenericSource(filepath=Path("tests/sample_1.json"))
+
+
+@pytest.fixture
+def audio_source() -> AudioSource:
+    """Fixture for an AudioSource object."""
+    return AudioSource(filepath=Path("tests/sample_1.mp3"))
+
+
+@pytest.fixture
+def base_source() -> BaseSource:
+    """Fixture for a wrong BaseSource object."""
+    return BaseSource(filepath=Path("tests/sample_1.txt"))
 
 
 def test_client_succeeds(client: Client) -> None:
@@ -71,10 +105,112 @@ def test_start_extract(client: Client) -> None:
         client.start_extract()
 
 
-def test_start_summary(client: Client) -> None:
+def test_start_summary(
+    base_source: BaseSource,
+    generic_source_txt: GenericSource,
+    generic_source_json: GenericSource,
+    audio_source: AudioSource,
+) -> None:
     """Test client start_summary method."""
-    with pytest.raises(NotImplementedError):
-        client.start_summary()
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    with Client(api_key=api_key) as client:
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object=generic_source_txt,
+                display_name="test",
+                summary_type="invalid",
+            )
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object=generic_source_txt,
+                display_name="test",
+                summary_type="reason_conclusion",
+                summary_length=0,
+            )
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object=generic_source_txt,
+                display_name="test",
+                summary_type="narrative",
+                summary_length=3,
+                pipelines=["invalid"],
+            )
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object={"invalid": "invalid"},
+                display_name="test",
+                summary_type="narrative",
+                summary_length=3,
+            )
+        with pytest.raises(ValueError):
+            client.start_summary(
+                source_object=base_source,
+                display_name="test",
+                summary_type="narrative",
+                summary_length=3,
+            )
+        with pytest.raises(ValueError):
+            base_source.source = "generic"
+            client.start_summary(
+                source_object=base_source,
+                display_name="test",
+                summary_type="narrative",
+                summary_length=3,
+            )
+
+        # Test generic source with txt file
+        txt_job = client.start_summary(
+            source_object=generic_source_txt,
+            display_name="test-sdk-txt",
+            summary_type="reason_conclusion",
+            summary_length=3,
+        )
+        assert isinstance(txt_job, SummarizeJob)
+        assert txt_job.display_name == "test-sdk-txt"
+        assert txt_job.job_name is not None
+        assert txt_job.source == "generic"
+        assert txt_job.settings == JobSettings(
+            ephemeral_data=False,
+            pipeline=["transcribe", "summarize"],
+            split_long_utterances=False,
+            only_api=True,
+        )
+
+        # Test generic source with json file
+        json_job = client.start_summary(
+            source_object=generic_source_json,
+            display_name="test-sdk-json",
+            summary_type="narrative",
+            summary_length=3,
+        )
+        assert isinstance(json_job, SummarizeJob)
+        assert json_job.display_name == "test-sdk-json"
+        assert json_job.job_name is not None
+        assert json_job.source == "generic"
+        assert json_job.settings == JobSettings(
+            ephemeral_data=False,
+            pipeline=["transcribe", "summarize"],
+            split_long_utterances=False,
+            only_api=True,
+        )
+
+        # Test audio source
+        audio_job = client.start_summary(
+            source_object=audio_source,
+            display_name="test-sdk-audio",
+            summary_type="narrative",
+            summary_length=3,
+        )
+        assert isinstance(audio_job, SummarizeJob)
+        assert audio_job.display_name == "test-sdk-audio"
+        assert audio_job.job_name is not None
+        assert audio_job.source == "audio"
+        assert audio_job.settings == JobSettings(
+            ephemeral_data=False,
+            pipeline=["transcribe", "summarize"],
+            split_long_utterances=False,
+            only_api=True,
+        )
 
 
 def test_list_jobs(client: Client) -> None:

@@ -18,8 +18,11 @@ import logging
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
-from ..config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
-from .source import BaseSource
+from ..config import (
+    EXTRACT_AVAILABLE_STATUS,
+    SOURCE_OBJECT_MAPPING,
+    SUMMARIZE_AVAILABLE_STATUS,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -29,10 +32,10 @@ logger = logging.getLogger(__name__)
 class JobSettings:
     """Wordcab API Job Settings object."""
 
-    ephemeral_data: Optional[bool] = field(init=False, default=False)
-    pipeline: Optional[str] = field(init=False, default=None)
-    only_api: Optional[bool] = field(init=False, default=True)
-    split_long_utterances: Optional[bool] = field(init=False, default=False)
+    ephemeral_data: Optional[bool] = field(default=False)
+    pipeline: Optional[str] = field(default=None)
+    only_api: Optional[bool] = field(default=True)
+    split_long_utterances: Optional[bool] = field(default=False)
 
 
 @dataclass
@@ -42,14 +45,20 @@ class BaseJob:
     display_name: str
     job_name: str
     settings: JobSettings
-    source: BaseSource
-    time_started: str
-    transcript_id: str
+    source: str
+    time_started: Optional[str] = None
+    transcript_id: Optional[str] = None
     job_status: Optional[str] = "Pending"
 
     def __post_init__(self) -> None:
         """Post-init method."""
         logger.info(f"Job {self.job_name} created.")
+        if self.source not in SOURCE_OBJECT_MAPPING.keys():
+            raise ValueError(
+                f"""
+                Source {self.source} is not a valid source. Valid sources are {SOURCE_OBJECT_MAPPING.keys()}.
+            """
+            )
 
     def job_update(self, parameters: Dict[str, str]) -> None:
         """Update the job attributes."""
