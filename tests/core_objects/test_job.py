@@ -20,12 +20,7 @@ from typing import Union
 import pytest
 
 from wordcab.config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
-from wordcab.core_objects import (
-    BaseJob,
-    ExtractJob,
-    JobSettings,
-    SummarizeJob,
-)
+from wordcab.core_objects import BaseJob, ExtractJob, JobSettings, SummarizeJob
 
 
 @pytest.fixture
@@ -168,11 +163,17 @@ def test_dummy_summarize_job(dummy_summarize_job: SummarizeJob) -> None:
         dummy_summarize_job.job_update
     )
 
+
 @pytest.mark.parametrize("source", ["youtube", 123, ""])
 def test_wrong_job_source(source: Union[str, int]) -> None:
     """Test for a wrong job source."""
     with pytest.raises(ValueError):
-        BaseJob(display_name="Dummy Job", job_name="dummy_job", source=source, settings=JobSettings())
+        BaseJob(
+            display_name="Dummy Job",
+            job_name="dummy_job",
+            source=source,
+            settings=JobSettings(),
+        )
     with pytest.raises(ValueError):
         ExtractJob(
             display_name="Dummy Extract Job",

@@ -35,11 +35,11 @@ def _check_summary_length(lengths: Union[int, List[int]]) -> bool:
     """
     if isinstance(lengths, int):
         lengths = [lengths]
-    
+
     for length in lengths:
         if length < SUMMARY_LENGTHS_RANGE[0] or length > SUMMARY_LENGTHS_RANGE[1]:
             return False
-    
+
     return True
 
 
@@ -51,7 +51,7 @@ def _check_summary_pipelines(pipelines: Union[str, List[str]]) -> bool:
     ----------
     pipelines : Union[str, List[str]]
         The summary pipelines.
-    
+
     Returns
     -------
     bool
@@ -59,11 +59,11 @@ def _check_summary_pipelines(pipelines: Union[str, List[str]]) -> bool:
     """
     if isinstance(pipelines, str):
         pipelines = [pipelines]
-    
+
     for pipeline in pipelines:
         if pipeline not in SUMMARY_PIPELINES:
             return False
-    
+
     return True
 
 

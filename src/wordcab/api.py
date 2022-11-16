@@ -17,7 +17,7 @@
 from typing import List, Optional
 
 from .client import Client
-from .core_objects import Stats
+from .core_objects import BaseSource, Stats, SummarizeJob
 
 
 def request(method: str, api_key: Optional[str] = None, **kwargs) -> None:
@@ -69,9 +69,27 @@ def start_extract(api_key: Optional[str] = None, **kwargs) -> None:
     return request(method="start_extract", api_key=api_key, **kwargs)
 
 
-def start_summary(api_key: Optional[str] = None, **kwargs) -> None:
-    """Start a summary job."""
-    return request(method="start_summary", api_key=api_key, **kwargs)
+def start_summary(source_object: BaseSource, display_name: str, api_key: Optional[str] = None) -> SummarizeJob:
+    """
+    Start a summary job.
+
+    Parameters
+    ----------
+    source_object : BaseSource
+        The source object to summarize.
+    display_name : str
+        The display name of the summary. This is useful for retrieving the
+        job later.
+    api_key : str, optional
+        The API key to use. The default is None. If None, the API key will be
+        automatically retrieved from the environment variable WORDCAB_API_KEY.
+    
+    Returns
+    -------
+    SummarizeJob
+        The summarize job object.
+    """
+    return request(method="start_summary", source_object=source_object, display_name=display_name, api_key=api_key)
 
 
 def list_jobs(api_key: Optional[str] = None) -> None:

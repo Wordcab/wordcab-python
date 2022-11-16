@@ -14,6 +14,7 @@
 
 """Wordcab API Source object."""
 
+import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -86,6 +87,10 @@ class BaseSource:
         """Load file from URL."""
         raise NotImplementedError("Loading files from URLs is not implemented yet.")
 
+    def prepare_payload(self) -> None:
+        """Prepare payload."""
+        raise NotImplementedError("Payload preparation is not implemented yet.")
+
 
 @dataclass
 class GenericSource(BaseSource):
@@ -108,6 +113,24 @@ class GenericSource(BaseSource):
         if self.source_type == "remote":
             self.file_object = self._load_file_from_url()
 
+    def prepare_payload(self) -> dict:
+        """Prepare payload for API request."""
+        if self._suffix == ".json":
+            self.payload = json.dumps({"transcript": json.loads(self.file_object)})
+        elif self._suffix == ".txt":
+            self.payload = json.dumps(
+                {"transcript": self.file_object.decode("utf-8").splitlines()}
+            )
+        return self.payload
+
+    def prepare_headers(self) -> dict:
+        """Prepare headers for API request."""
+        self.headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        }
+        return self.headers
+
 
 @dataclass
 class AudioSource(BaseSource):
@@ -129,6 +152,16 @@ class AudioSource(BaseSource):
 
         if self.source_type == "remote":
             self.file_object = self._load_file_from_url()
+
+    def prepare_payload(self) -> bytes:
+        """Prepare payload for API request."""
+        self.payload = {"audio_file": self.file_object}
+        return self.payload
+
+    def prepare_headers(self) -> dict:
+        """Prepare headers for API request."""
+        self.headers = {}
+        return self.headers
 
 
 @dataclass

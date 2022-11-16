@@ -14,11 +14,16 @@
 
 """Test cases for the utils functions."""
 
-import pytest
 from typing import List, Union
 
+import pytest
+
 from wordcab.utils import (
-    _check_summary_length, _check_summary_pipelines, _format_lengths, _format_pipelines, _format_tags
+    _check_summary_length,
+    _check_summary_pipelines,
+    _format_lengths,
+    _format_pipelines,
+    _format_tags,
 )
 
 
@@ -35,14 +40,23 @@ def test_correct_check_summary_length(lengths: Union[int, List[int]]) -> None:
 
 
 @pytest.mark.parametrize(
-    "pipelines", ["emotions", "questions_answers", "topic_segments", "speaker_talk_ratios", ["pipeline1", "pipeline2"]]
+    "pipelines",
+    [
+        "emotions",
+        "questions_answers",
+        "topic_segments",
+        "speaker_talk_ratios",
+        ["pipeline1", "pipeline2"],
+    ],
 )
 def test_wrong_check_summary_pipelines(pipelines: Union[str, List[str]]) -> None:
     """Test wrong summary pipelines."""
     assert _check_summary_pipelines(pipelines=pipelines) is False
 
 
-@pytest.mark.parametrize("pipelines", ["transcribe", "summarize", ["transcribe", "summarize"]])
+@pytest.mark.parametrize(
+    "pipelines", ["transcribe", "summarize", ["transcribe", "summarize"]]
+)
 def test_correct_check_summary_pipelines(pipelines: Union[str, List[str]]) -> None:
     """Test correct summary pipelines."""
     assert _check_summary_pipelines(pipelines=pipelines) is True
@@ -54,10 +68,14 @@ def test_format_lengths(lengths: Union[int, List[int]]) -> None:
     if isinstance(lengths, int):
         assert _format_lengths(lengths=lengths) == str(lengths)
     else:
-        assert _format_lengths(lengths=lengths) == ",".join([str(length) for length in lengths])
+        assert _format_lengths(lengths=lengths) == ",".join(
+            [str(length) for length in lengths]
+        )
 
 
-@pytest.mark.parametrize("pipelines", ["transcribe", "summarize", ["transcribe", "summarize"]])
+@pytest.mark.parametrize(
+    "pipelines", ["transcribe", "summarize", ["transcribe", "summarize"]]
+)
 def test_format_pipelines(pipelines: Union[str, List[str]]) -> None:
     """Test format pipelines."""
     if isinstance(pipelines, str):
@@ -66,7 +84,9 @@ def test_format_pipelines(pipelines: Union[str, List[str]]) -> None:
         assert _format_pipelines(pipelines=pipelines) == ",".join(pipelines)
 
 
-@pytest.mark.parametrize("tags", ["test_tag", ["tag1", "tag2"], ["tag1", "tag2", "tag3"]])
+@pytest.mark.parametrize(
+    "tags", ["test_tag", ["tag1", "tag2"], ["tag1", "tag2", "tag3"]]
+)
 def test_format_tags(tags: Union[str, List[str]]) -> None:
     """Test format tags."""
     if isinstance(tags, str):

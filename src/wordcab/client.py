@@ -14,7 +14,6 @@
 
 """Wordcab API Client."""
 
-import json
 import logging
 import os
 from typing import Dict, List, Optional, Union
@@ -122,8 +121,7 @@ class Client:
             )
         elif summary_type not in SUMMARY_TYPES:
             raise ValueError(
-                f"Invalid summary type. Available types are: "
-                + ", ".join(SUMMARY_TYPES)
+                f"Invalid summary type. Available types are: {', '.join(SUMMARY_TYPES)}"
             )
 
         if _check_summary_length(summary_length) is False:
@@ -169,11 +167,17 @@ class Client:
             """
             )
 
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        }
+        if hasattr(source_object, "payload"):
+            payload = source_object.payload
+        else:
+            payload = source_object.prepare_payload()
+
+        if hasattr(source_object, "headers"):
+            headers = source_object.headers
+        else:
+            headers = source_object.prepare_headers()
+        headers["Authorization"] = f"Bearer {self.api_key}"
+
         params: Dict[str, str] = {
             "source": source,
             "display_name": display_name,
@@ -192,13 +196,20 @@ class Client:
         if source == "signed_url":
             params["signed_url"] = source_object.signed_url
 
-        payload = json.dumps(
-            {"transcript": [
-                str(line).replace("\n", "") for line in source_object.file_object.decode("utf-8").splitlines()
-            ]})
-        r = requests.post(
-            "https://wordcab.com/api/v1/summarize", headers=headers, params=params, data=payload
-        )
+        if source == "audio":
+            r = requests.post(
+                "https://wordcab.com/api/v1/summarize",
+                headers=headers,
+                params=params,
+                files=payload,
+            )
+        else:
+            r = requests.post(
+                "https://wordcab.com/api/v1/summarize",
+                headers=headers,
+                params=params,
+                data=payload,
+            )
 
         if r.status_code == 201:
             logger.info("Summary job started.")
@@ -211,11 +222,11 @@ class Client:
                     pipeline=pipelines,
                     split_long_utterances=split_long_utterances,
                     only_api=only_api,
-                )
+                ),
             )
         else:
             raise ValueError(r.text)
-        
+
     def list_jobs(self) -> None:
         """List all jobs."""
         raise NotImplementedError

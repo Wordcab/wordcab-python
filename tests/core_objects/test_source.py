@@ -135,7 +135,7 @@ def test_signed_url_source() -> None:
 def test_wordcab_transcript_source() -> None:
     """Test the WordcabTranscriptSource object."""
     with pytest.raises(NotImplementedError):
-        WordcabTranscriptSource(url="https://example.com")
+        WordcabTranscriptSource(url="https://example.com" , transcript_id="123456")
 
 
 def test_rev_source() -> None:
