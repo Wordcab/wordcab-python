@@ -21,12 +21,13 @@ from typing import Dict, List, Optional, Union
 import requests
 
 from .config import (
+    LIST_JOBS_ORDER_BY,
     SOURCE_OBJECT_MAPPING,
     SUMMARY_LENGTHS_RANGE,
     SUMMARY_PIPELINES,
     SUMMARY_TYPES,
 )
-from .core_objects import BaseSource, JobSettings, Stats, SummarizeJob
+from .core_objects import BaseSource, ExtractJob, JobSettings, ListJobs, Stats, SummarizeJob
 from .utils import (
     _check_summary_length,
     _check_summary_pipelines,
@@ -223,9 +224,55 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def list_jobs(self) -> None:
+    def list_jobs(self, page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started") -> None:
         """List all jobs."""
-        raise NotImplementedError
+        if order_by not in LIST_JOBS_ORDER_BY:
+            raise ValueError(
+                f"""
+                Invalid `order_by` parameter. Must be one of {LIST_JOBS_ORDER_BY}. 
+                You can use - to indicate descending order.
+            """
+            )
+
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        params = {"page_size": page_size, "order_by": order_by}
+
+        r = requests.get(
+            "https://wordcab.com/api/v1/jobs", headers=headers, params=params
+        )
+
+        if r.status_code == 200:
+            data = r.json()
+            list_jobs: List[Union[ExtractJob, SummarizeJob]] = []
+            for job in data["results"]:
+                if "summary_details" in job:
+                    list_jobs.append(
+                        SummarizeJob(
+                            display_name=job["display_name"],
+                            job_name=job["job_name"],
+                            job_status=job["job_status"],
+                            source=job["source"],
+                            summary_details=job["summary_details"],
+                            transcript_id=job["transcript_id"],
+                            time_started=job["time_started"],
+                            time_completed=job["time_completed"],
+                        )
+                    )
+                else:
+                    list_jobs.append(
+                        ExtractJob(
+                            display_name=job["display_name"],
+                            job_name=job["job_name"],
+                            job_status=job["job_status"],
+                            source=job["source"],
+                            transcript_id=job["transcript_id"],
+                            time_started=job["time_started"],
+                            time_completed=job["time_completed"],
+                        )
+                    )
+            return ListJobs(page_count=int(data["page_count"]), next_page=data["next"], results=list_jobs)
+        else:
+            raise ValueError(r.text)
 
     def retrieve_job(self) -> None:
         """Retrieve a job."""

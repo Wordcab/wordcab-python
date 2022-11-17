@@ -17,7 +17,7 @@
 from typing import List, Optional, Union
 
 from .client import Client
-from .core_objects import BaseSource, Stats, SummarizeJob
+from .core_objects import BaseSource, ListJobs, Stats, SummarizeJob
 
 
 def request(method: str, api_key: Optional[str] = None, **kwargs) -> None:
@@ -133,9 +133,11 @@ def start_summary(
     )
 
 
-def list_jobs(api_key: Optional[str] = None) -> None:
+def list_jobs(
+    page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started", api_key: Optional[str] = None
+) -> ListJobs:
     """Retrieve a list of jobs."""
-    return request(method="list_jobs", api_key=api_key)
+    return request(method="list_jobs", page_size=page_size, order_by=order_by, api_key=api_key)
 
 
 def retrieve_job(api_key: Optional[str] = None, **kwargs) -> None:

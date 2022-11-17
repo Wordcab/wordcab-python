@@ -33,7 +33,7 @@ from wordcab import (
     start_extract,
     start_summary,
 )
-from wordcab.core_objects import GenericSource, JobSettings, Stats, SummarizeJob
+from wordcab.core_objects import GenericSource, JobSettings, ListJobs, Stats, SummarizeJob
 
 
 @pytest.fixture
@@ -66,8 +66,23 @@ def test_get_stats() -> None:
 
 def test_list_jobs(api_key: str) -> None:
     """Test the list_jobs function."""
-    with pytest.raises(NotImplementedError):
-        list_jobs(api_key=api_key)
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    jobs = list_jobs(api_key=api_key)
+    assert jobs is not None
+    assert isinstance(jobs, ListJobs)
+    assert jobs.page_count is not None
+    assert isinstance(jobs.page_count, int)
+    assert jobs.next_page is not None
+    assert isinstance(jobs.next_page, str)
+    assert jobs.results is not None
+    assert isinstance(jobs.results, list)
+
+    with pytest.raises(ValueError):
+        list_jobs(order_by="invalid")
+    with pytest.raises(ValueError):
+        list_jobs(order_by="+time_started")
+    with pytest.raises(ValueError):
+        list_jobs(order_by="+time_completed")
 
 
 def test_list_summaries(api_key: str) -> None:

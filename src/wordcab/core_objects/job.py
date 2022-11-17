@@ -16,7 +16,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Union
 
 from ..config import (
     EXTRACT_AVAILABLE_STATUS,
@@ -44,11 +44,12 @@ class BaseJob:
 
     display_name: str
     job_name: str
-    settings: JobSettings
     source: str
-    time_started: Optional[str] = None
-    transcript_id: Optional[str] = None
-    job_status: Optional[str] = "Pending"
+    settings: Optional[JobSettings] = field(default=None)
+    time_started: Optional[str] = field(default=None)
+    time_completed: Optional[str] = field(default=None)
+    transcript_id: Optional[str] = field(default=None)
+    job_status: Optional[str] = field(default="Pending")
 
     def __post_init__(self) -> None:
         """Post-init method."""
@@ -90,8 +91,19 @@ class ExtractJob(BaseJob):
 class SummarizeJob(BaseJob):
     """Wordcab API SummarizeJob object."""
 
+    summary_details: Optional[Dict[str, str]] = field(default=None)
+
     def __post_init__(self) -> None:
         """Post-init."""
         super().__post_init__()
         self._job_type = "SummarizeJob"
         self.available_status = SUMMARIZE_AVAILABLE_STATUS
+
+
+@dataclass
+class ListJobs:
+    """Wordcab API ListJobs object."""
+
+    page_count: int
+    next_page: str
+    results: List[Union[ExtractJob, SummarizeJob]]

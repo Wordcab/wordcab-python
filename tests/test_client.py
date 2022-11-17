@@ -26,6 +26,7 @@ from wordcab.core_objects import (
     BaseSource,
     GenericSource,
     JobSettings,
+    ListJobs,
     Stats,
     SummarizeJob,
 )
@@ -215,8 +216,24 @@ def test_start_summary(
 
 def test_list_jobs(client: Client) -> None:
     """Test client list_jobs method."""
-    with pytest.raises(NotImplementedError):
-        client.list_jobs()
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    with Client(api_key=api_key) as client:
+        list_jobs = client.list_jobs()
+        assert list_jobs is not None
+        assert isinstance(list_jobs, ListJobs)
+        assert list_jobs.page_count is not None
+        assert isinstance(list_jobs.page_count, int)
+        assert list_jobs.next_page is not None
+        assert isinstance(list_jobs.next_page, str)
+        assert list_jobs.results is not None
+        assert isinstance(list_jobs.results, list)
+
+        with pytest.raises(ValueError):
+            client.list_jobs(order_by="invalid")
+        with pytest.raises(ValueError):
+            client.list_jobs(order_by="+time_started")
+        with pytest.raises(ValueError):
+            client.list_jobs(order_by="+time_completed")
 
 
 def test_retrieve_job(client: Client) -> None:
