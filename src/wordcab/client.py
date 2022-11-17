@@ -246,30 +246,9 @@ class Client:
             list_jobs: List[Union[ExtractJob, SummarizeJob]] = []
             for job in data["results"]:
                 if "summary_details" in job:
-                    list_jobs.append(
-                        SummarizeJob(
-                            display_name=job["display_name"],
-                            job_name=job["job_name"],
-                            job_status=job["job_status"],
-                            source=job["source"],
-                            summary_details=job["summary_details"],
-                            transcript_id=job["transcript_id"],
-                            time_started=job["time_started"],
-                            time_completed=job["time_completed"],
-                        )
-                    )
+                    list_jobs.append(SummarizeJob(**job))
                 else:
-                    list_jobs.append(
-                        ExtractJob(
-                            display_name=job["display_name"],
-                            job_name=job["job_name"],
-                            job_status=job["job_status"],
-                            source=job["source"],
-                            transcript_id=job["transcript_id"],
-                            time_started=job["time_started"],
-                            time_completed=job["time_completed"],
-                        )
-                    )
+                    list_jobs.append(ExtractJob(**job))
             return ListJobs(page_count=int(data["page_count"]), next_page=data["next"], results=list_jobs)
         else:
             raise ValueError(r.text)
