@@ -21,12 +21,13 @@ from typing import Dict, List, Optional, Union
 import requests
 
 from .config import (
+    LIST_JOBS_ORDER_BY,
     SOURCE_OBJECT_MAPPING,
     SUMMARY_LENGTHS_RANGE,
     SUMMARY_PIPELINES,
     SUMMARY_TYPES,
 )
-from .core_objects import BaseSource, JobSettings, Stats, SummarizeJob
+from .core_objects import BaseSource, ExtractJob, JobSettings, ListJobs, Stats, SummarizeJob
 from .utils import (
     _check_summary_length,
     _check_summary_pipelines,
@@ -223,17 +224,61 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def list_jobs(self) -> None:
+    def list_jobs(self, page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started") -> ListJobs:
         """List all jobs."""
-        raise NotImplementedError
+        if order_by not in LIST_JOBS_ORDER_BY:
+            raise ValueError(
+                f"""
+                Invalid `order_by` parameter. Must be one of {LIST_JOBS_ORDER_BY}. 
+                You can use - to indicate descending order.
+            """
+            )
 
-    def retrieve_job(self) -> None:
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        params = {"page_size": page_size, "order_by": order_by}
+
+        r = requests.get(
+            "https://wordcab.com/api/v1/jobs", headers=headers, params=params
+        )
+
+        if r.status_code == 200:
+            data = r.json()
+            list_jobs: List[Union[ExtractJob, SummarizeJob]] = []
+            for job in data["results"]:
+                if "summary_details" in job:
+                    list_jobs.append(SummarizeJob(**job))
+                else:
+                    list_jobs.append(ExtractJob(**job))
+            return ListJobs(page_count=int(data["page_count"]), next_page=data["next"], results=list_jobs)
+        else:
+            raise ValueError(r.text)
+
+    def retrieve_job(self, job_name: str) -> Union[ExtractJob, SummarizeJob]:
         """Retrieve a job."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
 
-    def delete_job(self) -> None:
+        r = requests.get(f"https://wordcab.com/api/v1/jobs/{job_name}", headers=headers)
+
+        if r.status_code == 200:
+            data = r.json()
+            if "summary_details" in data:
+                return SummarizeJob(**data)
+            else:
+                return ExtractJob(**data)
+        else:
+            raise ValueError(r.text)
+
+    def delete_job(self, job_name: str) -> Dict[str, str]:
         """Delete a job."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+
+        r = requests.delete(f"https://wordcab.com/api/v1/jobs/{job_name}", headers=headers)
+
+        if r.status_code == 200:
+            logger.warning(f"Job {job_name} deleted.")
+            return r.json()
+        else:
+            raise ValueError(r.text)
 
     def list_transcripts(self) -> None:
         """List all transcripts."""

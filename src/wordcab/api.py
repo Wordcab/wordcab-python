@@ -14,10 +14,10 @@
 
 """Wordcab API mapping functions."""
 
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from .client import Client
-from .core_objects import BaseSource, Stats, SummarizeJob
+from .core_objects import BaseSource, ExtractJob, ListJobs, Stats, SummarizeJob
 
 
 def request(method: str, api_key: Optional[str] = None, **kwargs) -> None:
@@ -133,19 +133,70 @@ def start_summary(
     )
 
 
-def list_jobs(api_key: Optional[str] = None) -> None:
-    """Retrieve a list of jobs."""
-    return request(method="list_jobs", api_key=api_key)
+def list_jobs(
+    page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started", api_key: Optional[str] = None
+) -> ListJobs:
+    """
+    Retrieve a list of jobs.
+
+    Parameters
+    ----------
+    page_size : int, optional
+        The number of jobs to retrieve per page. The default is 100.
+    order_by : str, optional
+        The order to sort the jobs by. The default is "-time_started". The order can be "time_started" or 
+        "time_completed". You can also add a "-" to the start of the order to reverse it.
+    api_key : str, optional
+        The API key to use. The default is None. If None, the API key will be
+        automatically retrieved from the environment variable WORDCAB_API_KEY.
+
+    Returns
+    -------
+    ListJobs
+        The list jobs object containing the list of jobs. The jobs can be
+        SummarizeJob or ExtractJob objects.
+    """
+    return request(method="list_jobs", page_size=page_size, order_by=order_by, api_key=api_key)
 
 
-def retrieve_job(api_key: Optional[str] = None, **kwargs) -> None:
-    """Retrieve a job."""
-    return request(method="retrieve_job", api_key=api_key, **kwargs)
+def retrieve_job(job_name: str, api_key: Optional[str] = None) -> Union[ExtractJob, SummarizeJob]:
+    """
+    Retrieve a job by name.
+
+    Parameters
+    ----------
+    job_name : str
+        The name of the job to retrieve.
+    api_key : str, optional
+        The API key to use. The default is None. If None, the API key will be
+        automatically retrieved from the environment variable WORDCAB_API_KEY.
+    
+    Returns
+    -------
+    ExtractJob or SummarizeJob
+        The job object. The job can be an ExtractJob or SummarizeJob object.
+    """
+    return request(method="retrieve_job", job_name=job_name, api_key=api_key)
 
 
-def delete_job(api_key: Optional[str] = None, **kwargs) -> None:
-    """Delete a job."""
-    return request(method="delete_job", api_key=api_key, **kwargs)
+def delete_job(job_name: str, api_key: Optional[str] = None) -> Dict[str, str]:
+    """
+    Delete a job by name and all associated data (including the transcript).
+
+    Note that this will delete the transcript from WordCab's servers. If you want to keep the transcript,
+    you should download it before deleting the job.
+
+    Parameters
+    ----------
+    job_name: str
+        The name of the job to delete.
+    
+    Returns
+    -------
+    Dict[str, str]
+        A dictionary containing the name of the deleted job.
+    """
+    return request(method="delete_job", job_name=job_name, api_key=api_key)
 
 
 def list_transcripts(api_key: Optional[str] = None) -> None:

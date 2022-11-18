@@ -33,7 +33,7 @@ from wordcab import (
     start_extract,
     start_summary,
 )
-from wordcab.core_objects import GenericSource, JobSettings, Stats, SummarizeJob
+from wordcab.core_objects import ExtractJob, GenericSource, JobSettings, ListJobs, Stats, SummarizeJob
 
 
 @pytest.fixture
@@ -66,8 +66,23 @@ def test_get_stats() -> None:
 
 def test_list_jobs(api_key: str) -> None:
     """Test the list_jobs function."""
-    with pytest.raises(NotImplementedError):
-        list_jobs(api_key=api_key)
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    jobs = list_jobs(api_key=api_key)
+    assert jobs is not None
+    assert isinstance(jobs, ListJobs)
+    assert jobs.page_count is not None
+    assert isinstance(jobs.page_count, int)
+    assert jobs.next_page is not None
+    assert isinstance(jobs.next_page, str)
+    assert jobs.results is not None
+    assert isinstance(jobs.results, list)
+
+    with pytest.raises(ValueError):
+        list_jobs(order_by="invalid")
+    with pytest.raises(ValueError):
+        list_jobs(order_by="+time_started")
+    with pytest.raises(ValueError):
+        list_jobs(order_by="+time_completed")
 
 
 def test_list_summaries(api_key: str) -> None:
@@ -84,8 +99,31 @@ def test_list_transcripts(api_key: str) -> None:
 
 def test_retrieve_job(api_key: str) -> None:
     """Test the retrieve_job function."""
-    with pytest.raises(NotImplementedError):
-        retrieve_job(api_key=api_key)
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    job = retrieve_job(job_name="job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp")
+    assert job.job_name == "job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp"
+    assert job is not None
+    assert isinstance(job, SummarizeJob)
+    assert job.job_status is not None
+    assert job.display_name is not None
+    assert job.source is not None
+    assert job.time_started is not None
+    assert job.time_completed is not None
+    assert job.transcript_id is not None
+    assert job.summary_details is not None
+    assert isinstance(job.summary_details, dict)
+
+    # Extract job
+    job = retrieve_job(job_name="job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n")
+    assert job.job_name == "job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n"
+    assert job is not None
+    assert isinstance(job, ExtractJob)
+    assert job.job_status is not None
+    assert job.display_name is not None
+    assert job.source is not None
+    assert job.time_started is not None
+    assert job.time_completed is not None
+    assert job.transcript_id is not None
 
 
 def test_retrieve_summary(api_key: str) -> None:
@@ -136,5 +174,9 @@ def test_change_speaker_labels(api_key: str) -> None:
 
 def test_delete_job(api_key: str) -> None:
     """Test the delete_job function."""
-    with pytest.raises(NotImplementedError):
-        delete_job(api_key=api_key)
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    deleted_job = delete_job(job_name="job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB", api_key=api_key)
+    assert deleted_job is not None
+    assert isinstance(deleted_job, dict)
+    assert deleted_job["job_name"] == "job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB"
+    
