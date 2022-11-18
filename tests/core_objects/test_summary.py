@@ -19,7 +19,7 @@ from typing import List, Union
 
 import pytest
 
-from wordcab.core_objects import BaseSummary, StructuredSummary
+from wordcab.core_objects import BaseSummary, ListSummaries, StructuredSummary
 
 
 logger = logging.getLogger(__name__)
@@ -33,8 +33,8 @@ def dummy_empty_structured_summary() -> StructuredSummary:
         start="00:00:00",
         summary="This is a test.",
         summary_html="<p>This is a test.</p>",
-        timestamps_end=409000,
-        timestamps_start=0,
+        timestamp_end=409000,
+        timestamp_start=0,
     )
 
 
@@ -67,6 +67,12 @@ def dummy_full_base_summary() -> BaseSummary:
     )
 
 
+@pytest.fixture
+def dummy_list_summaries() -> ListSummaries:
+    """Fixture for a dummy ListSummaries object."""
+    return ListSummaries(page_count=3, next_page="https://next_page.com", results=[])
+
+
 def test_empty_structured_summary(
     dummy_empty_structured_summary: StructuredSummary,
 ) -> None:
@@ -75,8 +81,8 @@ def test_empty_structured_summary(
     assert dummy_empty_structured_summary.start == "00:00:00"
     assert dummy_empty_structured_summary.summary == "This is a test."
     assert dummy_empty_structured_summary.summary_html == "<p>This is a test.</p>"
-    assert dummy_empty_structured_summary.timestamps_end == 409000
-    assert dummy_empty_structured_summary.timestamps_start == 0
+    assert dummy_empty_structured_summary.timestamp_end == 409000
+    assert dummy_empty_structured_summary.timestamp_start == 0
     assert dummy_empty_structured_summary.transcript_segment == {}
     assert hasattr(dummy_empty_structured_summary, "_convert_timestamp")
     assert callable(dummy_empty_structured_summary._convert_timestamp)
@@ -147,8 +153,8 @@ def test_typerror_structured_summary(params: List[Union[str, int, float]]) -> No
             start=params[1],
             summary=params[2],
             summary_html=params[3],
-            timestamps_end=params[4],
-            timestamps_start=params[5],
+            timestamp_end=params[4],
+            timestamp_start=params[5],
         )
 
 
@@ -216,3 +222,11 @@ def test_valuerror_base_summary(params: List[str]) -> None:
             time_started=params[3],
             time_completed=params[4],
         )
+
+
+def test_list_summaries(dummy_list_summaries: ListSummaries) -> None:
+    """Test the ListSummaries object."""
+    assert dummy_list_summaries is not None
+    assert dummy_list_summaries.page_count == 3
+    assert dummy_list_summaries.next_page == "https://next_page.com"
+    assert dummy_list_summaries.results == []

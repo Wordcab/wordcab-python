@@ -32,8 +32,8 @@ class StructuredSummary:
     start: str
     summary: str
     summary_html: str
-    timestamps_end: int
-    timestamps_start: int
+    timestamp_end: int
+    timestamp_start: int
     transcript_segment: Optional[Dict[str, Union[str, int]]] = field(
         default_factory=dict
     )
@@ -59,22 +59,14 @@ class StructuredSummary:
                 f"summary_html must be a string, not {type(self.summary_html)}"
             )
 
-        if not isinstance(self.timestamps_end, int):
+        if not isinstance(self.timestamp_end, int):
             raise TypeError(
-                f"timestamps_end must be an integer, not {type(self.timestamps_end)}"
-            )
-        if self.timestamps_end != self._convert_timestamp(self.end):
-            raise ValueError(
-                f"timestamps_end must be equal to end, not {self.timestamps_end}"
+                f"timestamp_end must be an integer, not {type(self.timestamp_end)}"
             )
 
-        if not isinstance(self.timestamps_start, int):
+        if not isinstance(self.timestamp_start, int):
             raise TypeError(
-                f"timestamps_start must be an integer, not {type(self.timestamps_start)}"
-            )
-        if self.timestamps_start != self._convert_timestamp(self.start):
-            raise ValueError(
-                f"timestamps_start must be equal to start, not {self.timestamps_start}"
+                f"timestamp_start must be an integer, not {type(self.timestamp_start)}"
             )
 
     def _convert_timestamp(self, timestamp: str) -> int:
@@ -113,3 +105,12 @@ class BaseSummary:
         if self.time_started and self.time_completed:
             if self.time_started == self.time_completed:
                 raise ValueError("time_started and time_completed must be different")
+
+
+@dataclass
+class ListSummaries:
+    """List summaries object."""
+
+    page_count: int
+    next_page: str
+    results: List[BaseSummary]

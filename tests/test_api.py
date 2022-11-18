@@ -33,7 +33,17 @@ from wordcab import (
     start_extract,
     start_summary,
 )
-from wordcab.core_objects import ExtractJob, GenericSource, JobSettings, ListJobs, Stats, SummarizeJob
+from wordcab.core_objects import (
+    BaseSummary,
+    ExtractJob,
+    GenericSource,
+    JobSettings,
+    ListJobs,
+    ListSummaries,
+    Stats,
+    StructuredSummary,
+    SummarizeJob,
+)
 
 
 @pytest.fixture
@@ -87,8 +97,20 @@ def test_list_jobs(api_key: str) -> None:
 
 def test_list_summaries(api_key: str) -> None:
     """Test the list_summaries function."""
-    with pytest.raises(NotImplementedError):
-        list_summaries(api_key=api_key)
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    li_summaries = list_summaries(api_key=api_key)
+    assert li_summaries is not None
+    assert isinstance(li_summaries, ListSummaries)
+    assert li_summaries.page_count is not None
+    assert isinstance(li_summaries.page_count, int)
+    assert li_summaries.next_page is not None
+    assert isinstance(li_summaries.next_page, str)
+    assert li_summaries.results is not None
+    assert isinstance(li_summaries.results, list)
+    for summary in li_summaries.results:
+        assert isinstance(summary, BaseSummary)
+        assert summary.summary_id is not None
+        assert summary.job_status is not None
 
 
 def test_list_transcripts(api_key: str) -> None:
@@ -100,7 +122,7 @@ def test_list_transcripts(api_key: str) -> None:
 def test_retrieve_job(api_key: str) -> None:
     """Test the retrieve_job function."""
     api_key = os.environ.get("WORDCAB_API_KEY")
-    job = retrieve_job(job_name="job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp")
+    job = retrieve_job(job_name="job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp", api_key=api_key)
     assert job.job_name == "job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp"
     assert job is not None
     assert isinstance(job, SummarizeJob)
@@ -114,7 +136,7 @@ def test_retrieve_job(api_key: str) -> None:
     assert isinstance(job.summary_details, dict)
 
     # Extract job
-    job = retrieve_job(job_name="job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n")
+    job = retrieve_job(job_name="job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n", api_key=api_key)
     assert job.job_name == "job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n"
     assert job is not None
     assert isinstance(job, ExtractJob)
@@ -128,9 +150,38 @@ def test_retrieve_job(api_key: str) -> None:
 
 def test_retrieve_summary(api_key: str) -> None:
     """Test the retrieve_summary function."""
-    with pytest.raises(NotImplementedError):
-        retrieve_summary(api_key=api_key)
-
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    summary = retrieve_summary(summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m")
+    assert summary is not None
+    assert isinstance(summary, BaseSummary)
+    assert summary.summary_id is not None
+    assert summary.job_status is not None
+    assert summary.job_name is not None
+    assert summary.display_name is not None
+    assert summary.summary_type is not None
+    assert summary.source is not None
+    assert summary.speaker_map is not None
+    assert summary.time_started is not None
+    assert summary.time_completed is not None
+    assert isinstance(summary.summary, dict)
+    for key, value in summary.summary.items():
+        assert isinstance(key, str)
+        assert isinstance(value[0], StructuredSummary)
+        assert value[0].end is not None
+        assert value[0].start is not None
+        assert value[0].summary is not None
+        assert value[0].summary_html is not None
+        assert value[0].timestamp_end is not None
+        assert value[0].timestamp_start is not None
+        assert value[0].transcript_segment is not None
+        assert isinstance(value[0].transcript_segment, list)
+        for segment in value[0].transcript_segment:
+            assert isinstance(segment, dict)
+            assert "speaker" in segment
+            assert "text" in segment
+            assert "timestamp_end" in segment
+            assert "timestamp_start" in segment
+            assert "start" in segment
 
 def test_retrieve_transcript(api_key: str) -> None:
     """Test the retrieve_transcript function."""

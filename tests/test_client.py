@@ -24,11 +24,14 @@ from wordcab import Client
 from wordcab.core_objects import (
     AudioSource,
     BaseSource,
+    BaseSummary,
     ExtractJob,
     GenericSource,
     JobSettings,
     ListJobs,
+    ListSummaries,
     Stats,
+    StructuredSummary,
     SummarizeJob,
 )
 
@@ -296,13 +299,57 @@ def test_change_speaker_labels(client: Client) -> None:
         client.change_speaker_labels()
 
 
-def test_list_summaries(client: Client) -> None:
+def test_list_summaries() -> None:
     """Test client list_summaries method."""
-    with pytest.raises(NotImplementedError):
-        client.list_summaries()
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    with Client(api_key=api_key) as client:
+        list_summaries = client.list_summaries()
+        assert list_summaries is not None
+        assert isinstance(list_summaries, ListSummaries)
+        assert list_summaries.page_count is not None
+        assert isinstance(list_summaries.page_count, int)
+        assert list_summaries.next_page is not None
+        assert isinstance(list_summaries.next_page, str)
+        assert list_summaries.results is not None
+        assert isinstance(list_summaries.results, list)
+        for summary in list_summaries.results:
+            assert isinstance(summary, BaseSummary)
+            assert summary.summary_id is not None
+            assert summary.job_status is not None
 
 
-def test_retrieve_summary(client: Client) -> None:
+def test_retrieve_summary() -> None:
     """Test client retrieve_summary method."""
-    with pytest.raises(NotImplementedError):
-        client.retrieve_summary()
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    with Client(api_key=api_key) as client:
+        summary = client.retrieve_summary(summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m")
+        assert summary is not None
+        assert isinstance(summary, BaseSummary)
+        assert summary.summary_id is not None
+        assert summary.job_status is not None
+        assert summary.job_name is not None
+        assert summary.display_name is not None
+        assert summary.summary_type is not None
+        assert summary.source is not None
+        assert summary.speaker_map is not None
+        assert summary.time_started is not None
+        assert summary.time_completed is not None
+        assert isinstance(summary.summary, dict)
+        for key, value in summary.summary.items():
+            assert isinstance(key, str)
+            assert isinstance(value[0], StructuredSummary)
+            assert value[0].end is not None
+            assert value[0].start is not None
+            assert value[0].summary is not None
+            assert value[0].summary_html is not None
+            assert value[0].timestamp_end is not None
+            assert value[0].timestamp_start is not None
+            assert value[0].transcript_segment is not None
+            assert isinstance(value[0].transcript_segment, list)
+            for segment in value[0].transcript_segment:
+                assert isinstance(segment, dict)
+                assert "speaker" in segment
+                assert "text" in segment
+                assert "timestamp_end" in segment
+                assert "timestamp_start" in segment
+                assert "start" in segment

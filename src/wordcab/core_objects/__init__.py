@@ -27,7 +27,7 @@ from .source import (
     WordcabTranscriptSource,
 )
 from .stats import Stats
-from .summary import BaseSummary, StructuredSummary
+from .summary import BaseSummary, ListSummaries, StructuredSummary
 from .transcript import BaseTranscript, TranscriptUtterance
 
 
@@ -43,6 +43,7 @@ __all__ = [
     "GenericSource",
     "JobSettings",
     "ListJobs",
+    "ListSummaries",
     "RevSource",
     "SignedURLSource",
     "Stats",
