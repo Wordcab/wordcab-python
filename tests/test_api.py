@@ -231,8 +231,23 @@ def test_retrieve_transcript(api_key: str) -> None:
 
 def test_start_extract(api_key: str) -> None:
     """Test the start_extract function."""
-    with pytest.raises(NotImplementedError):
-        start_extract(api_key=api_key)
+    source_object = GenericSource(filepath=Path("tests/sample_1.txt"))
+    job = start_extract(
+        source_object=source_object,
+        display_name="test-extract-api",
+        pipelines=["emotions"],
+        api_key=api_key,
+    )
+    assert isinstance(job, ExtractJob)
+    assert job.display_name == "test-extract-api"
+    assert job.job_name is not None
+    assert job.source == "generic"
+    assert job.settings == JobSettings(
+        ephemeral_data=False,
+        pipeline=["emotions"],
+        split_long_utterances=False,
+        only_api=True,
+    )
 
 
 def test_start_summary(api_key: str) -> None:

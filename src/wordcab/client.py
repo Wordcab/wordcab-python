@@ -21,6 +21,7 @@ from typing import Dict, List, Optional, Union
 import requests
 
 from .config import (
+    EXTRACT_PIPELINES,
     LIST_JOBS_ORDER_BY,
     SOURCE_OBJECT_MAPPING,
     SUMMARY_LENGTHS_RANGE,
@@ -42,6 +43,7 @@ from .core_objects import (
     TranscriptUtterance,
 )
 from .utils import (
+    _check_extract_pipelines,
     _check_summary_length,
     _check_summary_pipelines,
     _format_lengths,
@@ -112,9 +114,101 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def start_extract(self) -> None:
+    def start_extract(
+        self,
+        source_object: BaseSource,
+        display_name: str,
+        ephemeral_data: Optional[bool] = False,
+        only_api: Optional[bool] = True,
+        pipelines: Optional[List[str]] = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"],
+        split_long_utterances: Optional[bool] = False,
+        tags: Optional[Union[str, List[str]]] = None,
+    ) -> ExtractJob:
         """Start an Extraction job."""
-        raise NotImplementedError
+        if _check_extract_pipelines(pipelines) is False:
+            raise ValueError(
+                f"""
+                You must specify a valid list of pipelines. Available pipelines are: {", ".join(EXTRACT_PIPELINES)}.
+            """
+            )
+        if isinstance(source_object, BaseSource) is False:
+            raise ValueError(
+                """
+                You must specify a valid source object for the extraction job.
+                See https://docs.wordcab.com/docs/accepted-sources for more information.
+            """
+            )
+
+        source = source_object.source
+        if source not in SOURCE_OBJECT_MAPPING.keys():
+            raise ValueError(
+                f"Invalid source: {source}. Source must be one of {SOURCE_OBJECT_MAPPING.keys()}"
+            )
+        if source_object.__class__.__name__ != SOURCE_OBJECT_MAPPING[source]:
+            raise ValueError(
+                f"""
+                Invalid source object: {source_object}. Source object must be of type {SOURCE_OBJECT_MAPPING[source]},
+                but is of type {type(source_object)}.
+            """
+            )
+
+        if hasattr(source_object, "payload"):
+            payload = source_object.payload
+        else:
+            payload = source_object.prepare_payload()
+
+        if hasattr(source_object, "headers"):
+            headers = source_object.headers
+        else:
+            headers = source_object.prepare_headers()
+        headers["Authorization"] = f"Bearer {self.api_key}"
+
+        params: Dict[str, str] = {
+            "source": source,
+            "display_name": display_name,
+            "ephemeral_data": ephemeral_data,
+            "only_api": only_api,
+            "pipeline": _format_pipelines(pipelines),
+            "split_long_utterances": split_long_utterances,
+        }
+        if tags:
+            params["tags"] = _format_tags(tags)
+        
+        if source == "wordcab_transcript":
+            params["transcript_id"] = source_object.transcript_id
+        if source == "signed_url":
+            params["signed_url"] = source_object.signed_url
+
+        if source == "audio":
+            r = requests.post(
+                "https://wordcab.com/api/v1/extract",
+                headers=headers,
+                params=params,
+                files=payload,
+            )
+        else:
+            r = requests.post(
+                "https://wordcab.com/api/v1/extract",
+                headers=headers,
+                params=params,
+                data=payload,
+            )
+
+        if r.status_code == 201:
+            logger.info("Extract job started.")
+            return ExtractJob(
+                display_name=display_name,
+                job_name=r.json()["job_name"],
+                source=source,
+                settings=JobSettings(
+                    ephemeral_data=ephemeral_data,
+                    only_api=only_api,
+                    pipeline=pipelines,
+                    split_long_utterances=split_long_utterances,
+                ),
+            )
+        else:
+            raise ValueError(r.text)
 
     def start_summary(
         self,
@@ -127,7 +221,7 @@ class Client:
         split_long_utterances: Optional[bool] = False,
         summary_length: Optional[Union[int, List[int]]] = 3,
         tags: Optional[Union[str, List[str]]] = None,
-    ) -> None:
+    ) -> SummarizeJob:
         """Start a Summary job."""
         if summary_type not in SUMMARY_TYPES:
             raise ValueError(
@@ -152,7 +246,7 @@ class Client:
         if _check_summary_pipelines(pipelines) is False:
             raise ValueError(
                 f"""
-                You must specify a valid list of pipelines. Available pipelines are: {", ".join(SUMMARY_PIPELINES)}
+                You must specify a valid list of pipelines. Available pipelines are: {", ".join(SUMMARY_PIPELINES)}.
             """
             )
 

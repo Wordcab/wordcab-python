@@ -16,7 +16,7 @@
 
 from typing import List, Union
 
-from .config import SUMMARY_LENGTHS_RANGE, SUMMARY_PIPELINES
+from .config import EXTRACT_PIPELINES, SUMMARY_LENGTHS_RANGE, SUMMARY_PIPELINES
 
 
 def _check_summary_length(lengths: Union[int, List[int]]) -> bool:
@@ -62,6 +62,30 @@ def _check_summary_pipelines(pipelines: Union[str, List[str]]) -> bool:
 
     for pipeline in pipelines:
         if pipeline not in SUMMARY_PIPELINES:
+            return False
+
+    return True
+
+
+def _check_extract_pipelines(pipelines: Union[str, List[str]]) -> bool:
+    """
+    Check the extract pipelines.
+
+    Parameters
+    ----------
+    pipelines : Union[str, List[str]]
+        The extract pipelines.
+
+    Returns
+    -------
+    bool
+        True if the extract pipelines are valid, False otherwise.
+    """
+    if isinstance(pipelines, str):
+        pipelines = [pipelines]
+
+    for pipeline in pipelines:
+        if pipeline not in EXTRACT_PIPELINES:
             return False
 
     return True

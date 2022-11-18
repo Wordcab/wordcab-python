@@ -74,9 +74,58 @@ def get_stats(
     )
 
 
-def start_extract(api_key: Optional[str] = None, **kwargs) -> None:
-    """Start an extraction job."""
-    return request(method="start_extract", api_key=api_key, **kwargs)
+def start_extract(
+    source_object: BaseSource,
+    display_name: str,
+    ephemeral_data: Optional[bool] = False,
+    only_api: Optional[bool] = True,
+    pipelines: Optional[List[str]] = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"],
+    split_long_utterances: Optional[bool] = False,
+    tags: Optional[Union[str, List[str]]] = None,
+    api_key: Optional[str] = None,
+) -> ExtractJob:
+    """
+    Start an extraction job.
+
+    Parameters
+    ----------
+    source_object : BaseSource
+        The source object to use for the extraction job.
+    display_name : str
+        The display name of the extraction job. This is useful for retrieving the job later.
+    ephemeral_data : bool, optional
+        Whether to delete the data after the job is complete. The default is False. If False, the data will be
+        kept on WordCab's servers. You can delete the data at any time, check the documentation here:
+        https://docs.wordcab.com/docs/enabling-ephemeral-data
+    only_api : bool, optional
+        Whether to only use the API for the extraction job. The default is True.
+    pipelines : list of str, optional
+        A list of pipelines to use for the extraction job. The default is ["questions_answers", "topic_segments",
+        "emotions", "speaker_talk_ratios"]. You can use one or more of the available pipelines.
+    split_long_utterances : bool, optional
+        Whether to split long utterances into multiple shorter utterances. The default is False.
+    tags : str or list of str, optional
+        The tags to add to the job. The default is None. If None, no tags will be added.
+    api_key : str, optional
+        The API key to use. The default is None. If None, the API key will be
+        automatically retrieved from the environment variable WORDCAB_API_KEY.
+
+    Returns
+    -------
+    ExtractJob
+        The extract job object.
+    """
+    return request(
+        method="start_extract",
+        source_object=source_object,
+        display_name=display_name,
+        ephemeral_data=ephemeral_data,
+        only_api=only_api,
+        pipelines=pipelines,
+        split_long_utterances=split_long_utterances,
+        tags=tags,
+        api_key=api_key
+    )
 
 
 def start_summary(
@@ -89,7 +138,7 @@ def start_summary(
     split_long_utterances: Optional[bool] = False,
     summary_length: Optional[Union[int, List[int]]] = 3,
     tags: Optional[Union[str, List[str]]] = None,
-    api_key: Optional[str] = None
+    api_key: Optional[str] = None,
 ) -> SummarizeJob:
     """
     Start a summary job.
@@ -99,8 +148,7 @@ def start_summary(
     source_object : BaseSource
         The source object to summarize.
     display_name : str
-        The display name of the summary. This is useful for retrieving the
-        job later.
+        The display name of the summary. This is useful for retrieving the job later.
     summary_type : str, optional
         The type of summary to create. You can choose from "conversational", "narrative", "reason_conclusion" or 
         "no_speaker". More information can be found here: https://docs.wordcab.com/docs/summary-types
