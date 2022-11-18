@@ -26,6 +26,7 @@ EXTRACT_AVAILABLE_STATUS = [
     "Pending",
     "PreparingExtraction",
 ]
+EXTRACT_PIPELINES = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"]
 LIST_JOBS_ORDER_BY = ["time_started", "time_completed", "-time_started", "-time_completed"]
 SOURCE_OBJECT_MAPPING = {
     "generic": "GenericSource",
