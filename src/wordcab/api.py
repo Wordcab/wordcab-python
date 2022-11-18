@@ -242,9 +242,32 @@ def retrieve_transcript(transcript_id: str, api_key: Optional[str] = None) -> Ba
     return request(method="retrieve_transcript", transcript_id=transcript_id, api_key=api_key)
 
 
-def change_speaker_labels(api_key: Optional[str] = None, **kwargs) -> None:
-    """Change speaker labels."""
-    return request(method="change_speaker_labels", api_key=api_key, **kwargs)
+def change_speaker_labels(
+    transcript_id: str,
+    speaker_map: Dict[str, str],
+    api_key: Optional[str] = None
+) -> BaseTranscript:
+    """
+    Change speaker labels in a transcript.
+
+    Parameters
+    ----------
+    transcript_id : str
+        The id of the transcript to change the speaker labels of.
+    speaker_map : Dict[str, str]
+        A dictionary mapping the old speaker labels to the new speaker labels.
+    api_key : str, optional
+        The API key to use. The default is None. If None, the API key will be
+        automatically retrieved from the environment variable WORDCAB_API_KEY.
+    
+    Returns
+    -------
+    BaseTranscript
+        The transcript object with the changed speaker labels.
+    """
+    return request(
+        method="change_speaker_labels", transcript_id=transcript_id, speaker_map=speaker_map, api_key=api_key
+    )
 
 
 def list_summaries(page_size: Optional[int] = 100, api_key: Optional[str] = None) -> ListSummaries:

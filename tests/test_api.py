@@ -258,8 +258,23 @@ def test_start_summary(api_key: str) -> None:
 
 def test_change_speaker_labels(api_key: str) -> None:
     """Test the change_speaker_labels function."""
-    with pytest.raises(NotImplementedError):
-        change_speaker_labels(api_key=api_key)
+    transcript = change_speaker_labels(
+        transcript_id="generic_transcript_JtugR2ELM9u4VSXJmscek7yuKupokH8t",
+        speaker_map={"A": "Tom", "B": "Tam", "C": "Tim", "D": "Tum", "E": "Tym"},
+    )
+    assert transcript is not None
+    assert isinstance(transcript, BaseTranscript)
+    assert transcript.transcript_id is not None
+    assert isinstance(transcript.transcript_id, str)
+    assert transcript.job_id_set is not None
+    assert isinstance(transcript.job_id_set, list)
+    assert transcript.summary_id_set is not None
+    assert isinstance(transcript.summary_id_set, list)
+    assert transcript.speaker_map is not None
+    assert isinstance(transcript.speaker_map, dict)
+    assert transcript.speaker_map == {"A": "Tom", "B": "Tam", "C": "Tim", "D": "Tum", "E": "Tym"}
+    assert transcript.transcript is not None
+    assert isinstance(transcript.transcript, list)
 
 
 def test_delete_job(api_key: str) -> None:

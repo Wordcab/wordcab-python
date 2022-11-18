@@ -328,9 +328,21 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def change_speaker_labels(self) -> None:
+    def change_speaker_labels(self, transcript_id: str, speaker_map: Dict[str, str]) -> BaseTranscript:
         """Change the speaker labels of a transcript."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+
+        r = requests.patch(
+            f"https://wordcab.com/api/v1/transcripts/{transcript_id}",
+            headers=headers,
+            json={"speaker_map": speaker_map},
+        )
+
+        if r.status_code == 200:
+            logger.info("Speaker labels changed.")
+            return BaseTranscript(**r.json())
+        else:
+            raise ValueError(r.text)
 
     def list_summaries(self, page_size: Optional[int] = 100) -> ListSummaries:
         """List all summaries."""
