@@ -28,8 +28,10 @@ class TranscriptUtterance:
 
     text: str
     speaker: str
-    end_index: int
-    start_index: int
+    end: int
+    start: int
+    timestamp_end: int
+    timestamp_start: int
 
     def __post_init__(self) -> None:
         """Post-init method."""
@@ -43,11 +45,11 @@ class TranscriptUtterance:
                 f"TranscriptUtterance.speaker must be a string, not {type(self.speaker)}"
             )
 
-        if self.end_index < self.start_index:
+        if self.timestamp_end < self.timestamp_start:
             raise ValueError(
                 f"""
                 TranscriptUtterance.end_index must be greater than or equal to TranscriptUtterance.start_index,
-                not {self.end_index} < {self.start_index}"""
+                not {self.timestamp_end} < {self.timestamp_start}"""
             )
 
 
@@ -56,8 +58,8 @@ class BaseTranscript:
     """Transcript object."""
 
     transcript_id: str
-    job_id_set: set[str] = field(default_factory=set)
-    summary_id_set: set[str] = field(default_factory=set)
+    job_id_set: set[str] = field(default_factory=list)
+    summary_id_set: set[str] = field(default_factory=list)
     transcript: List[TranscriptUtterance] = field(default_factory=list)
     speaker_map: Dict[str, str] = field(default_factory=dict)
 
@@ -76,12 +78,21 @@ class BaseTranscript:
 
     def add_job_id(self, job_id: str) -> None:
         """Add a job ID to the transcript."""
-        self.job_id_set.add(job_id)
+        self.job_id_set.append(job_id)
 
     def add_summary_id(self, summary_id: str) -> None:
         """Add a summary ID to the transcript."""
-        self.summary_id_set.add(summary_id)
+        self.summary_id_set.append(summary_id)
 
     def update_speaker_map(self, speaker_map: Dict[str, str]) -> None:
         """Update the speaker map for the transcript."""
         self.speaker_map = speaker_map
+
+
+@dataclass
+class ListTranscripts:
+    """List transcripts object."""
+
+    page_count: int
+    next_page: str
+    results: List[BaseTranscript]

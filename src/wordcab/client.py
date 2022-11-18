@@ -30,13 +30,16 @@ from .config import (
 from .core_objects import (
     BaseSource,
     BaseSummary,
+    BaseTranscript,
     ExtractJob,
     JobSettings,
     ListJobs,
     ListSummaries,
+    ListTranscripts,
     Stats,
     StructuredSummary,
     SummarizeJob,
+    TranscriptUtterance,
 )
 from .utils import (
     _check_summary_length,
@@ -290,13 +293,40 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def list_transcripts(self) -> None:
+    def list_transcripts(self, page_size: Optional[int] = 100) -> ListTranscripts:
         """List all transcripts."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        params = {"page_size": page_size}
 
-    def retrieve_transcript(self) -> None:
+        r = requests.get(
+            "https://wordcab.com/api/v1/transcripts", headers=headers, params=params
+        )
+
+        if r.status_code == 200:
+            data = r.json()
+            return ListTranscripts(
+                page_count=int(data["page_count"]),
+                next_page=data["next"],
+                results=[BaseTranscript(**transcript) for transcript in data["results"]],
+            )
+        else:
+            raise ValueError(r.text)
+
+    def retrieve_transcript(self, transcript_id: str) -> BaseTranscript:
         """Retrieve a transcript."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+
+        r = requests.get(f"https://wordcab.com/api/v1/transcripts/{transcript_id}", headers=headers)
+
+        if r.status_code == 200:
+            data = r.json()
+            utterances = data.pop("transcript")
+            transcript = BaseTranscript(**data)
+            for utterance in utterances:
+                transcript.transcript.append(TranscriptUtterance(**utterance))
+            return transcript
+        else:
+            raise ValueError(r.text)
 
     def change_speaker_labels(self) -> None:
         """Change the speaker labels of a transcript."""
@@ -318,6 +348,8 @@ class Client:
                 next_page=data["next"],
                 results=[BaseSummary(**summary) for summary in data["results"]]
             )
+        else:
+            raise ValueError(r.text)
 
     def retrieve_summary(self, summary_id: str) -> BaseSummary:
         """Retrieve a summary."""

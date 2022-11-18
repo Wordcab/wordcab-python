@@ -20,9 +20,11 @@ from .client import Client
 from .core_objects import (
     BaseSource,
     BaseSummary,
+    BaseTranscript,
     ExtractJob,
     ListJobs,
     ListSummaries,
+    ListTranscripts,
     Stats,
     SummarizeJob,
 )
@@ -200,18 +202,44 @@ def delete_job(job_name: str, api_key: Optional[str] = None) -> Dict[str, str]:
     return request(method="delete_job", job_name=job_name, api_key=api_key)
 
 
-def list_transcripts(page_size: Optional[int] = 100, api_key: Optional[str] = None) -> None:
+def list_transcripts(page_size: Optional[int] = 100, api_key: Optional[str] = None) -> ListTranscripts:
     """
     Retrieve a list of transcripts.
 
-
+    Parameters
+    ----------
+    page_size : int, optional
+        The number of transcripts to retrieve per page. The default is 100.
+    api_key : str, optional
+        The API key to use. The default is None. If None, the API key will be
+        automatically retrieved from the environment variable WORDCAB_API_KEY.
+    
+    Returns
+    -------
+    ListTranscripts
+        The list transcripts object containing the list of transcripts.
     """
     return request(method="list_transcripts", page_size=page_size, api_key=api_key)
 
 
-def retrieve_transcript(api_key: Optional[str] = None, **kwargs) -> None:
-    """Retrieve a transcript."""
-    return request(method="retrieve_transcript", api_key=api_key, **kwargs)
+def retrieve_transcript(transcript_id: str, api_key: Optional[str] = None) -> BaseTranscript:
+    """
+    Retrieve a transcript by id.
+
+    Parameters
+    ----------
+    transcript_id : str
+        The id of the transcript to retrieve.
+    api_key : str, optional
+        The API key to use. The default is None. If None, the API key will be
+        automatically retrieved from the environment variable WORDCAB_API_KEY.
+
+    Returns
+    -------
+    BaseTranscript
+        The transcript object.
+    """
+    return request(method="retrieve_transcript", transcript_id=transcript_id, api_key=api_key)
 
 
 def change_speaker_labels(api_key: Optional[str] = None, **kwargs) -> None:
@@ -226,7 +254,7 @@ def list_summaries(page_size: Optional[int] = 100, api_key: Optional[str] = None
     Parameters
     ----------
     page_size : int, optional
-        The number of transcripts to retrieve per page. The default is 100.
+        The number of summaries to retrieve per page. The default is 100.
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
         automatically retrieved from the environment variable WORDCAB_API_KEY.
@@ -234,7 +262,7 @@ def list_summaries(page_size: Optional[int] = 100, api_key: Optional[str] = None
     Returns
     -------
     ListSummaries
-        The list summaries object containing the list of transcripts.
+        The list summaries object containing the list of summaries.
     """
     return request(method="list_summaries", page_size=page_size, api_key=api_key)
 
