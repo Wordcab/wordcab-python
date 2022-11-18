@@ -35,26 +35,28 @@ from wordcab import (
 )
 from wordcab.core_objects import (
     BaseSummary,
+    BaseTranscript,
     ExtractJob,
     GenericSource,
     JobSettings,
     ListJobs,
     ListSummaries,
+    ListTranscripts,
     Stats,
     StructuredSummary,
     SummarizeJob,
+    TranscriptUtterance,
 )
 
 
 @pytest.fixture
 def api_key():
     """Fixture for the API key."""
-    return "dummy_api_key"
+    return os.environ.get("WORDCAB_API_KEY")
 
 
-def test_get_stats() -> None:
+def test_get_stats(api_key: str) -> None:
     """Test the get_stats function."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     stats = get_stats(
         api_key=api_key, min_created="2021-01-01", max_created="2021-01-31"
     )
@@ -76,7 +78,6 @@ def test_get_stats() -> None:
 
 def test_list_jobs(api_key: str) -> None:
     """Test the list_jobs function."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     jobs = list_jobs(api_key=api_key)
     assert jobs is not None
     assert isinstance(jobs, ListJobs)
@@ -97,7 +98,6 @@ def test_list_jobs(api_key: str) -> None:
 
 def test_list_summaries(api_key: str) -> None:
     """Test the list_summaries function."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     li_summaries = list_summaries(api_key=api_key)
     assert li_summaries is not None
     assert isinstance(li_summaries, ListSummaries)
@@ -115,13 +115,27 @@ def test_list_summaries(api_key: str) -> None:
 
 def test_list_transcripts(api_key: str) -> None:
     """Test the list_transcripts function."""
-    with pytest.raises(NotImplementedError):
-        list_transcripts(api_key=api_key)
+    li_transcripts = list_transcripts(api_key=api_key)
+    assert li_transcripts is not None
+    assert isinstance(li_transcripts, ListTranscripts)
+    assert li_transcripts.page_count is not None
+    assert isinstance(li_transcripts.page_count, int)
+    assert li_transcripts.next_page is not None
+    assert isinstance(li_transcripts.next_page, str)
+    assert li_transcripts.results is not None
+    assert isinstance(li_transcripts.results, list)
+    for transcript in li_transcripts.results:
+        assert isinstance(transcript, BaseTranscript)
+        assert transcript.transcript_id is not None
+        assert isinstance(transcript.transcript_id, str)
+        assert transcript.job_id_set is not None
+        assert isinstance(transcript.job_id_set, list)
+        assert transcript.summary_id_set is not None
+        assert isinstance(transcript.summary_id_set, list)
 
 
 def test_retrieve_job(api_key: str) -> None:
     """Test the retrieve_job function."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     job = retrieve_job(job_name="job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp", api_key=api_key)
     assert job.job_name == "job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp"
     assert job is not None
@@ -150,8 +164,7 @@ def test_retrieve_job(api_key: str) -> None:
 
 def test_retrieve_summary(api_key: str) -> None:
     """Test the retrieve_summary function."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
-    summary = retrieve_summary(summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m")
+    summary = retrieve_summary(summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m", api_key=api_key)
     assert summary is not None
     assert isinstance(summary, BaseSummary)
     assert summary.summary_id is not None
@@ -185,8 +198,35 @@ def test_retrieve_summary(api_key: str) -> None:
 
 def test_retrieve_transcript(api_key: str) -> None:
     """Test the retrieve_transcript function."""
-    with pytest.raises(NotImplementedError):
-        retrieve_transcript(api_key=api_key)
+    transcript = retrieve_transcript(
+        transcript_id="generic_transcript_JU74t3Tjzahn5DodBLwsDrS2EvGdb4bS", api_key=api_key
+    )
+    assert transcript is not None
+    assert isinstance(transcript, BaseTranscript)
+    assert transcript.transcript_id is not None
+    assert isinstance(transcript.transcript_id, str)
+    assert transcript.job_id_set is not None
+    assert isinstance(transcript.job_id_set, list)
+    assert transcript.summary_id_set is not None
+    assert isinstance(transcript.summary_id_set, list)
+    assert transcript.speaker_map is not None
+    assert isinstance(transcript.speaker_map, dict)
+    assert transcript.transcript is not None
+    assert isinstance(transcript.transcript, list)
+    for utterance in transcript.transcript:
+        assert isinstance(utterance, TranscriptUtterance)
+        assert utterance.end is not None
+        assert isinstance(utterance.end, str)
+        assert utterance.start is not None
+        assert isinstance(utterance.start, str)
+        assert utterance.speaker is not None
+        assert isinstance(utterance.speaker, str)
+        assert utterance.text is not None
+        assert isinstance(utterance.text, str)
+        assert utterance.timestamp_end is not None
+        assert isinstance(utterance.timestamp_end, int)
+        assert utterance.timestamp_start is not None
+        assert isinstance(utterance.timestamp_start, int)
 
 
 def test_start_extract(api_key: str) -> None:
@@ -197,7 +237,6 @@ def test_start_extract(api_key: str) -> None:
 
 def test_start_summary(api_key: str) -> None:
     """Test the start_summary function."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     source_object = GenericSource(filepath=Path("tests/sample_1.txt"))
     job = start_summary(
         source_object=source_object,
@@ -219,13 +258,27 @@ def test_start_summary(api_key: str) -> None:
 
 def test_change_speaker_labels(api_key: str) -> None:
     """Test the change_speaker_labels function."""
-    with pytest.raises(NotImplementedError):
-        change_speaker_labels(api_key=api_key)
+    transcript = change_speaker_labels(
+        transcript_id="generic_transcript_JtugR2ELM9u4VSXJmscek7yuKupokH8t",
+        speaker_map={"A": "Tom", "B": "Tam", "C": "Tim", "D": "Tum", "E": "Tym"},
+    )
+    assert transcript is not None
+    assert isinstance(transcript, BaseTranscript)
+    assert transcript.transcript_id is not None
+    assert isinstance(transcript.transcript_id, str)
+    assert transcript.job_id_set is not None
+    assert isinstance(transcript.job_id_set, list)
+    assert transcript.summary_id_set is not None
+    assert isinstance(transcript.summary_id_set, list)
+    assert transcript.speaker_map is not None
+    assert isinstance(transcript.speaker_map, dict)
+    assert transcript.speaker_map == {"A": "Tom", "B": "Tam", "C": "Tim", "D": "Tum", "E": "Tym"}
+    assert transcript.transcript is not None
+    assert isinstance(transcript.transcript, list)
 
 
 def test_delete_job(api_key: str) -> None:
     """Test the delete_job function."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     deleted_job = delete_job(job_name="job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB", api_key=api_key)
     assert deleted_job is not None
     assert isinstance(deleted_job, dict)

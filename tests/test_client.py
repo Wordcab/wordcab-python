@@ -25,21 +25,29 @@ from wordcab.core_objects import (
     AudioSource,
     BaseSource,
     BaseSummary,
+    BaseTranscript,
     ExtractJob,
     GenericSource,
     JobSettings,
     ListJobs,
     ListSummaries,
+    ListTranscripts,
     Stats,
     StructuredSummary,
     SummarizeJob,
+    TranscriptUtterance,
 )
 
 
 @pytest.fixture
 def client() -> Client:
-    """Fixture for a Wordcab Client object."""
+    """Client fixture."""
     return Client(api_key="dummy_api_key")
+
+@pytest.fixture
+def api_key() -> str:
+    """Fixture for a valid API key."""
+    return os.environ.get("WORDCAB_API_KEY")
 
 
 @pytest.fixture
@@ -83,9 +91,8 @@ def test_request(client: Client) -> None:
         client.request(method=None)
 
 
-def test_get_stats() -> None:
+def test_get_stats(api_key: str) -> None:
     """Test client get_stats method."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
         stats = client.get_stats(min_created="2021-01-01", max_created="2021-01-31")
         assert isinstance(stats, Stats)
@@ -115,9 +122,9 @@ def test_start_summary(
     generic_source_txt: GenericSource,
     generic_source_json: GenericSource,
     audio_source: AudioSource,
+    api_key: str,
 ) -> None:
     """Test client start_summary method."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
         with pytest.raises(ValueError):
             client.start_summary(
@@ -218,9 +225,8 @@ def test_start_summary(
         )
 
 
-def test_list_jobs() -> None:
+def test_list_jobs(api_key: str) -> None:
     """Test client list_jobs method."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
         list_jobs = client.list_jobs()
         assert list_jobs is not None
@@ -240,9 +246,8 @@ def test_list_jobs() -> None:
             client.list_jobs(order_by="+time_completed")
 
 
-def test_retrieve_job() -> None:
+def test_retrieve_job(api_key: str) -> None:
     """Test client retrieve_job method."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
         # Summarize job
         job = client.retrieve_job(job_name="job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp")
@@ -271,9 +276,8 @@ def test_retrieve_job() -> None:
         assert job.transcript_id is not None
 
 
-def test_delete_job() -> None:
+def test_delete_job(api_key: str) -> None:
     """Test client delete_job method."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
         deleted_job = client.delete_job(job_name="job_7WcE9BZ86Ce77esnmHiK7E6vaCLa5P7u")
         assert deleted_job is not None
@@ -281,27 +285,84 @@ def test_delete_job() -> None:
         assert deleted_job["job_name"] == "job_7WcE9BZ86Ce77esnmHiK7E6vaCLa5P7u"
 
 
-def test_list_transcripts(client: Client) -> None:
+def test_list_transcripts(api_key: str) -> None:
     """Test client list_transcripts method."""
-    with pytest.raises(NotImplementedError):
-        client.list_transcripts()
+    with Client(api_key=api_key) as client:
+        list_transcripts = client.list_transcripts()
+        assert list_transcripts is not None
+        assert isinstance(list_transcripts, ListTranscripts)
+        assert list_transcripts.page_count is not None
+        assert isinstance(list_transcripts.page_count, int)
+        assert list_transcripts.next_page is not None
+        assert isinstance(list_transcripts.next_page, str)
+        assert list_transcripts.results is not None
+        assert isinstance(list_transcripts.results, list)
+        for transcript in list_transcripts.results:
+            assert isinstance(transcript, BaseTranscript)
+            assert transcript.transcript_id is not None
+            assert isinstance(transcript.transcript_id, str)
+            assert transcript.job_id_set is not None
+            assert isinstance(transcript.job_id_set, list)
+            assert transcript.summary_id_set is not None
+            assert isinstance(transcript.summary_id_set, list)
 
 
-def test_retrieve_transcript(client: Client) -> None:
+def test_retrieve_transcript(api_key: str) -> None:
     """Test client retrieve_transcript method."""
-    with pytest.raises(NotImplementedError):
-        client.retrieve_transcript()
+    with Client(api_key=api_key) as client:
+        transcript = client.retrieve_transcript(transcript_id="generic_transcript_JU74t3Tjzahn5DodBLwsDrS2EvGdb4bS")
+        assert transcript is not None
+        assert isinstance(transcript, BaseTranscript)
+        assert transcript.transcript_id is not None
+        assert isinstance(transcript.transcript_id, str)
+        assert transcript.job_id_set is not None
+        assert isinstance(transcript.job_id_set, list)
+        assert transcript.summary_id_set is not None
+        assert isinstance(transcript.summary_id_set, list)
+        assert transcript.speaker_map is not None
+        assert isinstance(transcript.speaker_map, dict)
+        assert transcript.transcript is not None
+        assert isinstance(transcript.transcript, list)
+        for utterance in transcript.transcript:
+            assert isinstance(utterance, TranscriptUtterance)
+            assert utterance.end is not None
+            assert isinstance(utterance.end, str)
+            assert utterance.start is not None
+            assert isinstance(utterance.start, str)
+            assert utterance.speaker is not None
+            assert isinstance(utterance.speaker, str)
+            assert utterance.text is not None
+            assert isinstance(utterance.text, str)
+            assert utterance.timestamp_end is not None
+            assert isinstance(utterance.timestamp_end, int)
+            assert utterance.timestamp_start is not None
+            assert isinstance(utterance.timestamp_start, int)
 
 
-def test_change_speaker_labels(client: Client) -> None:
+def test_change_speaker_labels(api_key: str) -> None:
     """Test client change_speaker_labels method."""
-    with pytest.raises(NotImplementedError):
-        client.change_speaker_labels()
+    with Client(api_key=api_key) as client:
+        transcript = client.change_speaker_labels(
+            transcript_id="generic_transcript_JtugR2ELM9u4VSXJmscek7yuKupokH8t",
+            speaker_map={"A": "Tom", "B": "Tam", "C": "Tim", "D": "Tum", "E": "Tym"},
+        )
+        assert transcript is not None
+        assert isinstance(transcript, BaseTranscript)
+        assert transcript.transcript_id is not None
+        assert isinstance(transcript.transcript_id, str)
+        assert transcript.job_id_set is not None
+        assert isinstance(transcript.job_id_set, list)
+        assert transcript.summary_id_set is not None
+        assert isinstance(transcript.summary_id_set, list)
+        assert transcript.speaker_map is not None
+        assert isinstance(transcript.speaker_map, dict)
+        assert transcript.speaker_map == {"A": "Tom", "B": "Tam", "C": "Tim", "D": "Tum", "E": "Tym"}
+        assert transcript.transcript is not None
+        assert isinstance(transcript.transcript, list)
 
 
-def test_list_summaries() -> None:
+def test_list_summaries(api_key: str) -> None:
     """Test client list_summaries method."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
         list_summaries = client.list_summaries()
         assert list_summaries is not None
@@ -318,9 +379,8 @@ def test_list_summaries() -> None:
             assert summary.job_status is not None
 
 
-def test_retrieve_summary() -> None:
+def test_retrieve_summary(api_key: str) -> None:
     """Test client retrieve_summary method."""
-    api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
         summary = client.retrieve_summary(summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m")
         assert summary is not None

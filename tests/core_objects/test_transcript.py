@@ -19,7 +19,7 @@ from typing import Dict, List, Union
 
 import pytest
 
-from wordcab.core_objects import BaseTranscript, TranscriptUtterance
+from wordcab.core_objects import BaseTranscript, ListTranscripts, TranscriptUtterance
 
 
 logger = logging.getLogger(__name__)
@@ -31,15 +31,17 @@ def dummy_transcript_utterance() -> TranscriptUtterance:
     return TranscriptUtterance(
         text="This is a test.",
         speaker="A",
-        start_index=0,
-        end_index=10,
+        start="00:00:00",
+        end="00:00:10",
+        timestamp_start=0,
+        timestamp_end=10,
     )
 
 
 @pytest.fixture
 def dummy_empty_transcript() -> BaseTranscript:
     """Fixture for a dummy BaseTranscript object."""
-    utterances = [TranscriptUtterance("This is a test", "A", 10, 0) for _ in range(10)]
+    utterances = [TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)]
     return BaseTranscript(
         transcript_id="transcript_456789",
         transcript=utterances,
@@ -49,7 +51,7 @@ def dummy_empty_transcript() -> BaseTranscript:
 @pytest.fixture
 def dummy_full_transcript() -> BaseTranscript:
     """Fixture for a dummy BaseTranscript object."""
-    utterances = [TranscriptUtterance("This is a test", "A", 10, 0) for _ in range(10)]
+    utterances = [TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)]
     return BaseTranscript(
         transcript_id="transcript_456789",
         transcript=utterances,
@@ -59,18 +61,28 @@ def dummy_full_transcript() -> BaseTranscript:
     )
 
 
+@pytest.fixture
+def dummy_list_transcripts() -> ListTranscripts:
+    """Fixture for a dummy ListTranscripts object."""
+    return ListTranscripts(page_count=3, next_page="https://next_page.com", results=[])
+
+
 def test_transcript_utterance(dummy_transcript_utterance: TranscriptUtterance) -> None:
     """Test the TranscriptUtterance object."""
     assert dummy_transcript_utterance.text == "This is a test."
     assert dummy_transcript_utterance.speaker == "A"
-    assert dummy_transcript_utterance.start_index == 0
-    assert dummy_transcript_utterance.end_index == 10
+    assert dummy_transcript_utterance.timestamp_start == 0
+    assert dummy_transcript_utterance.timestamp_end == 10
+    assert dummy_transcript_utterance.start == "00:00:00"
+    assert dummy_transcript_utterance.end == "00:00:10"
     assert isinstance(dummy_transcript_utterance, TranscriptUtterance)
 
 
 @pytest.mark.parametrize(
     "utterance",
-    [[1, "A", 0, 10], ["This is a test", 1, 0, 10], ["This is a test", "A", 10, 0]],
+    [[1, "A", "00:00:00", "00:00:10", 0, 10],
+    ["This is a test", 1, "00:00:00", "00:00:10", 0, 10],
+    ["This is a test", "A", "00:00:00", "00:00:10", 10, 0]],
 )
 def test_wrong_transcript_utterance(utterance: List[Union[str, int]]) -> None:
     """Test the TranscriptUtterance object."""
@@ -87,17 +99,19 @@ def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
     """Test the BaseTranscript object."""
     assert dummy_empty_transcript.transcript_id == "transcript_456789"
     assert dummy_empty_transcript.transcript == [
-        TranscriptUtterance("This is a test", "A", 10, 0) for _ in range(10)
+        TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)
     ]
     assert isinstance(dummy_empty_transcript, BaseTranscript)
-    assert dummy_empty_transcript.job_id_set == set()
-    assert dummy_empty_transcript.summary_id_set == set()
+    assert dummy_empty_transcript.job_id_set == list()
+    assert dummy_empty_transcript.summary_id_set == list()
     assert dummy_empty_transcript.speaker_map == {}
 
     assert dummy_empty_transcript.transcript[0].text == "This is a test"
     assert dummy_empty_transcript.transcript[0].speaker == "A"
-    assert dummy_empty_transcript.transcript[0].start_index == 0
-    assert dummy_empty_transcript.transcript[0].end_index == 10
+    assert dummy_empty_transcript.transcript[0].start == "00:00:00"
+    assert dummy_empty_transcript.transcript[0].end == "00:00:10"
+    assert dummy_empty_transcript.transcript[0].timestamp_start == 0
+    assert dummy_empty_transcript.transcript[0].timestamp_end == 10
 
     assert hasattr(dummy_empty_transcript, "add_job_id") and callable(
         dummy_empty_transcript.add_job_id
@@ -111,11 +125,11 @@ def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
 
     dummy_empty_transcript.add_job_id("job_123456")
     assert dummy_empty_transcript.job_id_set == {"job_123456"}
-    assert isinstance(dummy_empty_transcript.job_id_set, set)
+    assert isinstance(dummy_empty_transcript.job_id_set, list)
 
     dummy_empty_transcript.add_summary_id("summary_123456")
     assert dummy_empty_transcript.summary_id_set == {"summary_123456"}
-    assert isinstance(dummy_empty_transcript.summary_id_set, set)
+    assert isinstance(dummy_empty_transcript.summary_id_set, list)
 
     dummy_empty_transcript.update_speaker_map(
         {"A": "The Speaker", "B": "The Other Speaker"}
@@ -131,7 +145,7 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
     """Test the BaseTranscript object."""
     assert dummy_full_transcript.transcript_id == "transcript_456789"
     assert dummy_full_transcript.transcript == [
-        TranscriptUtterance("This is a test", "A", 10, 0) for _ in range(10)
+        TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)
     ]
     assert isinstance(dummy_full_transcript, BaseTranscript)
     assert dummy_full_transcript.job_id_set == {"job_123456"}
@@ -143,8 +157,10 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
 
     assert dummy_full_transcript.transcript[0].text == "This is a test"
     assert dummy_full_transcript.transcript[0].speaker == "A"
-    assert dummy_full_transcript.transcript[0].start_index == 0
-    assert dummy_full_transcript.transcript[0].end_index == 10
+    assert dummy_full_transcript.transcript[0].start == "00:00:00"
+    assert dummy_full_transcript.transcript[0].end == "00:00:10"
+    assert dummy_full_transcript.transcript[0].timestamp_start == 0
+    assert dummy_full_transcript.transcript[0].timestamp_end == 10
 
     assert hasattr(dummy_full_transcript, "add_job_id") and callable(
         dummy_full_transcript.add_job_id
@@ -192,3 +208,11 @@ def test_speaker_map_creation(
     """Test the BaseTranscript object speaker_map creation."""
     with pytest.raises(TypeError):
         BaseTranscript("transcript_456789", speaker_map=speaker_map)
+
+
+def test_list_transcripts(dummy_list_transcripts: ListTranscripts) -> None:
+    """Test the ListTranscripts object."""
+    assert dummy_list_transcripts is not None
+    assert dummy_list_transcripts.page_count == 3
+    assert dummy_list_transcripts.next_page == "https://next_page.com"
+    assert dummy_list_transcripts.results == []

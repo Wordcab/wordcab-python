@@ -28,7 +28,7 @@ from .source import (
 )
 from .stats import Stats
 from .summary import BaseSummary, ListSummaries, StructuredSummary
-from .transcript import BaseTranscript, TranscriptUtterance
+from .transcript import BaseTranscript, ListTranscripts, TranscriptUtterance
 
 
 __all__ = [
@@ -44,6 +44,7 @@ __all__ = [
     "JobSettings",
     "ListJobs",
     "ListSummaries",
+    "ListTranscripts",
     "RevSource",
     "SignedURLSource",
     "Stats",
