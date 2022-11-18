@@ -224,7 +224,7 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def list_jobs(self, page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started") -> None:
+    def list_jobs(self, page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started") -> ListJobs:
         """List all jobs."""
         if order_by not in LIST_JOBS_ORDER_BY:
             raise ValueError(
@@ -253,9 +253,20 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def retrieve_job(self) -> None:
+    def retrieve_job(self, job_name: str) -> Union[ExtractJob, SummarizeJob]:
         """Retrieve a job."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+
+        r = requests.get(f"https://wordcab.com/api/v1/jobs/{job_name}", headers=headers)
+
+        if r.status_code == 200:
+            data = r.json()
+            if "summary_details" in data:
+                return SummarizeJob(**data)
+            else:
+                return ExtractJob(**data)
+        else:
+            raise ValueError(r.text)
 
     def delete_job(self) -> None:
         """Delete a job."""

@@ -33,7 +33,7 @@ from wordcab import (
     start_extract,
     start_summary,
 )
-from wordcab.core_objects import GenericSource, JobSettings, ListJobs, Stats, SummarizeJob
+from wordcab.core_objects import ExtractJob, GenericSource, JobSettings, ListJobs, Stats, SummarizeJob
 
 
 @pytest.fixture
@@ -99,8 +99,31 @@ def test_list_transcripts(api_key: str) -> None:
 
 def test_retrieve_job(api_key: str) -> None:
     """Test the retrieve_job function."""
-    with pytest.raises(NotImplementedError):
-        retrieve_job(api_key=api_key)
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    job = retrieve_job(job_name="job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp")
+    assert job.job_name == "job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp"
+    assert job is not None
+    assert isinstance(job, SummarizeJob)
+    assert job.job_status is not None
+    assert job.display_name is not None
+    assert job.source is not None
+    assert job.time_started is not None
+    assert job.time_completed is not None
+    assert job.transcript_id is not None
+    assert job.summary_details is not None
+    assert isinstance(job.summary_details, dict)
+
+    # Extract job
+    job = retrieve_job(job_name="job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n")
+    assert job.job_name == "job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n"
+    assert job is not None
+    assert isinstance(job, ExtractJob)
+    assert job.job_status is not None
+    assert job.display_name is not None
+    assert job.source is not None
+    assert job.time_started is not None
+    assert job.time_completed is not None
+    assert job.transcript_id is not None
 
 
 def test_retrieve_summary(api_key: str) -> None:

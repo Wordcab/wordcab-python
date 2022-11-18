@@ -24,6 +24,7 @@ from wordcab import Client
 from wordcab.core_objects import (
     AudioSource,
     BaseSource,
+    ExtractJob,
     GenericSource,
     JobSettings,
     ListJobs,
@@ -238,8 +239,33 @@ def test_list_jobs(client: Client) -> None:
 
 def test_retrieve_job(client: Client) -> None:
     """Test client retrieve_job method."""
-    with pytest.raises(NotImplementedError):
-        client.retrieve_job()
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    with Client(api_key=api_key) as client:
+        # Summarize job
+        job = client.retrieve_job(job_name="job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp")
+        assert job.job_name == "job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp"
+        assert job is not None
+        assert isinstance(job, SummarizeJob)
+        assert job.job_status is not None
+        assert job.display_name is not None
+        assert job.source is not None
+        assert job.time_started is not None
+        assert job.time_completed is not None
+        assert job.transcript_id is not None
+        assert job.summary_details is not None
+        assert isinstance(job.summary_details, dict)
+
+        # Extract job
+        job = client.retrieve_job(job_name="job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n")
+        assert job.job_name == "job_6R9gfLmgkDUjhTLhj2Xq6oW7FEPs736n"
+        assert job is not None
+        assert isinstance(job, ExtractJob)
+        assert job.job_status is not None
+        assert job.display_name is not None
+        assert job.source is not None
+        assert job.time_started is not None
+        assert job.time_completed is not None
+        assert job.transcript_id is not None
 
 
 def test_delete_job(client: Client) -> None:

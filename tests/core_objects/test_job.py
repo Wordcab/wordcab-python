@@ -105,8 +105,10 @@ def test_dummy_job(dummy_job: BaseJob) -> None:
     assert dummy_job.display_name == "Dummy Job"
     assert dummy_job.job_name == "dummy_job"
     assert dummy_job.job_status == "Pending"
+    assert dummy_job.metadata is None
     assert dummy_job.settings is not None
     assert dummy_job.source == "generic"
+    assert dummy_job.tags is None
     assert dummy_job.time_started == "dummy_time"
     assert dummy_job.time_completed is None
     assert dummy_job.transcript_id == "dummy_transcript"

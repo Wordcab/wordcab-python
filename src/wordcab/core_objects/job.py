@@ -45,11 +45,13 @@ class BaseJob:
     display_name: str
     job_name: str
     source: str
+    job_status: Optional[str] = field(default="Pending")
+    metadata: Optional[Dict[str, str]] = field(default=None)
     settings: Optional[JobSettings] = field(default=None)
+    tags: Optional[List[str]] = field(default=None)
     time_started: Optional[str] = field(default=None)
     time_completed: Optional[str] = field(default=None)
     transcript_id: Optional[str] = field(default=None)
-    job_status: Optional[str] = field(default="Pending")
 
     def __post_init__(self) -> None:
         """Post-init method."""

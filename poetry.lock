@@ -199,7 +199,7 @@ pipenv = ["pipenv"]
 
 [[package]]
 name = "exceptiongroup"
-version = "1.0.2"
+version = "1.0.4"
 description = "Backport of PEP 654 (exception groups)"
 category = "dev"
 optional = false
@@ -275,16 +275,19 @@ pydocstyle = ">=2.1"
 
 [[package]]
 name = "flake8-rst-docstrings"
-version = "0.2.7"
-description = "Python docstring reStructuredText (RST) validator"
+version = "0.3.0"
+description = "Python docstring reStructuredText (RST) validator for flake8"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
-flake8 = ">=3.0.0"
+flake8 = ">=3"
 pygments = "*"
 restructuredtext-lint = "*"
+
+[package.extras]
+develop = ["build", "twine"]
 
 [[package]]
 name = "furo"
@@ -1290,8 +1293,8 @@ dparse = [
     {file = "dparse-0.6.2.tar.gz", hash = "sha256:d45255bda21f998bc7ddf2afd5e62505ba6134756ba2d42a84c56b0826614dfe"},
 ]
 exceptiongroup = [
-    {file = "exceptiongroup-1.0.2-py3-none-any.whl", hash = "sha256:c22f11ec6a10d2b453871c5c5fe887436c4d1961324ce9090f2ca6ddc4180c27"},
-    {file = "exceptiongroup-1.0.2.tar.gz", hash = "sha256:a31cd183c3dea02e617aab5153588d5f7258a77b51f0ef41b3815ae8a0d0f695"},
+    {file = "exceptiongroup-1.0.4-py3-none-any.whl", hash = "sha256:542adf9dea4055530d6e1279602fa5cb11dab2395fa650b8674eaec35fc4a828"},
+    {file = "exceptiongroup-1.0.4.tar.gz", hash = "sha256:bd14967b79cd9bdb54d97323216f8fdf533e278df937aa2a90089e7d6e06e5ec"},
 ]
 filelock = [
     {file = "filelock-3.8.0-py3-none-any.whl", hash = "sha256:617eb4e5eedc82fc5f47b6d61e4d11cb837c56cb4544e39081099fa17ad109d4"},
@@ -1314,8 +1317,8 @@ flake8-docstrings = [
     {file = "flake8_docstrings-1.6.0-py2.py3-none-any.whl", hash = "sha256:99cac583d6c7e32dd28bbfbef120a7c0d1b6dde4adb5a9fd441c4227a6534bde"},
 ]
 flake8-rst-docstrings = [
-    {file = "flake8-rst-docstrings-0.2.7.tar.gz", hash = "sha256:2740067ab9237559dd45a3434d8c987792c7b259ca563621a3b95efe201f5382"},
-    {file = "flake8_rst_docstrings-0.2.7-py3-none-any.whl", hash = "sha256:5d56075dce360bcc9c6775bfe7cb431aa395de600ca7e8d40580a28d50b2a803"},
+    {file = "flake8-rst-docstrings-0.3.0.tar.gz", hash = "sha256:d1ce22b4bd37b73cd86b8d980e946ef198cfcc18ed82fedb674ceaa2f8d1afa4"},
+    {file = "flake8_rst_docstrings-0.3.0-py3-none-any.whl", hash = "sha256:f8c3c6892ff402292651c31983a38da082480ad3ba253743de52989bdc84ca1c"},
 ]
 furo = [
     {file = "furo-2022.9.29-py3-none-any.whl", hash = "sha256:559ee17999c0f52728481dcf6b1b0cf8c9743e68c5e3a18cb45a7992747869a9"},
