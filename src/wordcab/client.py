@@ -268,9 +268,17 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def delete_job(self) -> None:
+    def delete_job(self, job_name: str) -> Dict[str, str]:
         """Delete a job."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+
+        r = requests.delete(f"https://wordcab.com/api/v1/jobs/{job_name}", headers=headers)
+
+        if r.status_code == 200:
+            logger.warning(f"Job {job_name} deleted.")
+            return r.json()
+        else:
+            raise ValueError(r.text)
 
     def list_transcripts(self) -> None:
         """List all transcripts."""

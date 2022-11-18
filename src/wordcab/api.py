@@ -14,7 +14,7 @@
 
 """Wordcab API mapping functions."""
 
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from .client import Client
 from .core_objects import BaseSource, ExtractJob, ListJobs, Stats, SummarizeJob
@@ -179,9 +179,24 @@ def retrieve_job(job_name: str, api_key: Optional[str] = None) -> Union[ExtractJ
     return request(method="retrieve_job", job_name=job_name, api_key=api_key)
 
 
-def delete_job(api_key: Optional[str] = None, **kwargs) -> None:
-    """Delete a job."""
-    return request(method="delete_job", api_key=api_key, **kwargs)
+def delete_job(job_name: str, api_key: Optional[str] = None) -> Dict[str, str]:
+    """
+    Delete a job by name and all associated data (including the transcript).
+
+    Note that this will delete the transcript from WordCab's servers. If you want to keep the transcript,
+    you should download it before deleting the job.
+
+    Parameters
+    ----------
+    job_name: str
+        The name of the job to delete.
+    
+    Returns
+    -------
+    Dict[str, str]
+        A dictionary containing the name of the deleted job.
+    """
+    return request(method="delete_job", job_name=job_name, api_key=api_key)
 
 
 def list_transcripts(api_key: Optional[str] = None) -> None:

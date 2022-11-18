@@ -215,7 +215,7 @@ def test_start_summary(
         )
 
 
-def test_list_jobs(client: Client) -> None:
+def test_list_jobs() -> None:
     """Test client list_jobs method."""
     api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
@@ -237,7 +237,7 @@ def test_list_jobs(client: Client) -> None:
             client.list_jobs(order_by="+time_completed")
 
 
-def test_retrieve_job(client: Client) -> None:
+def test_retrieve_job() -> None:
     """Test client retrieve_job method."""
     api_key = os.environ.get("WORDCAB_API_KEY")
     with Client(api_key=api_key) as client:
@@ -268,10 +268,14 @@ def test_retrieve_job(client: Client) -> None:
         assert job.transcript_id is not None
 
 
-def test_delete_job(client: Client) -> None:
+def test_delete_job() -> None:
     """Test client delete_job method."""
-    with pytest.raises(NotImplementedError):
-        client.delete_job()
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    with Client(api_key=api_key) as client:
+        deleted_job = client.delete_job(job_name="job_7WcE9BZ86Ce77esnmHiK7E6vaCLa5P7u")
+        assert deleted_job is not None
+        assert isinstance(deleted_job, dict)
+        assert deleted_job["job_name"] == "job_7WcE9BZ86Ce77esnmHiK7E6vaCLa5P7u"
 
 
 def test_list_transcripts(client: Client) -> None:

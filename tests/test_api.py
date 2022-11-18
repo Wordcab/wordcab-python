@@ -174,5 +174,9 @@ def test_change_speaker_labels(api_key: str) -> None:
 
 def test_delete_job(api_key: str) -> None:
     """Test the delete_job function."""
-    with pytest.raises(NotImplementedError):
-        delete_job(api_key=api_key)
+    api_key = os.environ.get("WORDCAB_API_KEY")
+    deleted_job = delete_job(job_name="job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB", api_key=api_key)
+    assert deleted_job is not None
+    assert isinstance(deleted_job, dict)
+    assert deleted_job["job_name"] == "job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB"
+    
