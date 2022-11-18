@@ -27,7 +27,17 @@ from .config import (
     SUMMARY_PIPELINES,
     SUMMARY_TYPES,
 )
-from .core_objects import BaseSource, ExtractJob, JobSettings, ListJobs, Stats, SummarizeJob
+from .core_objects import (
+    BaseSource,
+    BaseSummary,
+    ExtractJob,
+    JobSettings,
+    ListJobs,
+    ListSummaries,
+    Stats,
+    StructuredSummary,
+    SummarizeJob,
+)
 from .utils import (
     _check_summary_length,
     _check_summary_pipelines,
@@ -292,10 +302,37 @@ class Client:
         """Change the speaker labels of a transcript."""
         raise NotImplementedError
 
-    def list_summaries(self) -> None:
+    def list_summaries(self, page_size: Optional[int] = 100) -> ListSummaries:
         """List all summaries."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        params = {"page_size": page_size}
 
-    def retrieve_summary(self) -> None:
+        r = requests.get(
+            "https://wordcab.com/api/v1/summaries", headers=headers, params=params
+        )
+
+        if r.status_code == 200:
+            data = r.json()
+            return ListSummaries(
+                page_count=int(data["page_count"]),
+                next_page=data["next"],
+                results=[BaseSummary(**summary) for summary in data["results"]]
+            )
+
+    def retrieve_summary(self, summary_id: str) -> BaseSummary:
         """Retrieve a summary."""
-        raise NotImplementedError
+        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+
+        r = requests.get(f"https://wordcab.com/api/v1/summaries/{summary_id}", headers=headers)
+
+        if r.status_code == 200:
+            data = r.json()
+            structured_summaries = data.pop("summary")
+            summary = BaseSummary(**data)
+            summaries: Dict[str, Union[Dict[str, str], Dict[str, List[StructuredSummary]]]] = {}
+            for key, value in structured_summaries.items():
+                summaries[key] = [StructuredSummary(**items) for items in value["structured_summary"]]
+            summary.summary = summaries
+            return summary
+        else:
+            raise ValueError(r.text)
