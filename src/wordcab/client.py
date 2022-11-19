@@ -15,7 +15,6 @@
 """Wordcab API Client."""
 
 import logging
-import os
 from typing import Dict, List, Optional, Union
 
 import requests
@@ -42,6 +41,7 @@ from .core_objects import (
     SummarizeJob,
     TranscriptUtterance,
 )
+from .login import get_token
 from .utils import (
     _check_extract_pipelines,
     _check_summary_length,
@@ -60,11 +60,13 @@ class Client:
 
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the client."""
-        self.api_key = api_key if api_key else os.getenv("WORDCAB_API_KEY")
+        self.api_key = api_key if api_key else get_token()
         if not self.api_key:
-            # TODO: Add a better error message with cli login instructions
             raise ValueError(
-                "API Key not found. You must set the WORDCAB_API_KEY environment variable."
+                """
+            API Key not found. You must set the WORDCAB_API_KEY environment variable. Use `wordcab login` to login 
+            to the Wordcab CLI and set the environment variable.
+            """
             )
 
     def __enter__(self) -> "Client":
@@ -85,7 +87,7 @@ class Client:
         if not method:
             raise ValueError("You must specify a method.")
         return getattr(self, method)(**kwargs)
-
+            
     def get_stats(
         self,
         min_created: Optional[str] = None,
