@@ -15,7 +15,6 @@
 """Wordcab API Client."""
 
 import logging
-import os
 from typing import Dict, List, Optional, Union
 
 import requests
@@ -88,7 +87,7 @@ class Client:
         if not method:
             raise ValueError("You must specify a method.")
         return getattr(self, method)(**kwargs)
-
+            
     def get_stats(
         self,
         min_created: Optional[str] = None,

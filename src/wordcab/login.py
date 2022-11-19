@@ -16,6 +16,7 @@
 
 import logging
 import os
+import requests
 from getpass import getpass
 from pathlib import Path
 from typing import Optional
@@ -50,7 +51,7 @@ def cli_login() -> None:
         \ /\ /(  O ) )   / ) D (( (__ /    \ ) _ (
         (_/\_) \__/ (__\_)(____/ \___)\_/\_/(____/
 
-        To login, please use your API token generated from https://wordcab.com/account/api-key/ .
+        To login, please use your API token generated from https://wordcab.com/account/api-key/
         """
     )
     account = input("    Email: ")
@@ -90,15 +91,29 @@ def get_token() -> Optional[str]:
     return token
 
 
+def _check_valid_credentials(account: str, token: str) -> bool:
+    """Check if the credentials are valid."""
+    headers = {"Authorization": f"Bearer {token}"}
+    r = requests.get("https://wordcab.com/api/v1/me", headers=headers)
+    if r.status_code == 200:
+        if r.json()["account_email"] == account:
+            return True
+    return False
+
+
 def _login(account: str, token: str) -> None:
     """Login to Wordcab API."""
-    path_to_token.parent.mkdir(exist_ok=True)
-    with path_to_token.open("w+") as f:
-        f.write(f"{account}:{token}")
-    logger.warning(f"Successfully logged in as {account} . Credentials are stored in {path_to_token} .")
+
+    if _check_valid_credentials(account, token):
+        path_to_token.parent.mkdir(exist_ok=True)
+        with path_to_token.open("w+") as f:
+            f.write(f"{account}:{token}")
+        logger.warning(f"Successfully logged in as {account} . Credentials are stored in {path_to_token}")
+    else:
+        logger.warning(f"Invalid credentials for {account} . Please check your API token.")
 
 
 def _logout(account: str) -> None:
     """Logout from Wordcab API."""
     path_to_token.unlink()
-    logger.warning(f"Successfully logged out as {account} . Credentials are removed from {path_to_token} .")
+    logger.warning(f"Successfully logged out as {account} . Credentials are removed from {path_to_token}")
