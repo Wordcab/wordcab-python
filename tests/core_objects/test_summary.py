@@ -59,7 +59,13 @@ def dummy_full_base_summary() -> BaseSummary:
         job_name="job_name",
         speaker_map={"A": "The Speaker", "B": "The Other Speaker"},
         source="generic",
-        summary={"test": {"structured_summary": [StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)]}},
+        summary={
+            "test": {
+                "structured_summary": [
+                    StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)
+                ]
+            }
+        },
         summary_type="narrative",
         transcript_id="transcript_123456",
         time_started="2021-01-01T00:00:00",
@@ -187,7 +193,11 @@ def test_full_base_summary(dummy_full_base_summary: BaseSummary) -> None:
     }
     assert dummy_full_base_summary.source == "generic"
     assert dummy_full_base_summary.summary == {
-        "test": {"structured_summary": [StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)]}
+        "test": {
+            "structured_summary": [
+                StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)
+            ]
+        }
     }
     assert dummy_full_base_summary.summary_type == "narrative"
     assert dummy_full_base_summary.transcript_id == "transcript_123456"

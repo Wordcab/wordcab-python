@@ -41,7 +41,10 @@ def dummy_transcript_utterance() -> TranscriptUtterance:
 @pytest.fixture
 def dummy_empty_transcript() -> BaseTranscript:
     """Fixture for a dummy BaseTranscript object."""
-    utterances = [TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)]
+    utterances = [
+        TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0)
+        for _ in range(10)
+    ]
     return BaseTranscript(
         transcript_id="transcript_456789",
         transcript=utterances,
@@ -51,7 +54,10 @@ def dummy_empty_transcript() -> BaseTranscript:
 @pytest.fixture
 def dummy_full_transcript() -> BaseTranscript:
     """Fixture for a dummy BaseTranscript object."""
-    utterances = [TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)]
+    utterances = [
+        TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0)
+        for _ in range(10)
+    ]
     return BaseTranscript(
         transcript_id="transcript_456789",
         transcript=utterances,
@@ -80,9 +86,11 @@ def test_transcript_utterance(dummy_transcript_utterance: TranscriptUtterance) -
 
 @pytest.mark.parametrize(
     "utterance",
-    [[1, "A", "00:00:00", "00:00:10", 0, 10],
-    ["This is a test", 1, "00:00:00", "00:00:10", 0, 10],
-    ["This is a test", "A", "00:00:00", "00:00:10", 10, 0]],
+    [
+        [1, "A", "00:00:00", "00:00:10", 0, 10],
+        ["This is a test", 1, "00:00:00", "00:00:10", 0, 10],
+        ["This is a test", "A", "00:00:00", "00:00:10", 10, 0],
+    ],
 )
 def test_wrong_transcript_utterance(utterance: List[Union[str, int]]) -> None:
     """Test the TranscriptUtterance object."""
@@ -99,7 +107,8 @@ def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
     """Test the BaseTranscript object."""
     assert dummy_empty_transcript.transcript_id == "transcript_456789"
     assert dummy_empty_transcript.transcript == [
-        TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)
+        TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0)
+        for _ in range(10)
     ]
     assert isinstance(dummy_empty_transcript, BaseTranscript)
     assert dummy_empty_transcript.job_id_set == list()
@@ -145,7 +154,8 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
     """Test the BaseTranscript object."""
     assert dummy_full_transcript.transcript_id == "transcript_456789"
     assert dummy_full_transcript.transcript == [
-        TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)
+        TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0)
+        for _ in range(10)
     ]
     assert isinstance(dummy_full_transcript, BaseTranscript)
     assert dummy_full_transcript.job_id_set == ["job_123456"]

@@ -64,7 +64,7 @@ class Client:
         if not self.api_key:
             raise ValueError(
                 """
-            API Key not found. You must set the WORDCAB_API_KEY environment variable. Use `wordcab login` to login 
+            API Key not found. You must set the WORDCAB_API_KEY environment variable. Use `wordcab login` to login
             to the Wordcab CLI and set the environment variable.
             """
             )
@@ -84,7 +84,9 @@ class Client:
 
     @no_type_check
     def request(
-        self, method: str, **kwargs: Union[bool, int, str, Dict[str, str], List[int], List[str]]
+        self,
+        method: str,
+        **kwargs: Union[bool, int, str, Dict[str, str], List[int], List[str]],
     ) -> Union[
         BaseSource,
         BaseSummary,
@@ -101,7 +103,7 @@ class Client:
         if not method:
             raise ValueError("You must specify a method.")
         return getattr(self, method)(**kwargs)
-            
+
     def get_stats(
         self,
         min_created: Optional[str] = None,
@@ -136,7 +138,12 @@ class Client:
         display_name: str,
         ephemeral_data: Optional[bool] = False,
         only_api: Optional[bool] = True,
-        pipelines: Union[str, List[str]] = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"],
+        pipelines: Union[str, List[str]] = [
+            "questions_answers",
+            "topic_segments",
+            "emotions",
+            "speaker_talk_ratios",
+        ],
         split_long_utterances: Optional[bool] = False,
         tags: Optional[Union[str, List[str]]] = None,
     ) -> ExtractJob:
@@ -190,7 +197,7 @@ class Client:
         }
         if tags:
             params["tags"] = _format_tags(tags)
-        
+
         if source == "wordcab_transcript" and hasattr(source_object, "transcript_id"):
             params["transcript_id"] = source_object.transcript_id
         if source == "signed_url" and hasattr(source_object, "signed_url"):
@@ -349,17 +356,22 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def list_jobs(self, page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started") -> ListJobs:
+    def list_jobs(
+        self, page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started"
+    ) -> ListJobs:
         """List all jobs."""
         if order_by not in LIST_JOBS_ORDER_BY:
             raise ValueError(
                 f"""
-                Invalid `order_by` parameter. Must be one of {LIST_JOBS_ORDER_BY}. 
+                Invalid `order_by` parameter. Must be one of {LIST_JOBS_ORDER_BY}.
                 You can use - to indicate descending order.
             """
             )
 
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
         params = {"page_size": page_size, "order_by": order_by}
 
         r = requests.get(
@@ -374,13 +386,20 @@ class Client:
                     list_jobs.append(SummarizeJob(**job))
                 else:
                     list_jobs.append(ExtractJob(**job))
-            return ListJobs(page_count=int(data["page_count"]), next_page=data["next"], results=list_jobs)
+            return ListJobs(
+                page_count=int(data["page_count"]),
+                next_page=data["next"],
+                results=list_jobs,
+            )
         else:
             raise ValueError(r.text)
 
     def retrieve_job(self, job_name: str) -> Union[ExtractJob, SummarizeJob]:
         """Retrieve a job."""
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
 
         r = requests.get(f"https://wordcab.com/api/v1/jobs/{job_name}", headers=headers)
 
@@ -396,9 +415,14 @@ class Client:
     @no_type_check
     def delete_job(self, job_name: str) -> Dict[str, str]:
         """Delete a job."""
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
 
-        r = requests.delete(f"https://wordcab.com/api/v1/jobs/{job_name}", headers=headers)
+        r = requests.delete(
+            f"https://wordcab.com/api/v1/jobs/{job_name}", headers=headers
+        )
 
         if r.status_code == 200:
             logger.warning(f"Job {job_name} deleted.")
@@ -408,7 +432,10 @@ class Client:
 
     def list_transcripts(self, page_size: Optional[int] = 100) -> ListTranscripts:
         """List all transcripts."""
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
         params = {"page_size": page_size}
 
         r = requests.get(
@@ -420,16 +447,23 @@ class Client:
             return ListTranscripts(
                 page_count=int(data["page_count"]),
                 next_page=data["next"],
-                results=[BaseTranscript(**transcript) for transcript in data["results"]],
+                results=[
+                    BaseTranscript(**transcript) for transcript in data["results"]
+                ],
             )
         else:
             raise ValueError(r.text)
 
     def retrieve_transcript(self, transcript_id: str) -> BaseTranscript:
         """Retrieve a transcript."""
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
 
-        r = requests.get(f"https://wordcab.com/api/v1/transcripts/{transcript_id}", headers=headers)
+        r = requests.get(
+            f"https://wordcab.com/api/v1/transcripts/{transcript_id}", headers=headers
+        )
 
         if r.status_code == 200:
             data = r.json()
@@ -441,9 +475,14 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def change_speaker_labels(self, transcript_id: str, speaker_map: Dict[str, str]) -> BaseTranscript:
+    def change_speaker_labels(
+        self, transcript_id: str, speaker_map: Dict[str, str]
+    ) -> BaseTranscript:
         """Change the speaker labels of a transcript."""
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
 
         r = requests.patch(
             f"https://wordcab.com/api/v1/transcripts/{transcript_id}",
@@ -459,7 +498,10 @@ class Client:
 
     def list_summaries(self, page_size: Optional[int] = 100) -> ListSummaries:
         """List all summaries."""
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
         params = {"page_size": page_size}
 
         r = requests.get(
@@ -471,16 +513,21 @@ class Client:
             return ListSummaries(
                 page_count=int(data["page_count"]),
                 next_page=data["next"],
-                results=[BaseSummary(**summary) for summary in data["results"]]
+                results=[BaseSummary(**summary) for summary in data["results"]],
             )
         else:
             raise ValueError(r.text)
 
     def retrieve_summary(self, summary_id: str) -> BaseSummary:
         """Retrieve a summary."""
-        headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Accept": "application/json",
+        }
 
-        r = requests.get(f"https://wordcab.com/api/v1/summaries/{summary_id}", headers=headers)
+        r = requests.get(
+            f"https://wordcab.com/api/v1/summaries/{summary_id}", headers=headers
+        )
 
         if r.status_code == 200:
             data = r.json()
@@ -488,7 +535,12 @@ class Client:
             summary = BaseSummary(**data)
             summaries: Dict[str, Dict[str, List[StructuredSummary]]] = {}
             for key, value in structured_summaries.items():
-                summaries[key] = {"structured_summary": [StructuredSummary(**items) for items in value["structured_summary"]]}
+                summaries[key] = {
+                    "structured_summary": [
+                        StructuredSummary(**items)
+                        for items in value["structured_summary"]
+                    ]
+                }
             summary.summary = summaries
             return summary
         else:

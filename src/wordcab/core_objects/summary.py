@@ -85,7 +85,9 @@ class BaseSummary:
     speaker_map: Optional[Dict[str, str]] = field(default=None)
     source: Optional[str] = field(default=None)
     summary_type: Optional[str] = field(default=None)
-    summary: Optional[Dict[str, Dict[str, List[StructuredSummary]]]] = field(default=None)
+    summary: Optional[Dict[str, Dict[str, List[StructuredSummary]]]] = field(
+        default=None
+    )
     transcript_id: Optional[str] = field(default=None)
     time_started: Optional[str] = field(default=None)
     time_completed: Optional[str] = field(default=None)

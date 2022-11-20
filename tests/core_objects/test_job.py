@@ -20,7 +20,13 @@ from typing import Union
 import pytest
 
 from wordcab.config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
-from wordcab.core_objects import BaseJob, ExtractJob, JobSettings, ListJobs, SummarizeJob
+from wordcab.core_objects import (
+    BaseJob,
+    ExtractJob,
+    JobSettings,
+    ListJobs,
+    SummarizeJob,
+)
 
 
 @pytest.fixture
@@ -206,7 +212,7 @@ def test_empty_job_settings(empty_job_settings: JobSettings) -> None:
     """Test for an empty JobSettings object."""
     assert empty_job_settings is not None
     assert empty_job_settings.ephemeral_data is False
-    assert empty_job_settings.pipeline is "default"
+    assert empty_job_settings.pipeline == "default"
     assert empty_job_settings.only_api is True
     assert empty_job_settings.split_long_utterances is False
 

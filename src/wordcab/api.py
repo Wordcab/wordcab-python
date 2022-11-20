@@ -32,7 +32,9 @@ from .core_objects import (
 
 @no_type_check
 def request(
-    method: str, api_key: Optional[str] = None, **kwargs: Union[bool, int, str, Dict[str, str], List[int], List[str]]
+    method: str,
+    api_key: Optional[str] = None,
+    **kwargs: Union[bool, int, str, Dict[str, str], List[int], List[str]]
 ) -> Union[
     BaseSource,
     BaseSummary,
@@ -48,6 +50,7 @@ def request(
     """Make a request to the Wordcab API."""
     with Client(api_key=api_key) as client:
         return client.request(method=method, **kwargs)
+
 
 @no_type_check
 def get_stats(
@@ -94,7 +97,12 @@ def start_extract(
     display_name: str,
     ephemeral_data: Optional[bool] = False,
     only_api: Optional[bool] = True,
-    pipelines: Union[str, List[str]] = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"],
+    pipelines: Union[str, List[str]] = [
+        "questions_answers",
+        "topic_segments",
+        "emotions",
+        "speaker_talk_ratios",
+    ],
     split_long_utterances: bool = False,
     tags: Optional[Union[str, List[str]]] = None,
     api_key: Optional[str] = None,
@@ -139,7 +147,7 @@ def start_extract(
         pipelines=pipelines,
         split_long_utterances=split_long_utterances,
         tags=tags,
-        api_key=api_key
+        api_key=api_key,
     )
 
 
@@ -166,7 +174,7 @@ def start_summary(
     display_name : str
         The display name of the summary. This is useful for retrieving the job later.
     summary_type : str
-        The type of summary to create. You can choose from "conversational", "narrative", "reason_conclusion" or 
+        The type of summary to create. You can choose from "conversational", "narrative", "reason_conclusion" or
         "no_speaker". More information can be found here: https://docs.wordcab.com/docs/summary-types
     ephemeral_data : bool
         Whether to delete the data after the summary is created. The default is False. If False, the data will be
@@ -186,7 +194,7 @@ def start_summary(
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
         automatically retrieved from the environment variable WORDCAB_API_KEY.
-    
+
     Returns
     -------
     SummarizeJob
@@ -203,7 +211,7 @@ def start_summary(
         split_long_utterances=split_long_utterances,
         summary_length=summary_length,
         tags=tags,
-        api_key=api_key
+        api_key=api_key,
     )
 
 
@@ -225,11 +233,15 @@ def list_jobs(
         The list jobs object containing the list of jobs. The jobs can be
         SummarizeJob or ExtractJob objects.
     """
-    return request(method="list_jobs", page_size=page_size, order_by=order_by, api_key=api_key)
+    return request(
+        method="list_jobs", page_size=page_size, order_by=order_by, api_key=api_key
+    )
 
 
 @no_type_check
-def retrieve_job(job_name: str, api_key: Optional[str] = None) -> Union[ExtractJob, SummarizeJob]:
+def retrieve_job(
+    job_name: str, api_key: Optional[str] = None
+) -> Union[ExtractJob, SummarizeJob]:
     """
     Retrieve a job by name.
 
@@ -240,7 +252,7 @@ def retrieve_job(job_name: str, api_key: Optional[str] = None) -> Union[ExtractJ
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
         automatically retrieved from the environment variable WORDCAB_API_KEY.
-    
+
     Returns
     -------
     ExtractJob or SummarizeJob
@@ -261,7 +273,7 @@ def delete_job(job_name: str, api_key: Optional[str] = None) -> Dict[str, str]:
     ----------
     job_name: str
         The name of the job to delete.
-    
+
     Returns
     -------
     Dict[str, str]
@@ -271,7 +283,9 @@ def delete_job(job_name: str, api_key: Optional[str] = None) -> Dict[str, str]:
 
 
 @no_type_check
-def list_transcripts(page_size: int = 100, api_key: Optional[str] = None) -> ListTranscripts:
+def list_transcripts(
+    page_size: int = 100, api_key: Optional[str] = None
+) -> ListTranscripts:
     """
     Retrieve a list of transcripts.
 
@@ -282,7 +296,7 @@ def list_transcripts(page_size: int = 100, api_key: Optional[str] = None) -> Lis
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
         automatically retrieved from the environment variable WORDCAB_API_KEY.
-    
+
     Returns
     -------
     ListTranscripts
@@ -292,7 +306,9 @@ def list_transcripts(page_size: int = 100, api_key: Optional[str] = None) -> Lis
 
 
 @no_type_check
-def retrieve_transcript(transcript_id: str, api_key: Optional[str] = None) -> BaseTranscript:
+def retrieve_transcript(
+    transcript_id: str, api_key: Optional[str] = None
+) -> BaseTranscript:
     """
     Retrieve a transcript by id.
 
@@ -309,14 +325,14 @@ def retrieve_transcript(transcript_id: str, api_key: Optional[str] = None) -> Ba
     BaseTranscript
         The transcript object.
     """
-    return request(method="retrieve_transcript", transcript_id=transcript_id, api_key=api_key)
+    return request(
+        method="retrieve_transcript", transcript_id=transcript_id, api_key=api_key
+    )
 
 
 @no_type_check
 def change_speaker_labels(
-    transcript_id: str,
-    speaker_map: Dict[str, str],
-    api_key: Optional[str] = None
+    transcript_id: str, speaker_map: Dict[str, str], api_key: Optional[str] = None
 ) -> BaseTranscript:
     """
     Change speaker labels in a transcript.
@@ -330,19 +346,24 @@ def change_speaker_labels(
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
         automatically retrieved from the environment variable WORDCAB_API_KEY.
-    
+
     Returns
     -------
     BaseTranscript
         The transcript object with the changed speaker labels.
     """
     return request(
-        method="change_speaker_labels", transcript_id=transcript_id, speaker_map=speaker_map, api_key=api_key
+        method="change_speaker_labels",
+        transcript_id=transcript_id,
+        speaker_map=speaker_map,
+        api_key=api_key,
     )
 
 
 @no_type_check
-def list_summaries(page_size: int = 100, api_key: Optional[str] = None) -> ListSummaries:
+def list_summaries(
+    page_size: int = 100, api_key: Optional[str] = None
+) -> ListSummaries:
     """
     Retrieve a list of summaries.
 
@@ -353,7 +374,7 @@ def list_summaries(page_size: int = 100, api_key: Optional[str] = None) -> ListS
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
         automatically retrieved from the environment variable WORDCAB_API_KEY.
-    
+
     Returns
     -------
     ListSummaries
@@ -374,7 +395,7 @@ def retrieve_summary(summary_id: str, api_key: Optional[str] = None) -> BaseSumm
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
         automatically retrieved from the environment variable WORDCAB_API_KEY.
-    
+
     Returns
     -------
     BaseSummary
