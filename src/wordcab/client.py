@@ -15,9 +15,9 @@
 """Wordcab API Client."""
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, no_type_check
 
-import requests
+import requests  # type: ignore
 
 from .config import (
     EXTRACT_PIPELINES,
@@ -82,7 +82,21 @@ class Client:
         """Exit the client context."""
         pass
 
-    def request(self, method: str, **kwargs) -> None:
+    @no_type_check
+    def request(
+        self, method: str, **kwargs: Union[bool, int, str, Dict[str, str], List[int], List[str]]
+    ) -> Union[
+        BaseSource,
+        BaseSummary,
+        BaseTranscript,
+        ExtractJob,
+        ListJobs,
+        ListSummaries,
+        ListTranscripts,
+        Stats,
+        SummarizeJob,
+        Union[ExtractJob, SummarizeJob],
+    ]:
         """Make a request to the Wordcab API."""
         if not method:
             raise ValueError("You must specify a method.")
@@ -105,7 +119,7 @@ class Client:
         if max_created:
             params["max_created"] = max_created
         if tags:
-            params["tags"] = tags
+            params["tags"] = _format_tags(tags)
 
         r = requests.get(
             "https://wordcab.com/api/v1/me", headers=headers, params=params
@@ -122,7 +136,7 @@ class Client:
         display_name: str,
         ephemeral_data: Optional[bool] = False,
         only_api: Optional[bool] = True,
-        pipelines: Optional[List[str]] = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"],
+        pipelines: Union[str, List[str]] = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"],
         split_long_utterances: Optional[bool] = False,
         tags: Optional[Union[str, List[str]]] = None,
     ) -> ExtractJob:
@@ -165,20 +179,21 @@ class Client:
             headers = source_object.prepare_headers()
         headers["Authorization"] = f"Bearer {self.api_key}"
 
+        pipelines = _format_pipelines(pipelines)
         params: Dict[str, str] = {
             "source": source,
             "display_name": display_name,
-            "ephemeral_data": ephemeral_data,
-            "only_api": only_api,
-            "pipeline": _format_pipelines(pipelines),
-            "split_long_utterances": split_long_utterances,
+            "ephemeral_data": str(ephemeral_data).lower(),
+            "only_api": str(only_api).lower(),
+            "pipeline": pipelines,
+            "split_long_utterances": str(split_long_utterances).lower(),
         }
         if tags:
             params["tags"] = _format_tags(tags)
         
-        if source == "wordcab_transcript":
+        if source == "wordcab_transcript" and hasattr(source_object, "transcript_id"):
             params["transcript_id"] = source_object.transcript_id
-        if source == "signed_url":
+        if source == "signed_url" and hasattr(source_object, "signed_url"):
             params["signed_url"] = source_object.signed_url
 
         if source == "audio":
@@ -219,9 +234,9 @@ class Client:
         summary_type: str,
         ephemeral_data: Optional[bool] = False,
         only_api: Optional[bool] = True,
-        pipelines: Optional[List[str]] = ["transcribe", "summarize"],
+        pipelines: Union[str, List[str]] = ["transcribe", "summarize"],
         split_long_utterances: Optional[bool] = False,
-        summary_length: Optional[Union[int, List[int]]] = 3,
+        summary_length: Union[int, List[int]] = 3,
         tags: Optional[Union[str, List[str]]] = None,
     ) -> SummarizeJob:
         """Start a Summary job."""
@@ -284,22 +299,23 @@ class Client:
             headers = source_object.prepare_headers()
         headers["Authorization"] = f"Bearer {self.api_key}"
 
+        pipelines = _format_pipelines(pipelines)
         params: Dict[str, str] = {
             "source": source,
             "display_name": display_name,
-            "ephemeral_data": ephemeral_data,
-            "only_api": only_api,
-            "pipeline": _format_pipelines(pipelines),
-            "split_long_utterances": split_long_utterances,
+            "ephemeral_data": str(ephemeral_data).lower(),
+            "only_api": str(only_api).lower(),
+            "pipeline": pipelines,
+            "split_long_utterances": str(split_long_utterances).lower(),
             "summary_type": summary_type,
             "summary_lens": _format_lengths(summary_length),
         }
         if tags:
             params["tags"] = _format_tags(tags)
 
-        if source == "wordcab_transcript":
+        if source == "wordcab_transcript" and hasattr(source_object, "transcript_id"):
             params["transcript_id"] = source_object.transcript_id
-        if source == "signed_url":
+        if source == "signed_url" and hasattr(source_object, "signed_url"):
             params["signed_url"] = source_object.signed_url
 
         if source == "audio":
@@ -377,6 +393,7 @@ class Client:
         else:
             raise ValueError(r.text)
 
+    @no_type_check
     def delete_job(self, job_name: str) -> Dict[str, str]:
         """Delete a job."""
         headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
@@ -469,9 +486,9 @@ class Client:
             data = r.json()
             structured_summaries = data.pop("summary")
             summary = BaseSummary(**data)
-            summaries: Dict[str, Union[Dict[str, str], Dict[str, List[StructuredSummary]]]] = {}
+            summaries: Dict[str, Dict[str, List[StructuredSummary]]] = {}
             for key, value in structured_summaries.items():
-                summaries[key] = [StructuredSummary(**items) for items in value["structured_summary"]]
+                summaries[key] = {"structured_summary": [StructuredSummary(**items) for items in value["structured_summary"]]}
             summary.summary = summaries
             return summary
         else:

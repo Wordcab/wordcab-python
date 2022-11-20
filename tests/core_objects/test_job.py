@@ -183,21 +183,21 @@ def test_wrong_job_source(source: Union[str, int]) -> None:
         BaseJob(
             display_name="Dummy Job",
             job_name="dummy_job",
-            source=source,
+            source=source,  # type: ignore
             settings=JobSettings(),
         )
     with pytest.raises(ValueError):
         ExtractJob(
             display_name="Dummy Extract Job",
             job_name="dummy_extract_job",
-            source=source,
+            source=source,  # type: ignore
             settings=JobSettings(),
         )
     with pytest.raises(ValueError):
         SummarizeJob(
             display_name="Dummy Summarize Job",
             job_name="dummy_summarize_job",
-            source=source,
+            source=source,  # type: ignore
             settings=JobSettings(),
         )
 
@@ -206,7 +206,7 @@ def test_empty_job_settings(empty_job_settings: JobSettings) -> None:
     """Test for an empty JobSettings object."""
     assert empty_job_settings is not None
     assert empty_job_settings.ephemeral_data is False
-    assert empty_job_settings.pipeline is None
+    assert empty_job_settings.pipeline is "default"
     assert empty_job_settings.only_api is True
     assert empty_job_settings.split_long_utterances is False
 

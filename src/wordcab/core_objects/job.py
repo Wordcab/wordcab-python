@@ -33,9 +33,14 @@ class JobSettings:
     """Wordcab API Job Settings object."""
 
     ephemeral_data: Optional[bool] = field(default=False)
-    pipeline: Optional[str] = field(default=None)
+    pipeline: str = field(default="default")
     only_api: Optional[bool] = field(default=True)
     split_long_utterances: Optional[bool] = field(default=False)
+
+    def __post_init__(self) -> None:
+        """Post init."""
+        if self.pipeline is "default":
+            raise ValueError("Pipeline must be set to a valid pipeline name")
 
 
 @dataclass

@@ -17,6 +17,7 @@
 import logging
 import os
 from pathlib import Path
+from typing import Optional
 
 import pytest
 
@@ -45,7 +46,7 @@ def client() -> Client:
     return Client(api_key="dummy_api_key")
 
 @pytest.fixture
-def api_key() -> str:
+def api_key() -> Optional[str]:
     """Fixture for a valid API key."""
     return os.environ.get("WORDCAB_API_KEY")
 
@@ -127,7 +128,7 @@ def test_start_extract(
                 source_object=generic_source_txt, display_name="test-extraction", pipelines=["invalid"]
             )
         with pytest.raises(ValueError):
-            client.start_extract(source_object={"invalid": "invalid"}, display_name="test-extraction")
+            client.start_extract(source_object={"invalid": "invalid"}, display_name="test-extraction")  # type: ignore
         with pytest.raises(ValueError):
             base_source.source = "generic"
             client.start_extract(source_object=base_source, display_name="test-extraction")
@@ -142,7 +143,7 @@ def test_start_extract(
         assert txt_job.source == "generic"
         assert txt_job.settings == JobSettings(
             ephemeral_data=False,
-            pipeline=["emotions"],
+            pipeline="emotions",
             split_long_utterances=False,
             only_api=True,
         )
@@ -157,7 +158,7 @@ def test_start_extract(
         assert json_job.source == "generic"
         assert json_job.settings == JobSettings(
             ephemeral_data=False,
-            pipeline=["emotions"],
+            pipeline="emotions",
             split_long_utterances=False,
             only_api=True,
         )
@@ -210,7 +211,7 @@ def test_start_summary(
             )
         with pytest.raises(ValueError):
             client.start_summary(
-                source_object={"invalid": "invalid"},
+                source_object={"invalid": "invalid"},  # type: ignore
                 display_name="test",
                 summary_type="narrative",
                 summary_length=3,
@@ -244,7 +245,7 @@ def test_start_summary(
         assert txt_job.source == "generic"
         assert txt_job.settings == JobSettings(
             ephemeral_data=False,
-            pipeline=["transcribe", "summarize"],
+            pipeline="transcribe,summarize",
             split_long_utterances=False,
             only_api=True,
         )
@@ -262,7 +263,7 @@ def test_start_summary(
         assert json_job.source == "generic"
         assert json_job.settings == JobSettings(
             ephemeral_data=False,
-            pipeline=["transcribe", "summarize"],
+            pipeline="transcribe,summarize",
             split_long_utterances=False,
             only_api=True,
         )
@@ -280,7 +281,7 @@ def test_start_summary(
         assert audio_job.source == "audio"
         assert audio_job.settings == JobSettings(
             ephemeral_data=False,
-            pipeline=["transcribe", "summarize"],
+            pipeline="transcribe,summarize",
             split_long_utterances=False,
             only_api=True,
         )
@@ -458,16 +459,16 @@ def test_retrieve_summary(api_key: str) -> None:
         assert isinstance(summary.summary, dict)
         for key, value in summary.summary.items():
             assert isinstance(key, str)
-            assert isinstance(value[0], StructuredSummary)
-            assert value[0].end is not None
-            assert value[0].start is not None
-            assert value[0].summary is not None
-            assert value[0].summary_html is not None
-            assert value[0].timestamp_end is not None
-            assert value[0].timestamp_start is not None
-            assert value[0].transcript_segment is not None
-            assert isinstance(value[0].transcript_segment, list)
-            for segment in value[0].transcript_segment:
+            assert isinstance(value["structured_summary"], StructuredSummary)
+            assert value["structured_summary"].end is not None
+            assert value["structured_summary"].start is not None
+            assert value["structured_summary"].summary is not None
+            assert value["structured_summary"].summary_html is not None
+            assert value["structured_summary"].timestamp_end is not None
+            assert value["structured_summary"].timestamp_start is not None
+            assert value["structured_summary"].transcript_segment is not None
+            assert isinstance(value["structured_summary"].transcript_segment, list)
+            for segment in value["structured_summary"].transcript_segment:
                 assert isinstance(segment, dict)
                 assert "speaker" in segment
                 assert "text" in segment

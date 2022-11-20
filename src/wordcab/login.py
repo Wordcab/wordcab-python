@@ -16,7 +16,7 @@
 
 import logging
 import os
-import requests
+import requests  # type: ignore
 from getpass import getpass
 from pathlib import Path
 from typing import Optional
