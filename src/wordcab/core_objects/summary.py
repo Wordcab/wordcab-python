@@ -67,11 +67,6 @@ class StructuredSummary:
                 f"timestamp_start must be an integer, not {type(self.timestamp_start)}"
             )
 
-    def _convert_timestamp(self, timestamp: str) -> int:
-        """Convert a timestamp to milliseconds."""
-        hours, minutes, seconds = timestamp.split(":")
-        return int(hours) * 3600000 + int(minutes) * 60000 + int(seconds) * 1000
-
 
 @dataclass
 class BaseSummary:

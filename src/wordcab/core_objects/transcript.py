@@ -76,14 +76,6 @@ class BaseTranscript:
                         f"BaseTranscript.speaker_map values must be strings, not {type(val)}"
                     )
 
-    def add_job_id(self, job_id: str) -> None:
-        """Add a job ID to the transcript."""
-        self.job_id_set.append(job_id)
-
-    def add_summary_id(self, summary_id: str) -> None:
-        """Add a summary ID to the transcript."""
-        self.summary_id_set.append(summary_id)
-
     def update_speaker_map(self, speaker_map: Dict[str, str]) -> None:
         """Update the speaker map for the transcript."""
         self.speaker_map = speaker_map

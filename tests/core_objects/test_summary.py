@@ -89,30 +89,12 @@ def test_empty_structured_summary(
     assert dummy_empty_structured_summary.summary_html == "<p>This is a test.</p>"
     assert dummy_empty_structured_summary.timestamp_end == 409000
     assert dummy_empty_structured_summary.timestamp_start == 0
-    assert dummy_empty_structured_summary.transcript_segment == []
-    assert hasattr(dummy_empty_structured_summary, "_convert_timestamp")
-    assert callable(dummy_empty_structured_summary._convert_timestamp)
+    assert dummy_empty_structured_summary.transcript_segment == None
 
 
 @pytest.mark.parametrize(
     "params",
     [
-        [
-            "00:06:49",
-            "00:00:00",
-            "This is a test.",
-            "<p>This is a test.</p>",
-            409000,
-            409001,
-        ],
-        [
-            "00:06:49",
-            "00:00:00",
-            "This is a test.",
-            "<p>This is a test.</p>",
-            409001,
-            0,
-        ],
         ["00:06:49", "000000", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         ["000649", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         [405, "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
