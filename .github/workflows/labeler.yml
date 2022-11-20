@@ -1,11 +1,12 @@
 name: Labeler
 
+runs-on: self-hosted
+
 on:
-  workflow_dispatch
-  # push:
-  #   branches:
-  #     - main
-  #     - master
+  push:
+    branches:
+      - main
+      - master
 
 jobs:
   labeler:
