@@ -27,7 +27,6 @@ from wordcab import (
     list_jobs,
     list_summaries,
     list_transcripts,
-    request,
     retrieve_job,
     retrieve_summary,
     retrieve_transcript,

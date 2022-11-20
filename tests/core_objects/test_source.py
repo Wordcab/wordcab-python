@@ -83,7 +83,6 @@ def test_base_source(tmp_path: Path) -> None:
 
 def test_generic_source_with_filepath(tmp_path: Path) -> None:
     """Test the GenericSource object."""
-
     path = "tests/sample_1.txt"
     generic_source = GenericSource(filepath=Path(path))
     assert generic_source.filepath == Path(path)

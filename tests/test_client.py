@@ -14,7 +14,6 @@
 
 """Test suite for the Wordcab Client."""
 
-import logging
 import os
 from pathlib import Path
 from typing import Optional

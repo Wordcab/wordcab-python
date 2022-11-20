@@ -132,13 +132,13 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def start_extract(
+    def start_extract(  # noqa: C901
         self,
         source_object: BaseSource,
         display_name: str,
         ephemeral_data: Optional[bool] = False,
         only_api: Optional[bool] = True,
-        pipelines: Union[str, List[str]] = [
+        pipelines: Union[str, List[str]] = [  # noqa: B006
             "questions_answers",
             "topic_segments",
             "emotions",
@@ -234,14 +234,14 @@ class Client:
         else:
             raise ValueError(r.text)
 
-    def start_summary(
+    def start_summary(  # noqa: C901
         self,
         source_object: BaseSource,
         display_name: str,
         summary_type: str,
         ephemeral_data: Optional[bool] = False,
         only_api: Optional[bool] = True,
-        pipelines: Union[str, List[str]] = ["transcribe", "summarize"],
+        pipelines: Union[str, List[str]] = ["transcribe", "summarize"],  # noqa: B006
         split_long_utterances: Optional[bool] = False,
         summary_length: Union[int, List[int]] = 3,
         tags: Optional[Union[str, List[str]]] = None,

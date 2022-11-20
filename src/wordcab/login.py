@@ -106,7 +106,6 @@ def _check_valid_credentials(account: str, token: str) -> bool:
 
 def _login(account: str, token: str) -> None:
     """Login to Wordcab API."""
-
     if _check_valid_credentials(account, token):
         path_to_token.parent.mkdir(exist_ok=True)
         with path_to_token.open("w+") as f:
