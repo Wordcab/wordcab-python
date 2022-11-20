@@ -34,9 +34,7 @@ class StructuredSummary:
     summary_html: str
     timestamp_end: int
     timestamp_start: int
-    transcript_segment: Optional[Dict[str, Union[str, int]]] = field(
-        default_factory=dict
-    )
+    transcript_segment: Optional[List[Dict[str, Union[str, int]]]] = field(default=None)
 
     def __post_init__(self) -> None:  # noqa: C901
         """Post-init."""
@@ -87,9 +85,7 @@ class BaseSummary:
     speaker_map: Optional[Dict[str, str]] = field(default=None)
     source: Optional[str] = field(default=None)
     summary_type: Optional[str] = field(default=None)
-    summary: Optional[
-        Dict[str, Union[Dict[str, str], Dict[str, List[StructuredSummary]]]]
-    ] = field(default=None)
+    summary: Optional[Dict[str, Dict[str, List[StructuredSummary]]]] = field(default=None)
     transcript_id: Optional[str] = field(default=None)
     time_started: Optional[str] = field(default=None)
     time_completed: Optional[str] = field(default=None)

@@ -16,6 +16,7 @@
 
 import os
 from pathlib import Path
+from typing import Optional
 
 import pytest
 
@@ -50,7 +51,7 @@ from wordcab.core_objects import (
 
 
 @pytest.fixture
-def api_key():
+def api_key() -> Optional[str]:
     """Fixture for the API key."""
     return os.environ.get("WORDCAB_API_KEY")
 
@@ -179,16 +180,16 @@ def test_retrieve_summary(api_key: str) -> None:
     assert isinstance(summary.summary, dict)
     for key, value in summary.summary.items():
         assert isinstance(key, str)
-        assert isinstance(value[0], StructuredSummary)
-        assert value[0].end is not None
-        assert value[0].start is not None
-        assert value[0].summary is not None
-        assert value[0].summary_html is not None
-        assert value[0].timestamp_end is not None
-        assert value[0].timestamp_start is not None
-        assert value[0].transcript_segment is not None
-        assert isinstance(value[0].transcript_segment, list)
-        for segment in value[0].transcript_segment:
+        assert isinstance(value["structured_summary"], StructuredSummary)
+        assert value["structured_summary"].end is not None
+        assert value["structured_summary"].start is not None
+        assert value["structured_summary"].summary is not None
+        assert value["structured_summary"].summary_html is not None
+        assert value["structured_summary"].timestamp_end is not None
+        assert value["structured_summary"].timestamp_start is not None
+        assert value["structured_summary"].transcript_segment is not None
+        assert isinstance(value["structured_summary"].transcript_segment, list)
+        for segment in value["structured_summary"].transcript_segment:
             assert isinstance(segment, dict)
             assert "speaker" in segment
             assert "text" in segment
@@ -244,7 +245,7 @@ def test_start_extract(api_key: str) -> None:
     assert job.source == "generic"
     assert job.settings == JobSettings(
         ephemeral_data=False,
-        pipeline=["emotions"],
+        pipeline="emotions",
         split_long_utterances=False,
         only_api=True,
     )
@@ -265,7 +266,7 @@ def test_start_summary(api_key: str) -> None:
     assert job.source == "generic"
     assert job.settings == JobSettings(
         ephemeral_data=False,
-        pipeline=["transcribe", "summarize"],
+        pipeline="transcribe,summarize",
         split_long_utterances=False,
         only_api=True,
     )

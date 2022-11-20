@@ -51,7 +51,7 @@ def test_base_source(tmp_path: Path) -> None:
     with pytest.raises(ValueError):
         BaseSource(url="123456")
     with pytest.raises(TypeError):
-        BaseSource(filepath=123456)
+        BaseSource(filepath=123456)  # type: ignore
     with pytest.raises(FileNotFoundError):
         BaseSource(filepath=Path(f"{tmp_path}/does_not_exist.txt"))
 

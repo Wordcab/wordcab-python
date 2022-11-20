@@ -18,9 +18,9 @@ import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Union
+from typing import Dict, Optional, Union, no_type_check
 
-import validators
+import validators  # type: ignore
 
 from ..config import AVAILABLE_AUDIO_FORMATS, AVAILABLE_GENERIC_FORMATS
 
@@ -78,6 +78,7 @@ class BaseSource:
                 )
             self.source_type = "remote"
 
+    @no_type_check
     def _load_file_from_path(self) -> bytes:
         """Load file from local path."""
         with open(self.filepath, "rb") as f:
@@ -87,11 +88,11 @@ class BaseSource:
         """Load file from URL."""
         raise NotImplementedError("Loading files from URLs is not implemented yet.")
 
-    def prepare_payload(self) -> None:
+    def prepare_payload(self) -> Union[str, Dict[str, bytes]]:
         """Prepare payload."""
         raise NotImplementedError("Payload preparation is not implemented yet.")
     
-    def prepare_headers(self) -> None:
+    def prepare_headers(self) -> Dict[str, str]:
         """Prepare headers."""
         raise NotImplementedError("Headers preparation is not implemented yet.")
 
@@ -117,7 +118,7 @@ class GenericSource(BaseSource):
         if self.source_type == "remote":
             self.file_object = self._load_file_from_url()
 
-    def prepare_payload(self) -> dict:
+    def prepare_payload(self) -> str:
         """Prepare payload for API request."""
         if self._suffix == ".json":
             self.payload = json.dumps({"transcript": json.loads(self.file_object)})
@@ -127,7 +128,7 @@ class GenericSource(BaseSource):
             )
         return self.payload
 
-    def prepare_headers(self) -> dict:
+    def prepare_headers(self) -> Dict[str, str]:
         """Prepare headers for API request."""
         self.headers = {
             "Accept": "application/json",
@@ -157,11 +158,12 @@ class AudioSource(BaseSource):
         if self.source_type == "remote":
             self.file_object = self._load_file_from_url()
 
-    def prepare_payload(self) -> bytes:
+    def prepare_payload(self) -> Dict[str, bytes]:
         """Prepare payload for API request."""
         self.payload = {"audio_file": self.file_object}
         return self.payload
 
+    @no_type_check
     def prepare_headers(self) -> dict:
         """Prepare headers for API request."""
         self.headers = {}
@@ -172,7 +174,7 @@ class AudioSource(BaseSource):
 class WordcabTranscriptSource(BaseSource):
     """Wordcab transcript source object."""
 
-    transcript_id: str = None
+    transcript_id: Optional[str] = field(default=None)
 
     def __post_init__(self) -> None:
         """Post-init method."""
@@ -189,7 +191,7 @@ class WordcabTranscriptSource(BaseSource):
 class SignedURLSource(BaseSource):
     """Signed URL source object."""
 
-    signed_url: str = field(init=False)
+    signed_url: Optional[str] = field(init=False)
 
     def __post_init__(self) -> None:
         """Post-init method."""

@@ -14,7 +14,7 @@
 
 """Wordcab API mapping functions."""
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, no_type_check
 
 from .client import Client
 from .core_objects import (
@@ -30,12 +30,26 @@ from .core_objects import (
 )
 
 
-def request(method: str, api_key: Optional[str] = None, **kwargs) -> None:
+@no_type_check
+def request(
+    method: str, api_key: Optional[str] = None, **kwargs: Union[bool, int, str, Dict[str, str], List[int], List[str]]
+) -> Union[
+    BaseSource,
+    BaseSummary,
+    BaseTranscript,
+    ExtractJob,
+    ListJobs,
+    ListSummaries,
+    ListTranscripts,
+    Stats,
+    SummarizeJob,
+    Union[ExtractJob, SummarizeJob],
+]:
     """Make a request to the Wordcab API."""
     with Client(api_key=api_key) as client:
         return client.request(method=method, **kwargs)
 
-
+@no_type_check
 def get_stats(
     min_created: Optional[str] = None,
     max_created: Optional[str] = None,
@@ -74,13 +88,14 @@ def get_stats(
     )
 
 
+@no_type_check
 def start_extract(
     source_object: BaseSource,
     display_name: str,
     ephemeral_data: Optional[bool] = False,
     only_api: Optional[bool] = True,
-    pipelines: Optional[List[str]] = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"],
-    split_long_utterances: Optional[bool] = False,
+    pipelines: Union[str, List[str]] = ["questions_answers", "topic_segments", "emotions", "speaker_talk_ratios"],
+    split_long_utterances: bool = False,
     tags: Optional[Union[str, List[str]]] = None,
     api_key: Optional[str] = None,
 ) -> ExtractJob:
@@ -102,7 +117,7 @@ def start_extract(
     pipelines : list of str, optional
         A list of pipelines to use for the extraction job. The default is ["questions_answers", "topic_segments",
         "emotions", "speaker_talk_ratios"]. You can use one or more of the available pipelines.
-    split_long_utterances : bool, optional
+    split_long_utterances : bool
         Whether to split long utterances into multiple shorter utterances. The default is False.
     tags : str or list of str, optional
         The tags to add to the job. The default is None. If None, no tags will be added.
@@ -128,15 +143,16 @@ def start_extract(
     )
 
 
+@no_type_check
 def start_summary(
     source_object: BaseSource,
     display_name: str,
     summary_type: str,
-    ephemeral_data: Optional[bool] = False,
-    only_api: Optional[bool] = True,
-    pipelines: Optional[List[str]] = ["transcribe", "summarize"],
-    split_long_utterances: Optional[bool] = False,
-    summary_length: Optional[Union[int, List[int]]] = 3,
+    ephemeral_data: bool = False,
+    only_api: bool = True,
+    pipelines: Union[str, List[str]] = ["transcribe", "summarize"],
+    split_long_utterances: bool = False,
+    summary_length: Union[int, List[int]] = 3,
     tags: Optional[Union[str, List[str]]] = None,
     api_key: Optional[str] = None,
 ) -> SummarizeJob:
@@ -149,18 +165,18 @@ def start_summary(
         The source object to summarize.
     display_name : str
         The display name of the summary. This is useful for retrieving the job later.
-    summary_type : str, optional
+    summary_type : str
         The type of summary to create. You can choose from "conversational", "narrative", "reason_conclusion" or 
         "no_speaker". More information can be found here: https://docs.wordcab.com/docs/summary-types
-    ephemeral_data : bool, optional
+    ephemeral_data : bool
         Whether to delete the data after the summary is created. The default is False. If False, the data will be
         kept on Wordcab's servers. You can delete the data at any time, check the documentation here:
         https://docs.wordcab.com/docs/enabling-ephemeral-data
-    only_api : bool, optional
+    only_api : bool
         Whether to only use the API to create the summary. The default is True.
-    pipelines : list of str, optional
+    pipelines : str or list of str
         The pipelines to use. The default is ["transcribe", "summarize"].
-    split_long_utterances : bool, optional
+    split_long_utterances : bool
         Whether to split long utterances into multiple shorter utterances. The default is False.
     summary_length : int or list of int, optional
         The length of the summary. The default is 3. The length should be between 1 and 5. If a list of ints is
@@ -191,17 +207,19 @@ def start_summary(
     )
 
 
+@no_type_check
 def list_jobs(
-    page_size: Optional[int] = 100, order_by: Optional[str] = "-time_started", api_key: Optional[str] = None
+    page_size: int = 100, order_by: str = "-time_started", api_key: Optional[str] = None
 ) -> ListJobs:
     """
     Retrieve a list of jobs.
 
     Parameters
     ----------
-    page_size : int, optional
+    page_size : int
         The number of jobs to retrieve per page. The default is 100.
-    order_by : str, optionalsummary.summary[key] = value
+    order_by : str
+        The order to retrieve the jobs in. The default is "-time_started".
     -------
     ListJobs
         The list jobs object containing the list of jobs. The jobs can be
@@ -210,6 +228,7 @@ def list_jobs(
     return request(method="list_jobs", page_size=page_size, order_by=order_by, api_key=api_key)
 
 
+@no_type_check
 def retrieve_job(job_name: str, api_key: Optional[str] = None) -> Union[ExtractJob, SummarizeJob]:
     """
     Retrieve a job by name.
@@ -230,6 +249,7 @@ def retrieve_job(job_name: str, api_key: Optional[str] = None) -> Union[ExtractJ
     return request(method="retrieve_job", job_name=job_name, api_key=api_key)
 
 
+@no_type_check
 def delete_job(job_name: str, api_key: Optional[str] = None) -> Dict[str, str]:
     """
     Delete a job by name and all associated data (including the transcript).
@@ -250,13 +270,14 @@ def delete_job(job_name: str, api_key: Optional[str] = None) -> Dict[str, str]:
     return request(method="delete_job", job_name=job_name, api_key=api_key)
 
 
-def list_transcripts(page_size: Optional[int] = 100, api_key: Optional[str] = None) -> ListTranscripts:
+@no_type_check
+def list_transcripts(page_size: int = 100, api_key: Optional[str] = None) -> ListTranscripts:
     """
     Retrieve a list of transcripts.
 
     Parameters
     ----------
-    page_size : int, optional
+    page_size : int
         The number of transcripts to retrieve per page. The default is 100.
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
@@ -270,6 +291,7 @@ def list_transcripts(page_size: Optional[int] = 100, api_key: Optional[str] = No
     return request(method="list_transcripts", page_size=page_size, api_key=api_key)
 
 
+@no_type_check
 def retrieve_transcript(transcript_id: str, api_key: Optional[str] = None) -> BaseTranscript:
     """
     Retrieve a transcript by id.
@@ -290,6 +312,7 @@ def retrieve_transcript(transcript_id: str, api_key: Optional[str] = None) -> Ba
     return request(method="retrieve_transcript", transcript_id=transcript_id, api_key=api_key)
 
 
+@no_type_check
 def change_speaker_labels(
     transcript_id: str,
     speaker_map: Dict[str, str],
@@ -318,13 +341,14 @@ def change_speaker_labels(
     )
 
 
-def list_summaries(page_size: Optional[int] = 100, api_key: Optional[str] = None) -> ListSummaries:
+@no_type_check
+def list_summaries(page_size: int = 100, api_key: Optional[str] = None) -> ListSummaries:
     """
     Retrieve a list of summaries.
 
     Parameters
     ----------
-    page_size : int, optional
+    page_size : int
         The number of summaries to retrieve per page. The default is 100.
     api_key : str, optional
         The API key to use. The default is None. If None, the API key will be
@@ -338,6 +362,7 @@ def list_summaries(page_size: Optional[int] = 100, api_key: Optional[str] = None
     return request(method="list_summaries", page_size=page_size, api_key=api_key)
 
 
+@no_type_check
 def retrieve_summary(summary_id: str, api_key: Optional[str] = None) -> BaseSummary:
     """
     Retrieve a summary by id.

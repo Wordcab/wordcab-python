@@ -59,7 +59,7 @@ def dummy_full_base_summary() -> BaseSummary:
         job_name="job_name",
         speaker_map={"A": "The Speaker", "B": "The Other Speaker"},
         source="generic",
-        summary={"test": {"test": "test"}},
+        summary={"test": {"structured_summary": [StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)]}},
         summary_type="narrative",
         transcript_id="transcript_123456",
         time_started="2021-01-01T00:00:00",
@@ -83,7 +83,7 @@ def test_empty_structured_summary(
     assert dummy_empty_structured_summary.summary_html == "<p>This is a test.</p>"
     assert dummy_empty_structured_summary.timestamp_end == 409000
     assert dummy_empty_structured_summary.timestamp_start == 0
-    assert dummy_empty_structured_summary.transcript_segment == {}
+    assert dummy_empty_structured_summary.transcript_segment == []
     assert hasattr(dummy_empty_structured_summary, "_convert_timestamp")
     assert callable(dummy_empty_structured_summary._convert_timestamp)
 
@@ -149,12 +149,12 @@ def test_typerror_structured_summary(params: List[Union[str, int, float]]) -> No
     """Test the wrong StructuredSummary object."""
     with pytest.raises((TypeError, ValueError)):
         StructuredSummary(
-            end=params[0],
-            start=params[1],
-            summary=params[2],
-            summary_html=params[3],
-            timestamp_end=params[4],
-            timestamp_start=params[5],
+            end=params[0],  # type: ignore
+            start=params[1],  # type: ignore
+            summary=params[2],  # type: ignore
+            summary_html=params[3],  # type: ignore
+            timestamp_end=params[4],  # type: ignore
+            timestamp_start=params[5],  # type: ignore
         )
 
 
@@ -186,7 +186,9 @@ def test_full_base_summary(dummy_full_base_summary: BaseSummary) -> None:
         "B": "The Other Speaker",
     }
     assert dummy_full_base_summary.source == "generic"
-    assert dummy_full_base_summary.summary == {"test": {"test": "test"}}
+    assert dummy_full_base_summary.summary == {
+        "test": {"structured_summary": [StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)]}
+    }
     assert dummy_full_base_summary.summary_type == "narrative"
     assert dummy_full_base_summary.transcript_id == "transcript_123456"
     assert dummy_full_base_summary.time_started == "2021-01-01T00:00:00"

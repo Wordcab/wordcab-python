@@ -55,8 +55,8 @@ def dummy_full_transcript() -> BaseTranscript:
     return BaseTranscript(
         transcript_id="transcript_456789",
         transcript=utterances,
-        job_id_set={"job_123456"},
-        summary_id_set={"summary_123456"},
+        job_id_set=["job_123456"],
+        summary_id_set=["summary_123456"],
         speaker_map={"A": "The Speaker", "B": "The Other Speaker"},
     )
 
@@ -88,8 +88,8 @@ def test_wrong_transcript_utterance(utterance: List[Union[str, int]]) -> None:
     """Test the TranscriptUtterance object."""
     with pytest.raises((TypeError, ValueError)):
         TranscriptUtterance(
-            text=utterance[0],
-            speaker=utterance[1],
+            text=utterance[0],  # type: ignore
+            speaker=utterance[1],  # type: ignore
             start_index=utterance[2],
             end_index=utterance[3],
         )
@@ -124,11 +124,11 @@ def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
     )
 
     dummy_empty_transcript.add_job_id("job_123456")
-    assert dummy_empty_transcript.job_id_set == {"job_123456"}
+    assert dummy_empty_transcript.job_id_set == ["job_123456"]
     assert isinstance(dummy_empty_transcript.job_id_set, list)
 
     dummy_empty_transcript.add_summary_id("summary_123456")
-    assert dummy_empty_transcript.summary_id_set == {"summary_123456"}
+    assert dummy_empty_transcript.summary_id_set == ["summary_123456"]
     assert isinstance(dummy_empty_transcript.summary_id_set, list)
 
     dummy_empty_transcript.update_speaker_map(
@@ -148,8 +148,8 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
         TranscriptUtterance("This is a test", "A", "00:00:00", "00:00:10", 10, 0) for _ in range(10)
     ]
     assert isinstance(dummy_full_transcript, BaseTranscript)
-    assert dummy_full_transcript.job_id_set == {"job_123456"}
-    assert dummy_full_transcript.summary_id_set == {"summary_123456"}
+    assert dummy_full_transcript.job_id_set == ["job_123456"]
+    assert dummy_full_transcript.summary_id_set == ["summary_123456"]
     assert dummy_full_transcript.speaker_map == {
         "A": "The Speaker",
         "B": "The Other Speaker",
@@ -173,14 +173,14 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
     )
 
     dummy_full_transcript.add_job_id("job_123456")
-    assert dummy_full_transcript.job_id_set == {"job_123456"}
+    assert dummy_full_transcript.job_id_set == ["job_123456"]
     dummy_full_transcript.add_job_id("job_987654")
-    assert dummy_full_transcript.job_id_set == {"job_123456", "job_987654"}
+    assert dummy_full_transcript.job_id_set == ["job_123456", "job_987654"]
 
     dummy_full_transcript.add_summary_id("summary_123456")
-    assert dummy_full_transcript.summary_id_set == {"summary_123456"}
+    assert dummy_full_transcript.summary_id_set == ["summary_123456"]
     dummy_full_transcript.add_summary_id("summary_987654")
-    assert dummy_full_transcript.summary_id_set == {"summary_123456", "summary_987654"}
+    assert dummy_full_transcript.summary_id_set == ["summary_123456", "summary_987654"]
 
     dummy_full_transcript.update_speaker_map({})
     assert dummy_full_transcript.speaker_map == {}
@@ -207,7 +207,7 @@ def test_speaker_map_creation(
 ) -> None:
     """Test the BaseTranscript object speaker_map creation."""
     with pytest.raises(TypeError):
-        BaseTranscript("transcript_456789", speaker_map=speaker_map)
+        BaseTranscript("transcript_456789", speaker_map=speaker_map)  # type: ignore
 
 
 def test_list_transcripts(dummy_list_transcripts: ListTranscripts) -> None:

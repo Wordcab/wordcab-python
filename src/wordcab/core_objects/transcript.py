@@ -28,8 +28,8 @@ class TranscriptUtterance:
 
     text: str
     speaker: str
-    end: int
-    start: int
+    end: str
+    start: str
     timestamp_end: int
     timestamp_start: int
 
@@ -58,8 +58,8 @@ class BaseTranscript:
     """Transcript object."""
 
     transcript_id: str
-    job_id_set: set[str] = field(default_factory=list)
-    summary_id_set: set[str] = field(default_factory=list)
+    job_id_set: List[str] = field(default_factory=list)
+    summary_id_set: List[str] = field(default_factory=list)
     transcript: List[TranscriptUtterance] = field(default_factory=list)
     speaker_map: Dict[str, str] = field(default_factory=dict)
 
