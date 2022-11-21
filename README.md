@@ -29,8 +29,8 @@
 
 **Wordcab** is a summarization service that provides a simple API to summarize any `audio`, `text`, or `JSON` file.
 
-It includes also compatibility with popular transcripts platforms like [AssemblyAI](https://www.assemblyai.com/),
-[Deepgram](https://deepgram.com/), [Rev.ai](https://www.rev.ai/), [Otter.ai](https://otter.ai/) or
+It also includes compatibility with famous transcripts platforms like [AssemblyAI](https://www.assemblyai.com/),
+[Deepgram](https://deepgram.com/), [Rev.ai](https://www.rev.ai/), [Otter.ai](https://otter.ai/), or
 [Sonix.ai](https://sonix.ai/).
 
 ### Getting started
