@@ -15,7 +15,7 @@
 """Test suite for the transcript dataclasses."""
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Union, no_type_check
 
 import pytest
 
@@ -84,6 +84,7 @@ def test_transcript_utterance(dummy_transcript_utterance: TranscriptUtterance) -
     assert isinstance(dummy_transcript_utterance, TranscriptUtterance)
 
 
+@no_type_check
 @pytest.mark.parametrize(
     "utterance",
     [
@@ -96,11 +97,11 @@ def test_wrong_transcript_utterance(utterance: List[Union[str, int]]) -> None:
     """Test the TranscriptUtterance object."""
     with pytest.raises((TypeError, ValueError)):
         TranscriptUtterance(
-            text=utterance[0],  # type: ignore
-            speaker=utterance[1],  # type: ignore
+            text=utterance[0],
+            speaker=utterance[1],
             start=utterance[2],
             end=utterance[3],
-            timestamp_start=utterance[4],
+            timestamp_start=utterance[4],  
             timestamp_end=utterance[5],
         )
 

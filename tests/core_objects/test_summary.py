@@ -89,7 +89,7 @@ def test_empty_structured_summary(
     assert dummy_empty_structured_summary.summary_html == "<p>This is a test.</p>"
     assert dummy_empty_structured_summary.timestamp_end == 409000
     assert dummy_empty_structured_summary.timestamp_start == 0
-    assert dummy_empty_structured_summary.transcript_segment == None
+    assert dummy_empty_structured_summary.transcript_segment is None
 
 
 @pytest.mark.parametrize(
