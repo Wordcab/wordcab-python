@@ -56,7 +56,37 @@ logger = logging.getLogger(__name__)
 
 
 class Client:
-    """Wordcab API Client."""
+    """
+    Wordcab API Client.
+
+    Parameters
+    ----------
+    api_key : str, optional
+        The API key to use for authentication. If not provided, the
+        WORDCAB_API_KEY environment variable will be used.
+
+    Examples
+    --------
+
+    >>> from wordcab import Client
+    ...
+    >>> client = Client()
+    >>> stats = client.get_stats()  # doctest: +SKIP
+    >>> stats  # doctest: +SKIP
+    Stats(...)
+
+    >>> # Run with a context manager
+    >>> with Client() as client:
+    >>>     stats = client.get_stats()  # doctest: +SKIP
+    >>>     print(stats)  # doctest: +SKIP
+    Stats(...)
+
+    >>> # Run with a context manager and a custom API key
+    >>> with Client(api_key="my_api_key") as client:
+    >>>     stats = client.get_stats()  # doctest: +SKIP
+    >>>     print(stats)  # doctest: +SKIP
+    Stats(...)
+    """
 
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the client."""

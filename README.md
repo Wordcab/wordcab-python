@@ -1,4 +1,4 @@
-# Wordcab Python SDK
+# Wordcab Python
 
 [![PyPI](https://img.shields.io/pypi/v/wordcab-python.svg)][pypi_]
 [![Status](https://img.shields.io/pypi/status/wordcab-python.svg)][status]
@@ -21,29 +21,54 @@
 [pre-commit]: https://github.com/pre-commit/pre-commit
 [black]: https://github.com/psf/black
 
-## Features
+## Wordcab
 
-- TODO
+### What is Wordcab?
+
+**Summarize any business communications at scale with Wordcab's API.** 
+
+**Wordcab** is a summarization service that provides a simple API to summarize any `audio`, `text`, or `JSON` file.  
+
+It includes also compatibility with popular transcripts platforms like [AssemblyAI](https://www.assemblyai.com/), 
+[Deepgram](https://deepgram.com/), [Rev.ai](https://www.rev.ai/), [Otter.ai](https://otter.ai/) or 
+[Sonix.ai](https://sonix.ai/).
+
+### Getting started
+
+You can learn more about Wordcab services and pricing on [our website](https://wordcab.com/).
+
+If you want to try out the API, you can [signup](https://wordcab.com/signup/) for a free account and start using the API
+right away.
 
 ## Requirements
 
-- TODO
+- Os: Linux, Mac, Windows
+- Python 3.8+
 
 ## Installation
 
-You can install _Wordcab Python SDK_ via [pip] from [PyPI]:
+You can install _Wordcab Python_ via [pip] from [PyPI]:
 
 ```console
 $ pip install wordcab
 ```
 
+Start using the API with any python script right away:
+
+```python
+from wordcab import get_stats
+
+stats = get_stats()
+print(stats)
+```
+
 ## Usage
 
-Please see the [Command-line Reference] for details.
+Please see the [Documentation](https://wordcab-python.readthedocs.io/) for details.
 
 ## Contributing
 
-Contributions are very welcome.
+Contributions are very welcome. 🚀
 To learn more, see the [Contributor Guide].
 
 ## License

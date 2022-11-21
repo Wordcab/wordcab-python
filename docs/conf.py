@@ -1,5 +1,5 @@
 """Sphinx configuration."""
-project = "Wordcab Python SDK"
+project = "Wordcab Python"
 author = "Wordcab"
 copyright = "2022, The Wordcab Team"
 extensions = [
