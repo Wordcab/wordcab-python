@@ -16,10 +16,13 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Union
 
-from ..config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
-from .source import BaseSource
+from ..config import (
+    EXTRACT_AVAILABLE_STATUS,
+    SOURCE_OBJECT_MAPPING,
+    SUMMARIZE_AVAILABLE_STATUS,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -29,10 +32,15 @@ logger = logging.getLogger(__name__)
 class JobSettings:
     """Wordcab API Job Settings object."""
 
-    ephemeral_data: Optional[bool] = field(init=False, default=False)
-    pipeline: Optional[str] = field(init=False, default=None)
-    only_api: Optional[bool] = field(init=False, default=True)
-    split_long_utterances: Optional[bool] = field(init=False, default=False)
+    ephemeral_data: Optional[bool] = field(default=False)
+    pipeline: str = field(default="default")
+    only_api: Optional[bool] = field(default=True)
+    split_long_utterances: Optional[bool] = field(default=False)
+
+    def __post_init__(self) -> None:
+        """Post init."""
+        if self.pipeline == "default":
+            raise ValueError("Pipeline must be set to a valid pipeline name")
 
 
 @dataclass
@@ -41,15 +49,24 @@ class BaseJob:
 
     display_name: str
     job_name: str
-    settings: JobSettings
-    source: BaseSource
-    time_started: str
-    transcript_id: str
-    job_status: Optional[str] = "Pending"
+    source: str
+    job_status: Optional[str] = field(default="Pending")
+    metadata: Optional[Dict[str, str]] = field(default=None)
+    settings: Optional[JobSettings] = field(default=None)
+    tags: Optional[List[str]] = field(default=None)
+    time_started: Optional[str] = field(default=None)
+    time_completed: Optional[str] = field(default=None)
+    transcript_id: Optional[str] = field(default=None)
 
     def __post_init__(self) -> None:
         """Post-init method."""
         logger.info(f"Job {self.job_name} created.")
+        if self.source not in SOURCE_OBJECT_MAPPING.keys():
+            raise ValueError(
+                f"""
+                Source {self.source} is not a valid source. Valid sources are {SOURCE_OBJECT_MAPPING.keys()}.
+            """
+            )
 
     def job_update(self, parameters: Dict[str, str]) -> None:
         """Update the job attributes."""
@@ -81,8 +98,19 @@ class ExtractJob(BaseJob):
 class SummarizeJob(BaseJob):
     """Wordcab API SummarizeJob object."""
 
+    summary_details: Optional[Dict[str, str]] = field(default=None)
+
     def __post_init__(self) -> None:
         """Post-init."""
         super().__post_init__()
         self._job_type = "SummarizeJob"
         self.available_status = SUMMARIZE_AVAILABLE_STATUS
+
+
+@dataclass
+class ListJobs:
+    """Wordcab API ListJobs object."""
+
+    page_count: int
+    next_page: str
+    results: List[Union[ExtractJob, SummarizeJob]]

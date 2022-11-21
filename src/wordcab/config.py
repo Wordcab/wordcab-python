@@ -26,7 +26,28 @@ EXTRACT_AVAILABLE_STATUS = [
     "Pending",
     "PreparingExtraction",
 ]
-SUMMARY_TYPES = ["conversational", "narrative", "no_speaker", "reason_conclusion"]
+EXTRACT_PIPELINES = [
+    "questions_answers",
+    "topic_segments",
+    "emotions",
+    "speaker_talk_ratios",
+]
+LIST_JOBS_ORDER_BY = [
+    "time_started",
+    "time_completed",
+    "-time_started",
+    "-time_completed",
+]
+SOURCE_OBJECT_MAPPING = {
+    "generic": "GenericSource",
+    "audio": "AudioSource",
+    "wordcab_transcript": "WordcabTranscriptSource",
+    "signed_url": "SignedUrlSource",
+    "assembly_ai": "AssemblyAISource",
+    "deepgram": "DeepgramSource",
+    "rev_ai": "RevSource",
+    "vtt": "VTTSource",
+}
 SUMMARIZE_AVAILABLE_STATUS = [
     "Deleted",
     "Error",
@@ -39,3 +60,7 @@ SUMMARIZE_AVAILABLE_STATUS = [
     "Transcribing",
     "TranscriptComplete",
 ]
+SUMMARY_LENGTHS_RANGE = [1, 5]
+SUMMARY_PIPELINES = ["transcribe", "summarize"]
+SUMMARY_TYPES = ["conversational", "narrative", "no_speaker", "reason_conclusion"]
+WORDCAB_TOKEN_FOLDER = "~/.wordcab/token"  # noqa: S105

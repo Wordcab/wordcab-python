@@ -14,12 +14,13 @@
 
 """Wordcab API Source object."""
 
+import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Union
+from typing import Dict, Optional, Union, no_type_check
 
-import validators
+import validators  # type: ignore
 
 from ..config import AVAILABLE_AUDIO_FORMATS, AVAILABLE_GENERIC_FORMATS
 
@@ -33,12 +34,14 @@ class BaseSource:
 
     filepath: Optional[Union[str, Path]] = field(default=None, repr=False)
     url: Optional[str] = field(default=None, repr=False)
+    source: str = field(init=False)
     source_type: str = field(init=False)
     _stem: str = field(init=False, repr=False)
     _suffix: str = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
         """Post-init method."""
+        self.source = self.__class__.__name__
         if not self.filepath and not self.url:
             raise ValueError(
                 "Please provide either a local or a remote source, respectively `filepath` or `url`."
@@ -75,6 +78,7 @@ class BaseSource:
                 )
             self.source_type = "remote"
 
+    @no_type_check
     def _load_file_from_path(self) -> bytes:
         """Load file from local path."""
         with open(self.filepath, "rb") as f:
@@ -83,6 +87,14 @@ class BaseSource:
     def _load_file_from_url(self) -> bytes:
         """Load file from URL."""
         raise NotImplementedError("Loading files from URLs is not implemented yet.")
+
+    def prepare_payload(self) -> Union[str, Dict[str, bytes]]:
+        """Prepare payload."""
+        raise NotImplementedError("Payload preparation is not implemented yet.")
+
+    def prepare_headers(self) -> Dict[str, str]:
+        """Prepare headers."""
+        raise NotImplementedError("Headers preparation is not implemented yet.")
 
 
 @dataclass
@@ -94,6 +106,7 @@ class GenericSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "generic"
         if self.source_type == "local":
             if self._suffix not in AVAILABLE_GENERIC_FORMATS:
                 raise ValueError(
@@ -105,6 +118,24 @@ class GenericSource(BaseSource):
         if self.source_type == "remote":
             self.file_object = self._load_file_from_url()
 
+    def prepare_payload(self) -> str:
+        """Prepare payload for API request."""
+        if self._suffix == ".json":
+            self.payload = json.dumps({"transcript": json.loads(self.file_object)})
+        elif self._suffix == ".txt":
+            self.payload = json.dumps(
+                {"transcript": self.file_object.decode("utf-8").splitlines()}
+            )
+        return self.payload
+
+    def prepare_headers(self) -> Dict[str, str]:
+        """Prepare headers for API request."""
+        self.headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        }
+        return self.headers
+
 
 @dataclass
 class AudioSource(BaseSource):
@@ -115,6 +146,7 @@ class AudioSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "audio"
         if self.source_type == "local":
             if self._suffix not in AVAILABLE_AUDIO_FORMATS:
                 raise ValueError(
@@ -126,14 +158,32 @@ class AudioSource(BaseSource):
         if self.source_type == "remote":
             self.file_object = self._load_file_from_url()
 
+    def prepare_payload(self) -> Dict[str, bytes]:
+        """Prepare payload for API request."""
+        self.payload = {"audio_file": self.file_object}
+        return self.payload
+
+    @no_type_check
+    def prepare_headers(self) -> dict:
+        """Prepare headers for API request."""
+        self.headers = {}
+        return self.headers
+
 
 @dataclass
 class WordcabTranscriptSource(BaseSource):
     """Wordcab transcript source object."""
 
+    transcript_id: Optional[str] = field(default=None)
+
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        if self.transcript_id is None:
+            raise ValueError(
+                "Please provide a `transcript_id` to initialize a WordcabTranscriptSource object."
+            )
+        self.source = "wordcab_transcript"
         raise NotImplementedError("Wordcab transcript source is not implemented yet.")
 
 
@@ -141,9 +191,13 @@ class WordcabTranscriptSource(BaseSource):
 class SignedURLSource(BaseSource):
     """Signed URL source object."""
 
+    signed_url: Optional[str] = field(init=False)
+
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.signed_url = self.url
+        self.source = "signed_url"
         raise NotImplementedError("Signed URL source is not implemented yet.")
 
 
@@ -154,6 +208,7 @@ class AssemblyAISource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "assembly_ai"
         raise NotImplementedError("AssemblyAI source is not implemented yet.")
 
 
@@ -164,6 +219,7 @@ class DeepgramSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "deepgram"
         raise NotImplementedError("Deepgram source is not implemented yet.")
 
 
@@ -174,6 +230,7 @@ class RevSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "rev_ai"
         raise NotImplementedError("Rev.ai source is not implemented yet.")
 
 
@@ -184,4 +241,5 @@ class VTTSource(BaseSource):
     def __post_init__(self) -> None:
         """Post-init method."""
         super().__post_init__()
+        self.source = "vtt"
         raise NotImplementedError("VTT source is not implemented yet.")
