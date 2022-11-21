@@ -11,7 +11,7 @@ end-before: <!-- github-only -->
 ```{toctree}
 ---
 hidden:
-maxdepth: 1
+maxdepth: 2
 ---
 
 usage
@@ -19,5 +19,5 @@ reference
 contributing
 Code of Conduct <codeofconduct>
 License <license>
-Changelog <https://github.com/ChainYo/wordcab-python/releases>
+Changelog <https://github.com/Wordcab/wordcab-python/releases>
 ```
