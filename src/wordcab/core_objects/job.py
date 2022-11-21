@@ -39,7 +39,7 @@ class JobSettings:
 
     def __post_init__(self) -> None:
         """Post init."""
-        if self.pipeline is "default":
+        if self.pipeline == "default":
             raise ValueError("Pipeline must be set to a valid pipeline name")
 
 

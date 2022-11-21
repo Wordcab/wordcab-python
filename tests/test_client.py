@@ -14,7 +14,6 @@
 
 """Test suite for the Wordcab Client."""
 
-import logging
 import os
 from pathlib import Path
 from typing import Optional
@@ -44,6 +43,7 @@ from wordcab.core_objects import (
 def client() -> Client:
     """Client fixture."""
     return Client(api_key="dummy_api_key")
+
 
 @pytest.fixture
 def api_key() -> Optional[str]:
@@ -117,25 +117,33 @@ def test_start_extract(
     generic_source_txt: GenericSource,
     generic_source_json: GenericSource,
     audio_source: AudioSource,
-    api_key: str
+    api_key: str,
 ) -> None:
     """Test client start_extract method."""
     with Client(api_key=api_key) as client:
         with pytest.raises(ValueError):
-            client.start_extract(source_object=base_source, display_name="test-extraction")
+            client.start_extract(
+                source_object=base_source, display_name="test-extraction"
+            )
         with pytest.raises(ValueError):
             client.start_extract(
-                source_object=generic_source_txt, display_name="test-extraction", pipelines=["invalid"]
+                source_object=generic_source_txt,
+                display_name="test-extraction",
+                pipelines=["invalid"],
             )
         with pytest.raises(ValueError):
             client.start_extract(source_object={"invalid": "invalid"}, display_name="test-extraction")  # type: ignore
         with pytest.raises(ValueError):
             base_source.source = "generic"
-            client.start_extract(source_object=base_source, display_name="test-extraction")
+            client.start_extract(
+                source_object=base_source, display_name="test-extraction"
+            )
 
         # Test generic source with txt file
         txt_job = client.start_extract(
-            source_object=generic_source_txt, display_name="test-extraction-txt", pipelines=["emotions"]
+            source_object=generic_source_txt,
+            display_name="test-extraction-txt",
+            pipelines=["emotions"],
         )
         assert isinstance(txt_job, ExtractJob)
         assert txt_job.display_name == "test-extraction-txt"
@@ -150,7 +158,9 @@ def test_start_extract(
 
         # Test generic source with json file
         json_job = client.start_extract(
-            source_object=generic_source_json, display_name="test-extraction-json", pipelines=["emotions"]
+            source_object=generic_source_json,
+            display_name="test-extraction-json",
+            pipelines=["emotions"],
         )
         assert isinstance(json_job, ExtractJob)
         assert json_job.display_name == "test-extraction-json"
@@ -177,7 +187,7 @@ def test_start_extract(
         #     split_long_utterances=False,
         #     only_api=True,
         # )
-        
+
 
 def test_start_summary(
     base_source: BaseSource,
@@ -372,7 +382,9 @@ def test_list_transcripts(api_key: str) -> None:
 def test_retrieve_transcript(api_key: str) -> None:
     """Test client retrieve_transcript method."""
     with Client(api_key=api_key) as client:
-        transcript = client.retrieve_transcript(transcript_id="generic_transcript_JU74t3Tjzahn5DodBLwsDrS2EvGdb4bS")
+        transcript = client.retrieve_transcript(
+            transcript_id="generic_transcript_JU74t3Tjzahn5DodBLwsDrS2EvGdb4bS"
+        )
         assert transcript is not None
         assert isinstance(transcript, BaseTranscript)
         assert transcript.transcript_id is not None
@@ -418,7 +430,13 @@ def test_change_speaker_labels(api_key: str) -> None:
         assert isinstance(transcript.summary_id_set, list)
         assert transcript.speaker_map is not None
         assert isinstance(transcript.speaker_map, dict)
-        assert transcript.speaker_map == {"A": "Tom", "B": "Tam", "C": "Tim", "D": "Tum", "E": "Tym"}
+        assert transcript.speaker_map == {
+            "A": "Tom",
+            "B": "Tam",
+            "C": "Tim",
+            "D": "Tum",
+            "E": "Tym",
+        }
         assert transcript.transcript is not None
         assert isinstance(transcript.transcript, list)
 
@@ -444,7 +462,9 @@ def test_list_summaries(api_key: str) -> None:
 def test_retrieve_summary(api_key: str) -> None:
     """Test client retrieve_summary method."""
     with Client(api_key=api_key) as client:
-        summary = client.retrieve_summary(summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m")
+        summary = client.retrieve_summary(
+            summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m"
+        )
         assert summary is not None
         assert isinstance(summary, BaseSummary)
         assert summary.summary_id is not None
@@ -459,16 +479,16 @@ def test_retrieve_summary(api_key: str) -> None:
         assert isinstance(summary.summary, dict)
         for key, value in summary.summary.items():
             assert isinstance(key, str)
-            assert isinstance(value["structured_summary"], StructuredSummary)
-            assert value["structured_summary"].end is not None
-            assert value["structured_summary"].start is not None
-            assert value["structured_summary"].summary is not None
-            assert value["structured_summary"].summary_html is not None
-            assert value["structured_summary"].timestamp_end is not None
-            assert value["structured_summary"].timestamp_start is not None
-            assert value["structured_summary"].transcript_segment is not None
-            assert isinstance(value["structured_summary"].transcript_segment, list)
-            for segment in value["structured_summary"].transcript_segment:
+            assert isinstance(value["structured_summary"][0], StructuredSummary)
+            assert value["structured_summary"][0].end is not None
+            assert value["structured_summary"][0].start is not None
+            assert value["structured_summary"][0].summary is not None
+            assert value["structured_summary"][0].summary_html is not None
+            assert value["structured_summary"][0].timestamp_end is not None
+            assert value["structured_summary"][0].timestamp_start is not None
+            assert value["structured_summary"][0].transcript_segment is not None
+            assert isinstance(value["structured_summary"][0].transcript_segment, list)
+            for segment in value["structured_summary"][0].transcript_segment:
                 assert isinstance(segment, dict)
                 assert "speaker" in segment
                 assert "text" in segment

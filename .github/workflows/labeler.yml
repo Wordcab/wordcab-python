@@ -1,15 +1,14 @@
 name: Labeler
 
 on:
-  workflow_dispatch
-  # push:
-  #   branches:
-  #     - main
-  #     - master
+  push:
+    branches:
+      - main
+      - master
 
 jobs:
   labeler:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3

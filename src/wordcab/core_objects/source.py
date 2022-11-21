@@ -91,7 +91,7 @@ class BaseSource:
     def prepare_payload(self) -> Union[str, Dict[str, bytes]]:
         """Prepare payload."""
         raise NotImplementedError("Payload preparation is not implemented yet.")
-    
+
     def prepare_headers(self) -> Dict[str, str]:
         """Prepare headers."""
         raise NotImplementedError("Headers preparation is not implemented yet.")

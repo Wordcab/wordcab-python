@@ -27,17 +27,13 @@ def main() -> None:
 
 @click.command()
 def login() -> None:
-    """
-    Prompt the user for API credentials and store them as git credentials.
-    """
+    """Prompt the user for API credentials and store them as git credentials."""
     cli_login()
 
 
 @click.command()
 def logout() -> None:
-    """
-    Remove stored git credentials.
-    """
+    """Remove stored git credentials."""
     cli_logout()
 
 

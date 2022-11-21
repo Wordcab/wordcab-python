@@ -59,7 +59,13 @@ def dummy_full_base_summary() -> BaseSummary:
         job_name="job_name",
         speaker_map={"A": "The Speaker", "B": "The Other Speaker"},
         source="generic",
-        summary={"test": {"structured_summary": [StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)]}},
+        summary={
+            "test": {
+                "structured_summary": [
+                    StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)
+                ]
+            }
+        },
         summary_type="narrative",
         transcript_id="transcript_123456",
         time_started="2021-01-01T00:00:00",
@@ -83,30 +89,12 @@ def test_empty_structured_summary(
     assert dummy_empty_structured_summary.summary_html == "<p>This is a test.</p>"
     assert dummy_empty_structured_summary.timestamp_end == 409000
     assert dummy_empty_structured_summary.timestamp_start == 0
-    assert dummy_empty_structured_summary.transcript_segment == []
-    assert hasattr(dummy_empty_structured_summary, "_convert_timestamp")
-    assert callable(dummy_empty_structured_summary._convert_timestamp)
+    assert dummy_empty_structured_summary.transcript_segment is None
 
 
 @pytest.mark.parametrize(
     "params",
     [
-        [
-            "00:06:49",
-            "00:00:00",
-            "This is a test.",
-            "<p>This is a test.</p>",
-            409000,
-            409001,
-        ],
-        [
-            "00:06:49",
-            "00:00:00",
-            "This is a test.",
-            "<p>This is a test.</p>",
-            409001,
-            0,
-        ],
         ["00:06:49", "000000", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         ["000649", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
         [405, "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
@@ -187,7 +175,11 @@ def test_full_base_summary(dummy_full_base_summary: BaseSummary) -> None:
     }
     assert dummy_full_base_summary.source == "generic"
     assert dummy_full_base_summary.summary == {
-        "test": {"structured_summary": [StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)]}
+        "test": {
+            "structured_summary": [
+                StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)
+            ]
+        }
     }
     assert dummy_full_base_summary.summary_type == "narrative"
     assert dummy_full_base_summary.transcript_id == "transcript_123456"
