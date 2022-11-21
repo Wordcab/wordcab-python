@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,21 +28,29 @@ class TranscriptUtterance:
 
     text: str
     speaker: str
-    end_index: int
-    start_index: int
+    end: str
+    start: str
+    timestamp_end: int
+    timestamp_start: int
 
     def __post_init__(self) -> None:
-        """Post-init method"""
+        """Post-init method."""
         if not isinstance(self.text, str):
-            raise TypeError(f"TranscriptUtterance.text must be a string, not {type(self.text)}")
-        
-        if not isinstance(self.speaker, str):
-            raise TypeError(f"TranscriptUtterance.speaker must be a string, not {type(self.speaker)}")
+            raise TypeError(
+                f"TranscriptUtterance.text must be a string, not {type(self.text)}"
+            )
 
-        if self.end_index < self.start_index:
-            raise ValueError(f"""
-                TranscriptUtterance.end_index must be greater than or equal to TranscriptUtterance.start_index, 
-                not {self.end_index} < {self.start_index}""")
+        if not isinstance(self.speaker, str):
+            raise TypeError(
+                f"TranscriptUtterance.speaker must be a string, not {type(self.speaker)}"
+            )
+
+        if self.timestamp_end < self.timestamp_start:
+            raise ValueError(
+                f"""
+                TranscriptUtterance.end_index must be greater than or equal to TranscriptUtterance.start_index,
+                not {self.timestamp_end} < {self.timestamp_start}"""
+            )
 
 
 @dataclass
@@ -51,8 +58,8 @@ class BaseTranscript:
     """Transcript object."""
 
     transcript_id: str
-    job_id_set: set = field(default_factory=set)
-    summary_id_set: set = field(default_factory=set)
+    job_id_set: List[str] = field(default_factory=list)
+    summary_id_set: List[str] = field(default_factory=list)
     transcript: List[TranscriptUtterance] = field(default_factory=list)
     speaker_map: Dict[str, str] = field(default_factory=dict)
 
@@ -61,18 +68,23 @@ class BaseTranscript:
         if self.speaker_map:
             for key, val in self.speaker_map.items():
                 if not isinstance(key, str):
-                    raise TypeError(f"BaseTranscript.speaker_map keys must be strings, not {type(key)}")
+                    raise TypeError(
+                        f"BaseTranscript.speaker_map keys must be strings, not {type(key)}"
+                    )
                 if not isinstance(val, str):
-                    raise TypeError(f"BaseTranscript.speaker_map values must be strings, not {type(val)}")
+                    raise TypeError(
+                        f"BaseTranscript.speaker_map values must be strings, not {type(val)}"
+                    )
 
-    def add_job_id(self, job_id: str) -> None:
-        """Add a job ID to the transcript."""
-        self.job_id_set.add(job_id)
-
-    def add_summary_id(self, summary_id: str) -> None:
-        """Add a summary ID to the transcript."""
-        self.summary_id_set.add(summary_id)
-
-    def update_speaker_map(self, speaker_map: dict) -> None:
+    def update_speaker_map(self, speaker_map: Dict[str, str]) -> None:
         """Update the speaker map for the transcript."""
         self.speaker_map = speaker_map
+
+
+@dataclass
+class ListTranscripts:
+    """List transcripts object."""
+
+    page_count: int
+    next_page: str
+    results: List[BaseTranscript]
