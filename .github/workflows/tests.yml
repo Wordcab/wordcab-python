@@ -7,8 +7,8 @@ on:
 jobs:
   tests:
     name: ${{ matrix.session }} ${{ matrix.python }} / ${{ matrix.os }}
-    # runs-on: ${{ matrix.os }}
-    runs-on: self-hosted
+    runs-on: ${{ matrix.os }}
+    # runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
