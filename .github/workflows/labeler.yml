@@ -1,11 +1,9 @@
 name: Labeler
 
 on:
-  workflow_dispatch
-  # push:
-  #   branches:
-  #     - main
-  #     - master
+  push:
+    branches:
+      - main
 
 jobs:
   labeler:

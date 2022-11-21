@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2022 The Wordcab Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +15,30 @@
 """Command-line interface."""
 import click
 
+from .login import cli_login, cli_logout
 
-@click.command()
+
+@click.group()
 @click.version_option()
 def main() -> None:
     """Wordcab Python SDK."""
+    pass
+
+
+@click.command()
+def login() -> None:
+    """Prompt the user for API credentials and store them as git credentials."""
+    cli_login()
+
+
+@click.command()
+def logout() -> None:
+    """Remove stored git credentials."""
+    cli_logout()
+
+
+main.add_command(login)
+main.add_command(logout)
 
 
 if __name__ == "__main__":
