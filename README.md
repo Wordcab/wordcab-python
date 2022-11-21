@@ -1,9 +1,9 @@
 # Wordcab Python
 
-[![PyPI](https://img.shields.io/pypi/v/wordcab-python.svg)][pypi_]
-[![Status](https://img.shields.io/pypi/status/wordcab-python.svg)][status]
-[![Python Version](https://img.shields.io/pypi/pyversions/wordcab-python)][python version]
-[![License](https://img.shields.io/pypi/l/wordcab-python)][license]
+[![PyPI](https://img.shields.io/pypi/v/wordcab.svg)][pypi_]
+[![Status](https://img.shields.io/pypi/status/wordcab.svg)][status]
+[![Python Version](https://img.shields.io/pypi/pyversions/wordcab)][python version]
+[![License](https://img.shields.io/pypi/l/wordcab)][license]
 
 [![Read the documentation at https://wordcab-python.readthedocs.io/](https://img.shields.io/readthedocs/wordcab-python/latest.svg?label=Read%20the%20Docs)][read the docs]
 [![Tests](https://github.com/Wordcab/wordcab-python/workflows/Tests/badge.svg)][tests]
