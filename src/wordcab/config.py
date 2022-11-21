@@ -26,6 +26,18 @@ EXTRACT_AVAILABLE_STATUS = [
     "Pending",
     "PreparingExtraction",
 ]
+EXTRACT_PIPELINES = [
+    "questions_answers",
+    "topic_segments",
+    "emotions",
+    "speaker_talk_ratios",
+]
+LIST_JOBS_ORDER_BY = [
+    "time_started",
+    "time_completed",
+    "-time_started",
+    "-time_completed",
+]
 SOURCE_OBJECT_MAPPING = {
     "generic": "GenericSource",
     "audio": "AudioSource",
@@ -51,3 +63,4 @@ SUMMARIZE_AVAILABLE_STATUS = [
 SUMMARY_LENGTHS_RANGE = [1, 5]
 SUMMARY_PIPELINES = ["transcribe", "summarize"]
 SUMMARY_TYPES = ["conversational", "narrative", "no_speaker", "reason_conclusion"]
+WORDCAB_TOKEN_FOLDER = "~/.wordcab/token"  # noqa: S105

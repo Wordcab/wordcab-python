@@ -16,7 +16,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Union
 
 from ..config import (
     EXTRACT_AVAILABLE_STATUS,
@@ -33,9 +33,14 @@ class JobSettings:
     """Wordcab API Job Settings object."""
 
     ephemeral_data: Optional[bool] = field(default=False)
-    pipeline: Optional[str] = field(default=None)
+    pipeline: str = field(default="default")
     only_api: Optional[bool] = field(default=True)
     split_long_utterances: Optional[bool] = field(default=False)
+
+    def __post_init__(self) -> None:
+        """Post init."""
+        if self.pipeline == "default":
+            raise ValueError("Pipeline must be set to a valid pipeline name")
 
 
 @dataclass
@@ -44,11 +49,14 @@ class BaseJob:
 
     display_name: str
     job_name: str
-    settings: JobSettings
     source: str
-    time_started: Optional[str] = None
-    transcript_id: Optional[str] = None
-    job_status: Optional[str] = "Pending"
+    job_status: Optional[str] = field(default="Pending")
+    metadata: Optional[Dict[str, str]] = field(default=None)
+    settings: Optional[JobSettings] = field(default=None)
+    tags: Optional[List[str]] = field(default=None)
+    time_started: Optional[str] = field(default=None)
+    time_completed: Optional[str] = field(default=None)
+    transcript_id: Optional[str] = field(default=None)
 
     def __post_init__(self) -> None:
         """Post-init method."""
@@ -90,8 +98,19 @@ class ExtractJob(BaseJob):
 class SummarizeJob(BaseJob):
     """Wordcab API SummarizeJob object."""
 
+    summary_details: Optional[Dict[str, str]] = field(default=None)
+
     def __post_init__(self) -> None:
         """Post-init."""
         super().__post_init__()
         self._job_type = "SummarizeJob"
         self.available_status = SUMMARIZE_AVAILABLE_STATUS
+
+
+@dataclass
+class ListJobs:
+    """Wordcab API ListJobs object."""
+
+    page_count: int
+    next_page: str
+    results: List[Union[ExtractJob, SummarizeJob]]
