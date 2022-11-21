@@ -25,12 +25,12 @@
 
 ### What is Wordcab?
 
-**Summarize any business communications at scale with Wordcab's API.** 
+**Summarize any business communications at scale with Wordcab's API.**
 
-**Wordcab** is a summarization service that provides a simple API to summarize any `audio`, `text`, or `JSON` file.  
+**Wordcab** is a summarization service that provides a simple API to summarize any `audio`, `text`, or `JSON` file.
 
-It includes also compatibility with popular transcripts platforms like [AssemblyAI](https://www.assemblyai.com/), 
-[Deepgram](https://deepgram.com/), [Rev.ai](https://www.rev.ai/), [Otter.ai](https://otter.ai/) or 
+It includes also compatibility with popular transcripts platforms like [AssemblyAI](https://www.assemblyai.com/),
+[Deepgram](https://deepgram.com/), [Rev.ai](https://www.rev.ai/), [Otter.ai](https://otter.ai/) or
 [Sonix.ai](https://sonix.ai/).
 
 ### Getting started

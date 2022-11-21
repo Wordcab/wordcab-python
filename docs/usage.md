@@ -21,7 +21,7 @@ $ wordcab login
 >>>        To login, please use your API token generated from https://wordcab.com/account/api-key/
 >>>
 >>>    Email:
->>>    API Token: 
+>>>    API Token:
 ```
 
 Enter your email and API token. You can get your API token from [https://wordcab.com/account/api-key/](https://wordcab.com/account/api-key/).
@@ -78,16 +78,16 @@ You can also use the API with a client object.
 
 Check out the [Reference](reference.md) for a list of available functions.
 
-name | client | simple
---- | --- | ---
-get_stats | ✅ | ✅
-start_summary | ✅ | ✅
-start_extract | ✅ | ✅
-list_jobs | ✅ | ✅
-list_summaries | ✅ | ✅
-list_transcripts | ✅ | ✅
-retrieve_job | ✅ | ✅
-retrieve_summary | ✅ | ✅
-retrieve_transcript | ✅ | ✅
-delete_job | ✅ | ✅
-change_speaker_labels | ✅ | ✅
+| name                  | client | simple |
+| --------------------- | ------ | ------ |
+| get_stats             | ✅     | ✅     |
+| start_summary         | ✅     | ✅     |
+| start_extract         | ✅     | ✅     |
+| list_jobs             | ✅     | ✅     |
+| list_summaries        | ✅     | ✅     |
+| list_transcripts      | ✅     | ✅     |
+| retrieve_job          | ✅     | ✅     |
+| retrieve_summary      | ✅     | ✅     |
+| retrieve_transcript   | ✅     | ✅     |
+| delete_job            | ✅     | ✅     |
+| change_speaker_labels | ✅     | ✅     |
