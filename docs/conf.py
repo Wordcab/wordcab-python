@@ -1,7 +1,7 @@
 """Sphinx configuration."""
-project = "Wordcab Python SDK"
-author = "Thomas Chaigneau"
-copyright = "2022, Thomas Chaigneau"
+project = "Wordcab Python"
+author = "Wordcab"
+copyright = "2022, The Wordcab Team"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
