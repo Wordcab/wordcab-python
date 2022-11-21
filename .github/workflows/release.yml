@@ -1,9 +1,10 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  - workflow_dispath
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   release:
