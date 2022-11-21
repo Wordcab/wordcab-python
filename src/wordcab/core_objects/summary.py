@@ -67,11 +67,6 @@ class StructuredSummary:
                 f"timestamp_start must be an integer, not {type(self.timestamp_start)}"
             )
 
-    def _convert_timestamp(self, timestamp: str) -> int:
-        """Convert a timestamp to milliseconds."""
-        hours, minutes, seconds = timestamp.split(":")
-        return int(hours) * 3600000 + int(minutes) * 60000 + int(seconds) * 1000
-
 
 @dataclass
 class BaseSummary:
@@ -85,7 +80,9 @@ class BaseSummary:
     speaker_map: Optional[Dict[str, str]] = field(default=None)
     source: Optional[str] = field(default=None)
     summary_type: Optional[str] = field(default=None)
-    summary: Optional[Dict[str, Dict[str, List[StructuredSummary]]]] = field(default=None)
+    summary: Optional[Dict[str, Dict[str, List[StructuredSummary]]]] = field(
+        default=None
+    )
     transcript_id: Optional[str] = field(default=None)
     time_started: Optional[str] = field(default=None)
     time_completed: Optional[str] = field(default=None)

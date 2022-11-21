@@ -20,7 +20,13 @@ from typing import Union
 import pytest
 
 from wordcab.config import EXTRACT_AVAILABLE_STATUS, SUMMARIZE_AVAILABLE_STATUS
-from wordcab.core_objects import BaseJob, ExtractJob, JobSettings, ListJobs, SummarizeJob
+from wordcab.core_objects import (
+    BaseJob,
+    ExtractJob,
+    JobSettings,
+    ListJobs,
+    SummarizeJob,
+)
 
 
 @pytest.fixture
@@ -29,7 +35,7 @@ def dummy_job() -> BaseJob:
     return BaseJob(
         display_name="Dummy Job",
         job_name="dummy_job",
-        settings=JobSettings(),
+        settings=JobSettings(pipeline="dummy_pipeline"),
         source="generic",
         time_started="dummy_time",
         transcript_id="dummy_transcript",
@@ -42,7 +48,7 @@ def dummy_extract_job() -> ExtractJob:
     return ExtractJob(
         display_name="Dummy Extract Job",
         job_name="dummy_extract_job",
-        settings=JobSettings(),
+        settings=JobSettings(pipeline="emotions"),
         source="generic",
         time_started="dummy_time",
         transcript_id="dummy_transcript",
@@ -55,17 +61,11 @@ def dummy_summarize_job() -> SummarizeJob:
     return SummarizeJob(
         display_name="Dummy Summarize Job",
         job_name="dummy_summarize_job",
-        settings=JobSettings(),
+        settings=JobSettings(pipeline="transcribe,summarize"),
         source="generic",
         time_started="dummy_time",
         transcript_id="dummy_transcript",
     )
-
-
-@pytest.fixture
-def empty_job_settings() -> JobSettings:
-    """Fixture for an empty JobSettings object."""
-    return JobSettings()
 
 
 @pytest.fixture
@@ -202,13 +202,16 @@ def test_wrong_job_source(source: Union[str, int]) -> None:
         )
 
 
-def test_empty_job_settings(empty_job_settings: JobSettings) -> None:
+def test_job_settings() -> None:
     """Test for an empty JobSettings object."""
-    assert empty_job_settings is not None
-    assert empty_job_settings.ephemeral_data is False
-    assert empty_job_settings.pipeline is "default"
-    assert empty_job_settings.only_api is True
-    assert empty_job_settings.split_long_utterances is False
+    with pytest.raises(ValueError):
+        JobSettings()
+    job_settings = JobSettings(pipeline="dummy_pipeline")
+    assert job_settings is not None
+    assert job_settings.ephemeral_data is False
+    assert job_settings.pipeline == "dummy_pipeline"
+    assert job_settings.only_api is True
+    assert job_settings.split_long_utterances is False
 
 
 def test_list_jobs(dummy_list_jobs: ListJobs) -> None:

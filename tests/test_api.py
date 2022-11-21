@@ -27,7 +27,6 @@ from wordcab import (
     list_jobs,
     list_summaries,
     list_transcripts,
-    request,
     retrieve_job,
     retrieve_summary,
     retrieve_transcript,
@@ -165,7 +164,9 @@ def test_retrieve_job(api_key: str) -> None:
 
 def test_retrieve_summary(api_key: str) -> None:
     """Test the retrieve_summary function."""
-    summary = retrieve_summary(summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m", api_key=api_key)
+    summary = retrieve_summary(
+        summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m", api_key=api_key
+    )
     assert summary is not None
     assert isinstance(summary, BaseSummary)
     assert summary.summary_id is not None
@@ -180,16 +181,16 @@ def test_retrieve_summary(api_key: str) -> None:
     assert isinstance(summary.summary, dict)
     for key, value in summary.summary.items():
         assert isinstance(key, str)
-        assert isinstance(value["structured_summary"], StructuredSummary)
-        assert value["structured_summary"].end is not None
-        assert value["structured_summary"].start is not None
-        assert value["structured_summary"].summary is not None
-        assert value["structured_summary"].summary_html is not None
-        assert value["structured_summary"].timestamp_end is not None
-        assert value["structured_summary"].timestamp_start is not None
-        assert value["structured_summary"].transcript_segment is not None
-        assert isinstance(value["structured_summary"].transcript_segment, list)
-        for segment in value["structured_summary"].transcript_segment:
+        assert isinstance(value["structured_summary"][0], StructuredSummary)
+        assert value["structured_summary"][0].end is not None
+        assert value["structured_summary"][0].start is not None
+        assert value["structured_summary"][0].summary is not None
+        assert value["structured_summary"][0].summary_html is not None
+        assert value["structured_summary"][0].timestamp_end is not None
+        assert value["structured_summary"][0].timestamp_start is not None
+        assert value["structured_summary"][0].transcript_segment is not None
+        assert isinstance(value["structured_summary"][0].transcript_segment, list)
+        for segment in value["structured_summary"][0].transcript_segment:
             assert isinstance(segment, dict)
             assert "speaker" in segment
             assert "text" in segment
@@ -197,10 +198,12 @@ def test_retrieve_summary(api_key: str) -> None:
             assert "timestamp_start" in segment
             assert "start" in segment
 
+
 def test_retrieve_transcript(api_key: str) -> None:
     """Test the retrieve_transcript function."""
     transcript = retrieve_transcript(
-        transcript_id="generic_transcript_JU74t3Tjzahn5DodBLwsDrS2EvGdb4bS", api_key=api_key
+        transcript_id="generic_transcript_JU74t3Tjzahn5DodBLwsDrS2EvGdb4bS",
+        api_key=api_key,
     )
     assert transcript is not None
     assert isinstance(transcript, BaseTranscript)
@@ -288,15 +291,22 @@ def test_change_speaker_labels(api_key: str) -> None:
     assert isinstance(transcript.summary_id_set, list)
     assert transcript.speaker_map is not None
     assert isinstance(transcript.speaker_map, dict)
-    assert transcript.speaker_map == {"A": "Tom", "B": "Tam", "C": "Tim", "D": "Tum", "E": "Tym"}
+    assert transcript.speaker_map == {
+        "A": "Tom",
+        "B": "Tam",
+        "C": "Tim",
+        "D": "Tum",
+        "E": "Tym",
+    }
     assert transcript.transcript is not None
     assert isinstance(transcript.transcript, list)
 
 
 def test_delete_job(api_key: str) -> None:
     """Test the delete_job function."""
-    deleted_job = delete_job(job_name="job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB", api_key=api_key)
+    deleted_job = delete_job(
+        job_name="job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB", api_key=api_key
+    )
     assert deleted_job is not None
     assert isinstance(deleted_job, dict)
     assert deleted_job["job_name"] == "job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB"
-    
