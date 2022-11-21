@@ -32,11 +32,9 @@ class StructuredSummary:
     start: str
     summary: str
     summary_html: str
-    timestamps_end: int
-    timestamps_start: int
-    transcript_segment: Optional[Dict[str, Union[str, int]]] = field(
-        default_factory=dict
-    )
+    timestamp_end: int
+    timestamp_start: int
+    transcript_segment: Optional[List[Dict[str, Union[str, int]]]] = field(default=None)
 
     def __post_init__(self) -> None:  # noqa: C901
         """Post-init."""
@@ -59,28 +57,15 @@ class StructuredSummary:
                 f"summary_html must be a string, not {type(self.summary_html)}"
             )
 
-        if not isinstance(self.timestamps_end, int):
+        if not isinstance(self.timestamp_end, int):
             raise TypeError(
-                f"timestamps_end must be an integer, not {type(self.timestamps_end)}"
-            )
-        if self.timestamps_end != self._convert_timestamp(self.end):
-            raise ValueError(
-                f"timestamps_end must be equal to end, not {self.timestamps_end}"
+                f"timestamp_end must be an integer, not {type(self.timestamp_end)}"
             )
 
-        if not isinstance(self.timestamps_start, int):
+        if not isinstance(self.timestamp_start, int):
             raise TypeError(
-                f"timestamps_start must be an integer, not {type(self.timestamps_start)}"
+                f"timestamp_start must be an integer, not {type(self.timestamp_start)}"
             )
-        if self.timestamps_start != self._convert_timestamp(self.start):
-            raise ValueError(
-                f"timestamps_start must be equal to start, not {self.timestamps_start}"
-            )
-
-    def _convert_timestamp(self, timestamp: str) -> int:
-        """Convert a timestamp to milliseconds."""
-        hours, minutes, seconds = timestamp.split(":")
-        return int(hours) * 3600000 + int(minutes) * 60000 + int(seconds) * 1000
 
 
 @dataclass
@@ -95,9 +80,9 @@ class BaseSummary:
     speaker_map: Optional[Dict[str, str]] = field(default=None)
     source: Optional[str] = field(default=None)
     summary_type: Optional[str] = field(default=None)
-    summary: Optional[
-        Dict[str, Union[Dict[str, str], Dict[str, List[StructuredSummary]]]]
-    ] = field(default=None)
+    summary: Optional[Dict[str, Dict[str, List[StructuredSummary]]]] = field(
+        default=None
+    )
     transcript_id: Optional[str] = field(default=None)
     time_started: Optional[str] = field(default=None)
     time_completed: Optional[str] = field(default=None)
@@ -113,3 +98,12 @@ class BaseSummary:
         if self.time_started and self.time_completed:
             if self.time_started == self.time_completed:
                 raise ValueError("time_started and time_completed must be different")
+
+
+@dataclass
+class ListSummaries:
+    """List summaries object."""
+
+    page_count: int
+    next_page: str
+    results: List[BaseSummary]
