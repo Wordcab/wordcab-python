@@ -101,7 +101,7 @@ def test_wrong_transcript_utterance(utterance: List[Union[str, int]]) -> None:
             speaker=utterance[1],
             start=utterance[2],
             end=utterance[3],
-            timestamp_start=utterance[4],  
+            timestamp_start=utterance[4],
             timestamp_end=utterance[5],
         )
 
