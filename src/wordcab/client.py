@@ -535,7 +535,13 @@ class Client:
             data = r.json()
             structured_summaries = data.pop("summary")
             summary = BaseSummary(**data)
-            summaries: Dict[str, Dict[str, List[StructuredSummary]]] = {}
+            summaries: Dict[
+                str,
+                Union[
+                    Dict[str, List[StructuredSummary]],
+                    Union[ConclusionSummary, ReasonSummary],
+                ],
+            ] = {}
             if summary.summary_type == "reason_conclusion":
                 summaries["reason_summary"] = ReasonSummary(
                     **structured_summaries["reason_summary"]

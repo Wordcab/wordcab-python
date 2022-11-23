@@ -16,7 +16,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from ..config import SUMMARY_TYPES
 
@@ -34,13 +34,12 @@ class StructuredSummary:
     end_index: Optional[int] = field(default=None)
     start: Optional[str] = field(default=None)
     start_index: Optional[int] = field(default=None)
-    timestamp_end: Optional[str] = field(default=None)
-    timestamp_start: Optional[str] = field(default=None)
+    timestamp_end: Optional[int] = field(default=None)
+    timestamp_start: Optional[int] = field(default=None)
     transcript_segment: Optional[List[Dict[str, Union[str, int]]]] = field(default=None)
 
     def __repr__(self) -> str:
-        """Return a string representation of the object."""
-        # return only values that are not None
+        """Return a string representation of the object without the None values."""
         return f"{self.__class__.__name__}({', '.join(f'{k}={v!r}' for k, v in self.__dict__.items() if v is not None)})"
 
 
@@ -57,7 +56,7 @@ class ConclusionSummary:
     """Conclusion summary object."""
 
     summary: str
-    start_index: int
+    stop_index: int
 
 
 @dataclass
@@ -72,9 +71,7 @@ class BaseSummary:
     speaker_map: Optional[Dict[str, str]] = field(default=None)
     source: Optional[str] = field(default=None)
     summary_type: Optional[str] = field(default=None)
-    summary: Optional[Dict[str, Dict[str, List[StructuredSummary]]]] = field(
-        default=None
-    )
+    summary: Optional[Dict[str, Any]] = field(default=None)
     transcript_id: Optional[str] = field(default=None)
     time_started: Optional[str] = field(default=None)
     time_completed: Optional[str] = field(default=None)
