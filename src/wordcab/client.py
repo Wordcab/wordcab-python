@@ -31,11 +31,13 @@ from .core_objects import (
     BaseSource,
     BaseSummary,
     BaseTranscript,
+    ConclusionSummary,
     ExtractJob,
     JobSettings,
     ListJobs,
     ListSummaries,
     ListTranscripts,
+    ReasonSummary,
     Stats,
     StructuredSummary,
     SummarizeJob,
@@ -534,13 +536,21 @@ class Client:
             structured_summaries = data.pop("summary")
             summary = BaseSummary(**data)
             summaries: Dict[str, Dict[str, List[StructuredSummary]]] = {}
-            for key, value in structured_summaries.items():
-                summaries[key] = {
-                    "structured_summary": [
-                        StructuredSummary(**items)
-                        for items in value["structured_summary"]
-                    ]
-                }
+            if summary.summary_type == "reason_conclusion":
+                summaries["reason_summary"] = ReasonSummary(
+                    **structured_summaries["reason_summary"]
+                )
+                summaries["conclusion_summary"] = ConclusionSummary(
+                    **structured_summaries["conclusion_summary"]
+                )
+            else:
+                for key, value in structured_summaries.items():
+                    summaries[key] = {
+                        "structured_summary": [
+                            StructuredSummary(**items)
+                            for items in value["structured_summary"]
+                        ]
+                    }
             summary.summary = summaries
             return summary
         else:
