@@ -19,7 +19,13 @@ from typing import List, Union
 
 import pytest
 
-from wordcab.core_objects import BaseSummary, ListSummaries, StructuredSummary
+from wordcab.core_objects import (
+    BaseSummary,
+    ConclusionSummary,
+    ListSummaries,
+    ReasonSummary,
+    StructuredSummary,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -77,6 +83,24 @@ def dummy_full_base_summary() -> BaseSummary:
 def dummy_list_summaries() -> ListSummaries:
     """Fixture for a dummy ListSummaries object."""
     return ListSummaries(page_count=3, next_page="https://next_page.com", results=[])
+
+
+@pytest.fixture
+def dummy_reason_summary() -> ReasonSummary:
+    """Fixture for a dummy ReasonSummary object."""
+    return ReasonSummary(
+        summary="This is a test.",
+        stop_index=10,
+    )
+
+
+@pytest.fixture
+def dummy_conclusion_summary() -> ConclusionSummary:
+    """Fixture for a dummy ConclusionSummary object."""
+    return ConclusionSummary(
+        summary="This is a test.",
+        stop_index=10,
+    )
 
 
 def test_empty_structured_summary(
@@ -224,3 +248,17 @@ def test_list_summaries(dummy_list_summaries: ListSummaries) -> None:
     assert dummy_list_summaries.page_count == 3
     assert dummy_list_summaries.next_page == "https://next_page.com"
     assert dummy_list_summaries.results == []
+
+
+def test_reason_summary(dummy_reason_summary: ReasonSummary) -> None:
+    """Test the ReasonSummary object."""
+    assert dummy_reason_summary is not None
+    assert dummy_reason_summary.summary == "This is a test."
+    assert dummy_reason_summary.stop_index == 10
+
+
+def test_conclusion_summary(dummy_conclusion_summary: ConclusionSummary) -> None:
+    """Test the ConclusionSummary object."""
+    assert dummy_conclusion_summary is not None
+    assert dummy_conclusion_summary.summary == "This is a test."
+    assert dummy_conclusion_summary.start_index == 10
