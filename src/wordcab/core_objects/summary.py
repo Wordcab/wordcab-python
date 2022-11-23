@@ -28,44 +28,36 @@ logger = logging.getLogger(__name__)
 class StructuredSummary:
     """Structured summary object."""
 
-    end: str
-    start: str
     summary: str
     summary_html: str
-    timestamp_end: int
-    timestamp_start: int
+    end: Optional[str] = field(default=None)
+    end_index: Optional[int] = field(default=None)
+    start: Optional[str] = field(default=None)
+    start_index: Optional[int] = field(default=None)
+    timestamp_end: Optional[str] = field(default=None)
+    timestamp_start: Optional[str] = field(default=None)
     transcript_segment: Optional[List[Dict[str, Union[str, int]]]] = field(default=None)
 
-    def __post_init__(self) -> None:  # noqa: C901
-        """Post-init."""
-        if not isinstance(self.end, str):
-            raise TypeError(f"end must be a string, not {type(self.end)}")
-        if len(self.end.split(":")) != 3:
-            raise ValueError(f"end must be in the format 'HH:MM:SS', not {self.end}")
+    def __repr__(self) -> str:
+        """Return a string representation of the object."""
+        # return only values that are not None
+        return f"{self.__class__.__name__}({', '.join(f'{k}={v!r}' for k, v in self.__dict__.items() if v is not None)})"
 
-        if not isinstance(self.start, str):
-            raise TypeError(f"start must be a string, not {type(self.start)}")
-        if len(self.start.split(":")) != 3:
-            raise ValueError(
-                f"start must be in the format 'HH:MM:SS', not {self.start}"
-            )
 
-        if not isinstance(self.summary, str):
-            raise TypeError(f"summary must be a string, not {type(self.summary)}")
-        if not isinstance(self.summary_html, str):
-            raise TypeError(
-                f"summary_html must be a string, not {type(self.summary_html)}"
-            )
+@dataclass
+class ReasonSummary:
+    """Reason summary object."""
 
-        if not isinstance(self.timestamp_end, int):
-            raise TypeError(
-                f"timestamp_end must be an integer, not {type(self.timestamp_end)}"
-            )
+    summary: str
+    stop_index: int
 
-        if not isinstance(self.timestamp_start, int):
-            raise TypeError(
-                f"timestamp_start must be an integer, not {type(self.timestamp_start)}"
-            )
+
+@dataclass
+class ConclusionSummary:
+    """Conclusion summary object."""
+
+    summary: str
+    start_index: int
 
 
 @dataclass
