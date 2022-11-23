@@ -1,0 +1,25 @@
+SPEAKER A: Thank you for calling Marcus Flores. How may I assist you?
+SPEAKER B: Hello. I'd like to order flowers and I think you have what I'm looking for.
+SPEAKER A: I'll be happy to take care of your order. May I have your name, please?
+SPEAKER B: Randall Thomas.
+SPEAKER A: Randall Thomas. Can you spell that for me?
+SPEAKER B: Randall, R-A-N-D-A-L.
+SPEAKER A: Thank you for that information, Randall. May I have your home or office number? Area code first?
+SPEAKER B: Area code 4095-866-5088.
+SPEAKER A: That's 409-866-5088. Do you have a fax number or email address?
+SPEAKER B: My email is Randall Thomas@gmail.com.
+SPEAKER A: Randall Thomas@gmail.com. May I have your shipping address?
+SPEAKER B: 6800 Beaumont, Texas.
+SPEAKER A: Zip code is 77706 Gladys Avenue, Beaumont, Texas. Zip code 77706. Thank you for the information. What products are you interested in purchasing?
+SPEAKER B: Red roses. Probably a dozen.
+SPEAKER A: One dozen of red roses. Do you want longstands?
+SPEAKER B: Sure.
+SPEAKER A: All right, Reynold, let me process the order. One moment, please.
+SPEAKER B: Okay.
+SPEAKER A: Randall, you're ordering 1000 longstand red roses. The total amount of your order is $40 and it will be shipped to your address within 24 hours.
+SPEAKER B: I was looking to deliver MC roses.
+SPEAKER A: Again within 24 hours.
+SPEAKER B: Okay, no problem.
+SPEAKER A: Is there anything else I can help you with?
+SPEAKER B: That's all for now. Thanks.
+SPEAKER A: No problem. Randall. Thank you for calling martha's Flores. Have a nice day. Bye.
