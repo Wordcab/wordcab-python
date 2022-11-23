@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wordcab"
-version = "0.1.0"
+version = "0.2.0"
 description = "Wordcab Python SDK"
 authors = ["Wordcab <info@wordcab.com>"]
 license = "Apache-2.0"
@@ -63,7 +63,7 @@ source = ["wordcab", "tests"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 100
+fail_under = 90
 
 [tool.isort]
 profile = "black"

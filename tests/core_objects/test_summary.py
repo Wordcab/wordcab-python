@@ -15,18 +15,24 @@
 """Test suite for the summary dataclasses."""
 
 import logging
-from typing import List, Union
+from typing import List
 
 import pytest
 
-from wordcab.core_objects import BaseSummary, ListSummaries, StructuredSummary
+from wordcab.core_objects import (
+    BaseSummary,
+    ConclusionSummary,
+    ListSummaries,
+    ReasonSummary,
+    StructuredSummary,
+)
 
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def dummy_empty_structured_summary() -> StructuredSummary:
+def dummy_structured_summary() -> StructuredSummary:
     """Fixture for a dummy StructuredSummary object."""
     return StructuredSummary(
         end="00:06:49",
@@ -35,6 +41,17 @@ def dummy_empty_structured_summary() -> StructuredSummary:
         summary_html="<p>This is a test.</p>",
         timestamp_end=409000,
         timestamp_start=0,
+    )
+
+
+@pytest.fixture
+def dummy_structured_summary_no_timestamps() -> StructuredSummary:
+    """Fixture for a dummy StructuredSummary object without timestamps."""
+    return StructuredSummary(
+        end_index=10,
+        start_index=0,
+        summary="This is a test.",
+        summary_html="<p>This is a test.</p>",
     )
 
 
@@ -62,7 +79,14 @@ def dummy_full_base_summary() -> BaseSummary:
         summary={
             "test": {
                 "structured_summary": [
-                    StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)
+                    StructuredSummary(
+                        summary="test",
+                        summary_html="test",
+                        start="00:00:00",
+                        end="00:00:10",
+                        timestamp_start=0,
+                        timestamp_end=10,
+                    )
                 ]
             }
         },
@@ -79,71 +103,48 @@ def dummy_list_summaries() -> ListSummaries:
     return ListSummaries(page_count=3, next_page="https://next_page.com", results=[])
 
 
+@pytest.fixture
+def dummy_reason_summary() -> ReasonSummary:
+    """Fixture for a dummy ReasonSummary object."""
+    return ReasonSummary(
+        summary="This is a test.",
+        stop_index=10,
+    )
+
+
+@pytest.fixture
+def dummy_conclusion_summary() -> ConclusionSummary:
+    """Fixture for a dummy ConclusionSummary object."""
+    return ConclusionSummary(
+        summary="This is a test.",
+        stop_index=10,
+    )
+
+
 def test_empty_structured_summary(
-    dummy_empty_structured_summary: StructuredSummary,
+    dummy_structured_summary: StructuredSummary,
 ) -> None:
-    """Test the empty StructuredSummary object."""
-    assert dummy_empty_structured_summary.end == "00:06:49"
-    assert dummy_empty_structured_summary.start == "00:00:00"
-    assert dummy_empty_structured_summary.summary == "This is a test."
-    assert dummy_empty_structured_summary.summary_html == "<p>This is a test.</p>"
-    assert dummy_empty_structured_summary.timestamp_end == 409000
-    assert dummy_empty_structured_summary.timestamp_start == 0
-    assert dummy_empty_structured_summary.transcript_segment is None
+    """Test the StructuredSummary object."""
+    assert dummy_structured_summary.end == "00:06:49"
+    assert dummy_structured_summary.start == "00:00:00"
+    assert dummy_structured_summary.summary == "This is a test."
+    assert dummy_structured_summary.summary_html == "<p>This is a test.</p>"
+    assert dummy_structured_summary.timestamp_end == 409000
+    assert dummy_structured_summary.timestamp_start == 0
+    assert dummy_structured_summary.transcript_segment is None
 
 
-@pytest.mark.parametrize(
-    "params",
-    [
-        ["00:06:49", "000000", "This is a test.", "<p>This is a test.</p>", 409000, 0],
-        ["000649", "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
-        [405, "00:00:00", "This is a test.", "<p>This is a test.</p>", 409000, 0],
-        ["00:06:49", 0, "This is a test.", "<p>This is a test.</p>", 409000, 0],
-        [
-            "00:06:49",
-            "00:00:00",
-            ["This is a test."],
-            "<p>This is a test.</p>",
-            409000,
-            0,
-        ],
-        [
-            "00:06:49",
-            "00:00:00",
-            "This is a test.",
-            ["<p>This is a test.</p>"],
-            409000,
-            0,
-        ],
-        [
-            "00:06:49",
-            "00:00:00",
-            "This is a test.",
-            "<p>This is a test.</p>",
-            409000.25,
-            0,
-        ],
-        [
-            "00:06:49",
-            "00:00:00",
-            "This is a test.",
-            "<p>This is a test.</p>",
-            409000,
-            0.0,
-        ],
-    ],
-)
-def test_typerror_structured_summary(params: List[Union[str, int, float]]) -> None:
-    """Test the wrong StructuredSummary object."""
-    with pytest.raises((TypeError, ValueError)):
-        StructuredSummary(
-            end=params[0],  # type: ignore
-            start=params[1],  # type: ignore
-            summary=params[2],  # type: ignore
-            summary_html=params[3],  # type: ignore
-            timestamp_end=params[4],  # type: ignore
-            timestamp_start=params[5],  # type: ignore
-        )
+def test_structured_summary_no_timestamps(
+    dummy_structured_summary_no_timestamps: StructuredSummary,
+) -> None:
+    """Test the StructuredSummary object without timestamps."""
+    assert dummy_structured_summary_no_timestamps.end_index == 10
+    assert dummy_structured_summary_no_timestamps.start_index == 0
+    assert dummy_structured_summary_no_timestamps.summary == "This is a test."
+    assert (
+        dummy_structured_summary_no_timestamps.summary_html == "<p>This is a test.</p>"
+    )
+    assert dummy_structured_summary_no_timestamps.transcript_segment is None
 
 
 def test_empty_base_summary(dummy_empty_base_summary: BaseSummary) -> None:
@@ -177,7 +178,9 @@ def test_full_base_summary(dummy_full_base_summary: BaseSummary) -> None:
     assert dummy_full_base_summary.summary == {
         "test": {
             "structured_summary": [
-                StructuredSummary("00:00:10", "00:00:00", "test", "test", 10, 0)
+                StructuredSummary(
+                    "test", "test", "00:00:10", None, "00:00:00", None, 10, 0
+                )
             ]
         }
     }
@@ -224,3 +227,17 @@ def test_list_summaries(dummy_list_summaries: ListSummaries) -> None:
     assert dummy_list_summaries.page_count == 3
     assert dummy_list_summaries.next_page == "https://next_page.com"
     assert dummy_list_summaries.results == []
+
+
+def test_reason_summary(dummy_reason_summary: ReasonSummary) -> None:
+    """Test the ReasonSummary object."""
+    assert dummy_reason_summary is not None
+    assert dummy_reason_summary.summary == "This is a test."
+    assert dummy_reason_summary.stop_index == 10
+
+
+def test_conclusion_summary(dummy_conclusion_summary: ConclusionSummary) -> None:
+    """Test the ConclusionSummary object."""
+    assert dummy_conclusion_summary is not None
+    assert dummy_conclusion_summary.summary == "This is a test."
+    assert dummy_conclusion_summary.stop_index == 10
