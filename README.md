@@ -64,6 +64,8 @@ print(stats)
 
 ## Usage
 
+[<img src="https://cdn.loom.com/sessions/thumbnails/25150a30c593467fa1632145ff2dea6f-with-play.gif" width="50%">](https://www.loom.com/embed/25150a30c593467fa1632145ff2dea6f "Quick Python Package Demo")
+
 Please see the [Documentation](https://wordcab-python.readthedocs.io/) for details.
 
 ## Contributing
