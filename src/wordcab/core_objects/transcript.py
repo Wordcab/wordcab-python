@@ -16,7 +16,7 @@
 
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -62,6 +62,7 @@ class BaseTranscript:
     summary_id_set: List[str] = field(default_factory=list)
     transcript: List[TranscriptUtterance] = field(default_factory=list)
     speaker_map: Dict[str, str] = field(default_factory=dict)
+    question_answers: Optional[List[Dict[str, str]]] = field(default=None)
 
     def __post_init__(self) -> None:
         """Post-init method."""
