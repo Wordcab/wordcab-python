@@ -64,6 +64,20 @@ def dummy_full_transcript() -> BaseTranscript:
         job_id_set=["job_123456"],
         summary_id_set=["summary_123456"],
         speaker_map={"A": "The Speaker", "B": "The Other Speaker"},
+        question_answers=[
+            {
+                "answer": "Yeah, my name is John Smith.",
+                "question": "Can I have your name?",
+                "answer_speaker": "B",
+                "question_speaker": "A",
+            },
+            {
+                "answer": "I was just calling about to see how much it would cost to update the map in my car.",
+                "question": "How can I help you?",
+                "answer_speaker": "B",
+                "question_speaker": "A",
+            },
+        ],
     )
 
 
@@ -117,6 +131,7 @@ def test_transcript(dummy_empty_transcript: BaseTranscript) -> None:
     assert dummy_empty_transcript.job_id_set == list()
     assert dummy_empty_transcript.summary_id_set == list()
     assert dummy_empty_transcript.speaker_map == {}
+    assert dummy_empty_transcript.question_answers is None
 
     assert dummy_empty_transcript.transcript[0].text == "This is a test"
     assert dummy_empty_transcript.transcript[0].speaker == "A"
@@ -152,6 +167,20 @@ def test_full_transcript(dummy_full_transcript: BaseTranscript) -> None:
         "A": "The Speaker",
         "B": "The Other Speaker",
     }
+    assert dummy_full_transcript.question_answers == [
+        {
+            "answer": "Yeah, my name is John Smith.",
+            "question": "Can I have your name?",
+            "answer_speaker": "B",
+            "question_speaker": "A",
+        },
+        {
+            "answer": "I was just calling about to see how much it would cost to update the map in my car.",
+            "question": "How can I help you?",
+            "answer_speaker": "B",
+            "question_speaker": "A",
+        },
+    ]
 
     assert dummy_full_transcript.transcript[0].text == "This is a test"
     assert dummy_full_transcript.transcript[0].speaker == "A"
