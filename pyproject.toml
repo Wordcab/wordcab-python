@@ -53,6 +53,10 @@ myst-parser = {version = ">=0.16.1"}
 [tool.poetry.scripts]
 wordcab = "wordcab.__main__:main"
 
+[tool.poetry.group.dev.dependencies]
+nox = "^2022.11.21"
+nox-poetry = "^1.0.2"
+
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
 tests = ["tests", "*/tests"]
