@@ -416,7 +416,7 @@ class Client:
                     list_jobs.append(ExtractJob(**job))
             return ListJobs(
                 page_count=int(data["page_count"]),
-                next_page=data["next"],
+                next_page=data.get("next"),
                 results=list_jobs,
             )
         else:
@@ -474,7 +474,7 @@ class Client:
             data = r.json()
             return ListTranscripts(
                 page_count=int(data["page_count"]),
-                next_page=data["next"],
+                next_page=data.get("next"),
                 results=[
                     BaseTranscript(**transcript) for transcript in data["results"]
                 ],
@@ -540,7 +540,7 @@ class Client:
             data = r.json()
             return ListSummaries(
                 page_count=int(data["page_count"]),
-                next_page=data["next"],
+                next_page=data.get("next"),
                 results=[BaseSummary(**summary) for summary in data["results"]],
             )
         else:
