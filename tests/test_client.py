@@ -208,7 +208,7 @@ def test_start_summary(
             client.start_summary(
                 source_object=generic_source_txt,
                 display_name="test",
-                summary_type="reason_conclusion",
+                summary_type="narrative",
                 summary_length=0,
             )
         with pytest.raises(ValueError):
@@ -247,7 +247,6 @@ def test_start_summary(
             source_object=generic_source_txt,
             display_name="test-sdk-txt",
             summary_type="reason_conclusion",
-            summary_length=3,
         )
         assert isinstance(txt_job, SummarizeJob)
         assert txt_job.display_name == "test-sdk-txt"
