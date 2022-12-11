@@ -29,7 +29,7 @@ class StructuredSummary:
     """Structured summary object."""
 
     summary: str
-    summary_html: str
+    summary_html: Optional[str] = field(default=None)
     end: Optional[str] = field(default=None)
     end_index: Optional[int] = field(default=None)
     start: Optional[str] = field(default=None)
