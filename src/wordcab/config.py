@@ -38,6 +38,7 @@ LIST_JOBS_ORDER_BY = [
     "-time_started",
     "-time_completed",
 ]
+SOURCE_LANG = ["de", "en", "es", "fr", "it"]
 SOURCE_OBJECT_MAPPING = {
     "generic": "GenericSource",
     "audio": "AudioSource",
