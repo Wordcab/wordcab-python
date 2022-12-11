@@ -175,16 +175,14 @@ def test_audio_source(tmp_path: Path) -> None:
 def test_in_memory_source() -> None:
     """Test the InMemorySource object."""
     with pytest.raises(TypeError):
-        InMemorySource(in_memory_obj="test")  # type: ignore
+        InMemorySource(obj="test")  # type: ignore
     with pytest.raises(ValueError):
-        InMemorySource(in_memory_obj={"test": "test"})  # type: ignore
+        InMemorySource(obj={"test": "test"})  # type: ignore
     with pytest.raises(TypeError):
-        InMemorySource(in_memory_obj={"transcript": "test"})  # type: ignore
+        InMemorySource(obj={"transcript": "test"})  # type: ignore
 
-    in_memory_source = InMemorySource(in_memory_obj={"transcript": ["test"]})
-    assert in_memory_source.in_memory_obj == {"transcript": ["test"]}
-    assert in_memory_source.filepath is None
-    assert in_memory_source.url is None
+    in_memory_source = InMemorySource(obj={"transcript": ["test"]})
+    assert in_memory_source.obj == {"transcript": ["test"]}
     assert in_memory_source.source == "generic"
     assert in_memory_source.source_type == "in_memory"
     assert hasattr(in_memory_source, "prepare_payload") and callable(

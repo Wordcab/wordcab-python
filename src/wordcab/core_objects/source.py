@@ -30,13 +30,45 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class BaseSource:
-    """Source object."""
+    """Base class for all source objects except for InMemorySource. It is not meant to be used directly.
+
+    Parameters
+    ----------
+    filepath : Optional[Union[str, Path]], optional
+        Path to the local file, by default None.
+    url : Optional[str], optional
+        URL to the remote file, by default None.
+
+    Raises
+    ------
+    ValueError
+        If neither `filepath` nor `url` are provided.
+    ValueError
+        If both `filepath` and `url` are provided.
+    TypeError
+        If `filepath` is not a string or a Path object.
+    FileNotFoundError
+        If `filepath` does not exist or is not accessible.
+
+    Attributes
+    ----------
+    source : str
+        The source type.
+    source_type : str
+        The source type.
+    _stem : str
+        The stem of the file.
+    _suffix : str
+        The suffix of the file.
+
+    Returns
+    -------
+    BaseSource
+        The source object.
+    """
 
     filepath: Optional[Union[str, Path]] = field(default=None, repr=False)
     url: Optional[str] = field(default=None, repr=False)
-    in_memory_obj: Optional[Union[Dict[str, List[str]], List[str]]] = field(
-        default=None, repr=False
-    )
     source: str = field(init=False)
     source_type: str = field(init=False)
     _stem: str = field(init=False, repr=False)
@@ -45,10 +77,9 @@ class BaseSource:
     def __post_init__(self) -> None:
         """Post-init method."""
         self.source = self.__class__.__name__
-        if not self.filepath and not self.url and not self.in_memory_obj:
+        if not self.filepath and not self.url:
             raise ValueError(
-                """Please provide either a local, a remote source or an in-memory object,
-                respectively `filepath`, `url` or `in_memory_obj`."""
+                "Please provide either a local or a remote source, respectively `filepath` or `url`."
             )
         if self.filepath and self.url:
             raise ValueError(
@@ -102,25 +133,64 @@ class BaseSource:
 
 
 @dataclass
-class InMemorySource(BaseSource):
-    """In-memory source object."""
+class InMemorySource:
+    """In-memory source object.
+
+    The in-memory source object is a special case of the generic source object.
+    It is used to pass a pre-processed transcript to the API.
+
+    Parameters
+    ----------
+    obj : Union[Dict[str, List[str]], List[str]]
+        The in-memory object. It can be a list of strings or a dict with a `transcript` key
+        and a list of strings as value.
+
+    Raises
+    ------
+    ValueError
+        If the in-memory object does not have a `transcript` key.
+    TypeError
+        If the in-memory object does not have a list as value for the `transcript` key.
+    TypeError
+        If the in-memory object is not a list or a dict.
+
+    Examples
+    --------
+    >>> from wordcab.core_objects import InMemorySource
+
+    >>> transcript = {"transcript": ["SPEAKER A: Hello.", "SPEAKER B: Hi."]}
+    >>> in_memory_source = InMemorySource(obj=transcript)
+    >>> in_memory_source
+    InMemorySource(...)
+    >>> in_memory_source.obj
+
+    Returns
+    -------
+    InMemorySource
+        The in-memory source object.
+    """
+
+    obj: Optional[Union[Dict[str, List[str]], List[str]]] = field(
+        default=None, repr=False
+    )
+    source: str = field(init=False)
+    source_type: str = field(init=False)
 
     def __post_init__(self) -> None:
         """Post-init method."""
-        super().__post_init__()
         self.source = "generic"
         self.source_type = "in_memory"
-        if isinstance(self.in_memory_obj, dict):
-            if "transcript" not in self.in_memory_obj:
+        if isinstance(self.obj, dict):
+            if "transcript" not in self.obj:
                 raise ValueError(
                     "Please provide a valid in-memory object. It must have a `transcript` key."
                 )
-            elif not isinstance(self.in_memory_obj["transcript"], list):
+            elif not isinstance(self.obj["transcript"], list):
                 raise TypeError(
                     "Please provide a valid in-memory object. The `transcript` key must be a list."
                 )
-        elif isinstance(self.in_memory_obj, list):
-            self.in_memory_obj = {"transcript": self.in_memory_obj}
+        elif isinstance(self.obj, list):
+            self.obj = {"transcript": self.obj}
         else:
             raise TypeError(
                 "Please provide a valid in-memory object. It must be a list or a dict."
@@ -128,7 +198,7 @@ class InMemorySource(BaseSource):
 
     def prepare_payload(self) -> str:
         """Prepare payload for API request."""
-        self.payload = json.dumps(self.in_memory_obj)
+        self.payload = json.dumps(self.obj)
         return self.payload
 
     def prepare_headers(self) -> Dict[str, str]:
@@ -142,7 +212,49 @@ class InMemorySource(BaseSource):
 
 @dataclass
 class GenericSource(BaseSource):
-    """Generic source object."""
+    """Generic source object.
+
+    The GenericSource object is required to create a job that uses a generic file as input, such as `.txt` or `.json` file.
+
+    Parameters
+    ----------
+    filepath : Union[str, Path]
+        The path to the local file.
+    url : str
+        The URL to the remote file.
+
+    Raises
+    ------
+    ValueError
+        If the file format is not supported.
+    ValueError
+        If both `filepath` and `url` are provided.
+    TypeError
+        If the path is not a string or a Path object.
+    FileNotFoundError
+        If the file does not exist or is not accessible.
+
+    Examples
+    --------
+    >>> from wordcab.core_objects import GenericSource
+
+    >>> generic_source = GenericSource(filepath="path/to/generic/file.txt")  # doctest: +SKIP
+    >>> generic_source  # doctest: +SKIP
+    GenericSource(...)
+    >>> generic_source.file_object  # doctest: +SKIP
+    b'Hello, world!'
+    >>> generic_source.source_type  # doctest: +SKIP
+    'local'
+    >>> generic_source._suffix  # doctest: +SKIP
+    '.txt'
+    >>> generic_source._stem  # doctest: +SKIP
+    'file'
+
+    Returns
+    -------
+    GenericSource
+        The generic source object.
+    """
 
     file_object: bytes = field(init=False, repr=False)
 
@@ -182,7 +294,40 @@ class GenericSource(BaseSource):
 
 @dataclass
 class AudioSource(BaseSource):
-    """Audio source object."""
+    """
+    The AudioSource object is required to create a job that uses an audio file as input.
+
+    Parameters
+    ----------
+    filepath : Union[str, Path]
+        The path to the local file.
+    url : str
+        The URL to the remote file.
+
+    Raises
+    ------
+    ValueError
+        If the file format is not supported.
+    ValueError
+        If both `filepath` and `url` are provided.
+    TypeError
+        If the path is not a string or a Path object.
+    FileNotFoundError
+        If the file does not exist or is not accessible.
+
+    Examples
+    --------
+    >>> from wordcab.core_objects import AudioSource
+
+    >>> audio_source = AudioSource(filepath="path/to/audio/file.mp3")  # doctest: +SKIP
+    >>> audio_source  # doctest: +SKIP
+    AudioSource(...)
+
+    Returns
+    -------
+    AudioSource
+        The audio source object.
+    """
 
     file_object: bytes = field(init=False, repr=False)
 

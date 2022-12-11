@@ -112,24 +112,12 @@ The core objects are used to represent the data returned by the API but also to 
 
 #### BaseSource
 
-The BaseSource object is the base class for all source objects. It is not meant to be used directly.
-
 ```{eval-rst}
 .. autoclass:: wordcab.core_objects.BaseSource
    :members:
 ```
 
 #### AudioSource
-
-The AudioSource object is required to create a job that uses an audio file as input.
-
-```python
->>> from wordcab.core_objects import AudioSource
-
->>> audio_source = AudioSource(filepath="path/to/audio/file.mp3")
->>> audio_source
-AudioSource(...)
-```
 
 ```{eval-rst}
 .. autoclass:: wordcab.core_objects.AudioSource
@@ -138,37 +126,12 @@ AudioSource(...)
 
 #### GenericSource
 
-The GenericSource object is required to create a job that uses a generic file as input,
-such as `.txt` or `.json`.
-
-```python
->>> from wordcab.core_objects import GenericSource
-
->>> generic_source = GenericSource(filepath="path/to/generic/file.txt")
->>> generic_source
-GenericSource(...)
-```
-
 ```{eval-rst}
 .. autoclass:: wordcab.core_objects.GenericSource
    :members:
 ```
 
 #### InMemorySource
-
-The InMemorySource object is required to create a job that uses a pre-loaded transcript as input.
-It is useful when you want to create a job from a transcript that you have already loaded in memory.
-
-```python
->>> from wordcab.core_objects import InMemorySource
-
->>> transcript = {
->>>   "transcript": ["SPEAKER A: Hello.", "SPEAKER B: Hi."]
->>> }
->>> in_memory_source = InMemorySource(in_memory_obj=transcript)
->>> in_memory_source
-InMemorySource(...)
-```
 
 ```{eval-rst}
 .. autoclass:: wordcab.core_objects.InMemorySource
