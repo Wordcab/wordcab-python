@@ -103,3 +103,107 @@ with Client(api_key="my_api_key") as client:
 .. autoclass:: wordcab.Client
    :members:
 ```
+
+## Core objects
+
+The core objects are used to represent the data returned by the API but also to pass data to the API.
+
+### Job objects
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.BaseJob
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.ExtractJob
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.JobSettings
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.ListJobs
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.SummarizeJob
+   :members:
+```
+
+### Source objects
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.BaseSource
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.AudioSource
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.GenericSource
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.InMemorySource
+   :members:
+```
+
+### Stats object
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.Stats
+   :members:
+```
+
+### Summary objects
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.BaseSummary
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.ConclusionSummary
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.ListSummaries
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.ReasonSummary
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.StructuredSummary
+   :members:
+```
+
+### Transcript objects
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.BaseTranscript
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.ListTranscripts
+   :members:
+```
+
+```{eval-rst}
+.. autoclass:: wordcab.core_objects.TranscriptUtterance
+   :members:
+```
