@@ -245,7 +245,7 @@ class Client:
         only_api: Optional[bool] = True,
         pipelines: Union[str, List[str]] = ["transcribe", "summarize"],  # noqa: B006
         split_long_utterances: Optional[bool] = False,
-        summary_length: Union[int, List[int]] = 3,
+        summary_length: Optional[Union[int, List[int]]] = None,
         tags: Optional[Union[str, List[str]]] = None,
     ) -> SummarizeJob:
         """Start a Summary job."""
@@ -254,18 +254,22 @@ class Client:
                 f"Invalid summary type. Available types are: {', '.join(SUMMARY_TYPES)}"
             )
 
-        if _check_summary_length(summary_length) is False:
-            raise ValueError(
-                f"""
-                You must specify a valid summary length. Summary length must be an integer or a list of integers.
-                The integer values must be between {SUMMARY_LENGTHS_RANGE[0]} and {SUMMARY_LENGTHS_RANGE[1]}.
-            """
-            )
         if summary_type == "reason_conclusion" and summary_length:
             logger.warning(
                 """
                 You have specified a summary length for a reason_conclusion summary but reason_conclusion summaries
                 do not use a summary length. The summary_length parameter will be ignored.
+            """
+            )
+        elif summary_type != "reason_conclusion" and summary_length is None:
+            logger.warning("You have not specified a summary length. Defaulting to 3.")
+            summary_length = 3
+
+        if summary_length and _check_summary_length(summary_length) is False:
+            raise ValueError(
+                f"""
+                You must specify a valid summary length. Summary length must be an integer or a list of integers.
+                The integer values must be between {SUMMARY_LENGTHS_RANGE[0]} and {SUMMARY_LENGTHS_RANGE[1]}.
             """
             )
 
@@ -317,8 +321,9 @@ class Client:
             "pipeline": pipelines,
             "split_long_utterances": str(split_long_utterances).lower(),
             "summary_type": summary_type,
-            "summary_lens": _format_lengths(summary_length),
         }
+        if summary_type != "reason_conclusion" and summary_length:
+            params["summary_lens"] = _format_lengths(summary_length)
         if tags:
             params["tags"] = _format_tags(tags)
 
