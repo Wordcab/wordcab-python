@@ -257,24 +257,27 @@ class Client:
                 f"Invalid summary type. Available types are: {', '.join(SUMMARY_TYPES)}"
             )
 
-        if summary_type == "reason_conclusion" and summary_length:
-            logger.warning(
+        if summary_type == "reason_conclusion":
+            if summary_length:
+                logger.warning(
+                    """
+                    You have specified a summary length for a reason_conclusion summary but reason_conclusion summaries
+                    do not use a summary length. The summary_length parameter will be ignored.
                 """
-                You have specified a summary length for a reason_conclusion summary but reason_conclusion summaries
-                do not use a summary length. The summary_length parameter will be ignored.
-            """
-            )
-        elif summary_type != "reason_conclusion" and summary_length is None:
-            logger.warning("You have not specified a summary length. Defaulting to 3.")
-            summary_length = 3
-
-        if summary_length and _check_summary_length(summary_length) is False:
-            raise ValueError(
-                f"""
-                You must specify a valid summary length. Summary length must be an integer or a list of integers.
-                The integer values must be between {SUMMARY_LENGTHS_RANGE[0]} and {SUMMARY_LENGTHS_RANGE[1]}.
-            """
-            )
+                )
+        else:
+            if summary_length is None:
+                logger.warning(
+                    "You have not specified a summary length. Defaulting to 3."
+                )
+                summary_length = 3
+            if _check_summary_length(summary_length) is False:
+                raise ValueError(
+                    f"""
+                    You must specify a valid summary length. Summary length must be an integer or a list of integers.
+                    The integer values must be between {SUMMARY_LENGTHS_RANGE[0]} and {SUMMARY_LENGTHS_RANGE[1]}.
+                """
+                )
 
         if _check_summary_pipelines(pipelines) is False:
             raise ValueError(
