@@ -26,6 +26,7 @@ from wordcab.core_objects import (
     BaseSource,
     DeepgramSource,
     GenericSource,
+    InMemorySource,
     RevSource,
     SignedURLSource,
     VTTSource,
@@ -169,6 +170,32 @@ def test_audio_source(tmp_path: Path) -> None:
         AudioSource(filepath=Path(aac_path))
     with pytest.raises(NotImplementedError):
         AudioSource(url="https://example.com")
+
+
+def test_in_memory_source() -> None:
+    """Test the InMemorySource object."""
+    with pytest.raises(TypeError):
+        InMemorySource(obj="test")  # type: ignore
+    with pytest.raises(ValueError):
+        InMemorySource(obj={"test": "test"})  # type: ignore
+    with pytest.raises(TypeError):
+        InMemorySource(obj={"transcript": "test"})  # type: ignore
+
+    in_memory_source = InMemorySource(obj={"transcript": ["test"]})
+    assert in_memory_source.obj == {"transcript": ["test"]}
+    assert in_memory_source.source == "generic"
+    assert in_memory_source.source_type == "in_memory"
+    assert hasattr(in_memory_source, "prepare_payload") and callable(
+        in_memory_source.prepare_payload
+    )
+    assert in_memory_source.prepare_payload() == json.dumps({"transcript": ["test"]})
+    assert hasattr(in_memory_source, "prepare_headers") and callable(
+        in_memory_source.prepare_headers
+    )
+    assert in_memory_source.prepare_headers() == {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
 
 
 def test_signed_url_source() -> None:
