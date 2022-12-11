@@ -19,12 +19,25 @@ from typing import List, Union
 import pytest
 
 from wordcab.utils import (
+    _check_source_lang,
     _check_summary_length,
     _check_summary_pipelines,
     _format_lengths,
     _format_pipelines,
     _format_tags,
 )
+
+
+@pytest.mark.parametrize("lang", ["en", "es", "de", "fr", "it"])
+def test_correct_check_source_lang(lang: str) -> None:
+    """Test correct source languages."""
+    assert _check_source_lang(lang=lang) is True
+
+
+@pytest.mark.parametrize("lang", ["en-US", "es-ES", "de-DE", "fr-FR", "ru", "ja", "zh"])
+def test_wrong_check_source_lang(lang: str) -> None:
+    """Test wrong source languages."""
+    assert _check_source_lang(lang=lang) is False
 
 
 @pytest.mark.parametrize("lengths", [50, [50, 100]])

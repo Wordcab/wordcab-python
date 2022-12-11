@@ -1,0 +1,23 @@
+SPEAKER A: Merci d'avoir appelé Marcus Flores.
+SPEAKER B: Comment puis-je vous aider ?
+SPEAKER A: J'aimerais commander des fleurs et je pense que vous avez ce que je cherche.
+SPEAKER B: Puis-je avoir votre nom, s'il vous plaît ?
+SPEAKER A: Peux-tu épeler ça pour moi ?
+SPEAKER B: Randall, R-A-N-D-A-L.
+SPEAKER A: Merci pour cette information, Randall. Puis-je avoir votre numéro de maison ou de bureau ? L'indicatif régional d'abord?
+SPEAKER B: L'indicatif régional 4095-866-5088.
+SPEAKER A: C'est 409-866-5088. Avez-vous un numéro de télécopieur ou une adresse électronique?
+SPEAKER B: Mon courriel est Randall Thomas@gmail.com.
+SPEAKER A: Randall Thomas@gmail.com. Puis-je avoir votre adresse de livraison?
+SPEAKER B: Le code postal est 77706 Gladys Avenue, Beaumont, Texas.
+SPEAKER A: Code postal 77706. Merci pour l'information. Quels sont les produits que vous souhaitez acheter? SPEAKER B: Roses rouges.
+SPEAKER B: Une douzaine de roses rouges.
+SPEAKER A: Vous voulez des long tiges ?
+SPEAKER B: Bien sûr.
+SPEAKER A: Randall, vous commandez 1000 longues roses rouges. Le montant total de votre commande est de 40 $ et il sera expédié à votre adresse dans les 24 heures.
+SPEAKER B: Je cherchais à livrer des roses MC.
+SPEAKER A: Encore dans les 24 heures.
+SPEAKER B: D'accord, pas de problème.
+SPEAKER A: Y a-t-il autre chose que je peux vous aider?
+SPEAKER B: C'est tout pour le moment.
+SPEAKER A: Pas de problème. Randall. Merci d'avoir appelé les Flores de Martha. Bonne journée. Au revoir.

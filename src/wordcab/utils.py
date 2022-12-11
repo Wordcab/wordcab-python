@@ -16,7 +16,31 @@
 
 from typing import List, Union
 
-from .config import EXTRACT_PIPELINES, SUMMARY_LENGTHS_RANGE, SUMMARY_PIPELINES
+from .config import (
+    EXTRACT_PIPELINES,
+    SOURCE_LANG,
+    SUMMARY_LENGTHS_RANGE,
+    SUMMARY_PIPELINES,
+)
+
+
+def _check_source_lang(lang: str) -> bool:
+    """
+    Check the source language.
+
+    Parameters
+    ----------
+    lang : str
+        The source language.
+
+    Returns
+    -------
+    bool
+        True if the source language is valid, False otherwise.
+    """
+    if lang not in SOURCE_LANG:
+        return False
+    return True
 
 
 def _check_summary_length(lengths: Union[int, List[int]]) -> bool:
