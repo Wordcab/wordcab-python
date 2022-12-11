@@ -214,7 +214,8 @@ class InMemorySource:
 class GenericSource(BaseSource):
     """Generic source object.
 
-    The GenericSource object is required to create a job that uses a generic file as input, such as `.txt` or `.json` file.
+    The GenericSource object is required to create a job that uses a generic file as input,
+    such as `.txt` or `.json` file.
 
     Parameters
     ----------
