@@ -55,7 +55,7 @@ def api_key() -> Optional[str]:
     return os.environ.get("WORDCAB_API_KEY")
 
 
-def test_get_stats(api_key: str) -> None:
+def test_api_get_stats(api_key: str) -> None:
     """Test the get_stats function."""
     stats = get_stats(
         api_key=api_key, min_created="2021-01-01", max_created="2021-01-31"
@@ -76,7 +76,7 @@ def test_get_stats(api_key: str) -> None:
     assert stats.tags is None
 
 
-def test_list_jobs(api_key: str) -> None:
+def test_api_list_jobs(api_key: str) -> None:
     """Test the list_jobs function."""
     jobs = list_jobs(api_key=api_key)
     assert jobs is not None
@@ -96,7 +96,7 @@ def test_list_jobs(api_key: str) -> None:
         list_jobs(order_by="+time_completed")
 
 
-def test_list_summaries(api_key: str) -> None:
+def test_api_list_summaries(api_key: str) -> None:
     """Test the list_summaries function."""
     li_summaries = list_summaries(api_key=api_key)
     assert li_summaries is not None
@@ -113,7 +113,7 @@ def test_list_summaries(api_key: str) -> None:
         assert summary.job_status is not None
 
 
-def test_list_transcripts(api_key: str) -> None:
+def test_api_list_transcripts(api_key: str) -> None:
     """Test the list_transcripts function."""
     li_transcripts = list_transcripts(api_key=api_key)
     assert li_transcripts is not None
@@ -134,7 +134,7 @@ def test_list_transcripts(api_key: str) -> None:
         assert isinstance(transcript.summary_id_set, list)
 
 
-def test_retrieve_job(api_key: str) -> None:
+def test_api_retrieve_job(api_key: str) -> None:
     """Test the retrieve_job function."""
     job = retrieve_job(job_name="job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp", api_key=api_key)
     assert job.job_name == "job_VkzpZbp79KVv4SoTiW8bFATY4FVQ9rCp"
@@ -162,7 +162,7 @@ def test_retrieve_job(api_key: str) -> None:
     assert job.transcript_id is not None
 
 
-def test_retrieve_summary(api_key: str) -> None:
+def test_api_retrieve_summary(api_key: str) -> None:
     """Test the retrieve_summary function."""
     summary = retrieve_summary(
         summary_id="narrative_summary_VYJfH4TbBgQx6LHJKXgsPZwG9nRGgh8m", api_key=api_key
@@ -199,7 +199,7 @@ def test_retrieve_summary(api_key: str) -> None:
             assert "start" in segment
 
 
-def test_retrieve_transcript(api_key: str) -> None:
+def test_api_retrieve_transcript(api_key: str) -> None:
     """Test the retrieve_transcript function."""
     transcript = retrieve_transcript(
         transcript_id="generic_transcript_JU74t3Tjzahn5DodBLwsDrS2EvGdb4bS",
@@ -233,7 +233,7 @@ def test_retrieve_transcript(api_key: str) -> None:
         assert isinstance(utterance.timestamp_start, int)
 
 
-def test_start_extract(api_key: str) -> None:
+def test_api_start_extract(api_key: str) -> None:
     """Test the start_extract function."""
     source_object = GenericSource(filepath=Path("tests/sample_1.txt"))
     job = start_extract(
@@ -254,7 +254,7 @@ def test_start_extract(api_key: str) -> None:
     )
 
 
-def test_start_summary(api_key: str) -> None:
+def test_api_start_summary(api_key: str) -> None:
     """Test the start_summary function."""
     source_object = GenericSource(filepath=Path("tests/sample_1.txt"))
     job = start_summary(
@@ -275,7 +275,7 @@ def test_start_summary(api_key: str) -> None:
     )
 
 
-def test_change_speaker_labels(api_key: str) -> None:
+def test_api_change_speaker_labels(api_key: str) -> None:
     """Test the change_speaker_labels function."""
     transcript = change_speaker_labels(
         transcript_id="generic_transcript_JtugR2ELM9u4VSXJmscek7yuKupokH8t",
@@ -302,7 +302,7 @@ def test_change_speaker_labels(api_key: str) -> None:
     assert isinstance(transcript.transcript, list)
 
 
-def test_delete_job(api_key: str) -> None:
+def test_api_delete_job(api_key: str) -> None:
     """Test the delete_job function."""
     deleted_job = delete_job(
         job_name="job_aLt5gw5AZwg2rnqaqR46kB7csMfwqTdB", api_key=api_key
