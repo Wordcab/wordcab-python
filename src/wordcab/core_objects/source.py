@@ -18,7 +18,7 @@ import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Optional, Union, no_type_check
+from typing import Dict, List, Optional, Union, no_type_check
 
 import validators  # type: ignore
 
@@ -34,6 +34,9 @@ class BaseSource:
 
     filepath: Optional[Union[str, Path]] = field(default=None, repr=False)
     url: Optional[str] = field(default=None, repr=False)
+    in_memory_obj: Optional[Union[Dict[str, List[str]], List[str]]] = field(
+        default=None, repr=False
+    )
     source: str = field(init=False)
     source_type: str = field(init=False)
     _stem: str = field(init=False, repr=False)
@@ -42,9 +45,10 @@ class BaseSource:
     def __post_init__(self) -> None:
         """Post-init method."""
         self.source = self.__class__.__name__
-        if not self.filepath and not self.url:
+        if not self.filepath and not self.url and not self.in_memory_obj:
             raise ValueError(
-                "Please provide either a local or a remote source, respectively `filepath` or `url`."
+                """Please provide either a local, a remote source or an in-memory object,
+                respectively `filepath`, `url` or `in_memory_obj`."""
             )
         if self.filepath and self.url:
             raise ValueError(
@@ -95,6 +99,45 @@ class BaseSource:
     def prepare_headers(self) -> Dict[str, str]:
         """Prepare headers."""
         raise NotImplementedError("Headers preparation is not implemented yet.")
+
+
+@dataclass
+class InMemorySource(BaseSource):
+    """In-memory source object."""
+
+    def __post_init__(self) -> None:
+        """Post-init method."""
+        super().__post_init__()
+        self.source = "generic"
+        self.source_type = "in_memory"
+        if isinstance(self.in_memory_obj, dict):
+            if "transcript" not in self.in_memory_obj:
+                raise ValueError(
+                    "Please provide a valid in-memory object. It must have a `transcript` key."
+                )
+            elif not isinstance(self.in_memory_obj["transcript"], list):
+                raise TypeError(
+                    "Please provide a valid in-memory object. The `transcript` key must be a list."
+                )
+        elif isinstance(self.in_memory_obj, list):
+            self.in_memory_obj = {"transcript": self.in_memory_obj}
+        else:
+            raise TypeError(
+                "Please provide a valid in-memory object. It must be a list or a dict."
+            )
+
+    def prepare_payload(self) -> str:
+        """Prepare payload for API request."""
+        self.payload = json.dumps(self.in_memory_obj)
+        return self.payload
+
+    def prepare_headers(self) -> Dict[str, str]:
+        """Prepare headers for API request."""
+        self.headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        }
+        return self.headers
 
 
 @dataclass
