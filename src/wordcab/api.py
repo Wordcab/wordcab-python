@@ -159,6 +159,7 @@ def start_summary(
     ephemeral_data: bool = False,
     only_api: bool = True,
     pipelines: Union[str, List[str]] = ["transcribe", "summarize"],  # noqa: B006
+    source_lang: Optional[str] = None,
     split_long_utterances: bool = False,
     summary_length: Union[int, List[int]] = 3,
     tags: Optional[Union[str, List[str]]] = None,
@@ -184,6 +185,8 @@ def start_summary(
         Whether to only use the API to create the summary. The default is True.
     pipelines : str or list of str
         The pipelines to use. The default is ["transcribe", "summarize"].
+    source_lang : str, optional
+        The language of the source. If None, the language will be `en` (English) by default.
     split_long_utterances : bool
         Whether to split long utterances into multiple shorter utterances. The default is False.
     summary_length : int or list of int, optional
@@ -208,6 +211,7 @@ def start_summary(
         ephemeral_data=ephemeral_data,
         only_api=only_api,
         pipelines=pipelines,
+        source_lang=source_lang,
         split_long_utterances=split_long_utterances,
         summary_length=summary_length,
         tags=tags,
