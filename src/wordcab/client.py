@@ -22,6 +22,7 @@ import requests  # type: ignore
 from .config import (
     EXTRACT_PIPELINES,
     LIST_JOBS_ORDER_BY,
+    SOURCE_LANG,
     SOURCE_OBJECT_MAPPING,
     SUMMARY_LENGTHS_RANGE,
     SUMMARY_PIPELINES,
@@ -46,6 +47,7 @@ from .core_objects import (
 from .login import get_token
 from .utils import (
     _check_extract_pipelines,
+    _check_source_lang,
     _check_summary_length,
     _check_summary_pipelines,
     _format_lengths,
@@ -244,6 +246,7 @@ class Client:
         ephemeral_data: Optional[bool] = False,
         only_api: Optional[bool] = True,
         pipelines: Union[str, List[str]] = ["transcribe", "summarize"],  # noqa: B006
+        source_lang: Optional[str] = None,
         split_long_utterances: Optional[bool] = False,
         summary_length: Optional[Union[int, List[int]]] = None,
         tags: Optional[Union[str, List[str]]] = None,
@@ -288,6 +291,23 @@ class Client:
             """
             )
 
+        if source_lang is None:
+            source_lang = "en"
+        if _check_source_lang(source_lang) is False:
+            raise ValueError(
+                f"""
+                You must specify a valid source language. Available languages are: {", ".join(SOURCE_LANG)}.
+            """
+            )
+        elif source_lang != "en":
+            logger.warning(
+                f"""
+                You have specified {source_lang} as the source language. This is currently in beta and may not
+                be as accurate as the English model. We are working to improve the accuracy of the non-English
+                models. If you have any feedback, please contact us at info@wordcab.com.
+            """
+            )
+
         source = source_object.source
         if source not in SOURCE_OBJECT_MAPPING.keys():
             raise ValueError(
@@ -319,6 +339,7 @@ class Client:
             "ephemeral_data": str(ephemeral_data).lower(),
             "only_api": str(only_api).lower(),
             "pipeline": pipelines,
+            "source_lang": source_lang,
             "split_long_utterances": str(split_long_utterances).lower(),
             "summary_type": summary_type,
         }
