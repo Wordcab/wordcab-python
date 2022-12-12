@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wordcab"
-version = "0.3.1"
+version = "0.3.2"
 description = "Wordcab Python SDK"
 authors = ["Wordcab <info@wordcab.com>"]
 license = "Apache-2.0"
