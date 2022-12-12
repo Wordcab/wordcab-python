@@ -139,7 +139,7 @@ class Client:
 
     def start_extract(  # noqa: C901
         self,
-        source_object: BaseSource,
+        source_object: Union[BaseSource, InMemorySource],
         display_name: str,
         ephemeral_data: Optional[bool] = False,
         only_api: Optional[bool] = True,
@@ -172,7 +172,10 @@ class Client:
             raise ValueError(
                 f"Invalid source: {source}. Source must be one of {SOURCE_OBJECT_MAPPING.keys()}"
             )
-        if source_object.__class__.__name__ != SOURCE_OBJECT_MAPPING[source]:
+        if (
+            source_object.__class__.__name__ != SOURCE_OBJECT_MAPPING[source]
+            and source_object.__class__.__name__ != "InMemorySource"
+        ):
             raise ValueError(
                 f"""
                 Invalid source object: {source_object}. Source object must be of type {SOURCE_OBJECT_MAPPING[source]},
