@@ -55,7 +55,7 @@ def api_key() -> Optional[str]:
 @pytest.fixture
 def in_memory_source() -> InMemorySource:
     """Fixture for an InMemorySource object."""
-    with open("test/sample_1.txt", "rb") as f:
+    with open("tests/sample_1.txt", "rb") as f:
         file = f.read()
     obj = {"transcript": file.decode("utf-8").splitlines()}
     return InMemorySource(obj=obj)
