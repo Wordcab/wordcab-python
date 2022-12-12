@@ -159,7 +159,10 @@ class Client:
                 You must specify a valid list of pipelines. Available pipelines are: {", ".join(EXTRACT_PIPELINES)}.
             """
             )
-        if isinstance(source_object, BaseSource) is False:
+        if (
+            isinstance(source_object, BaseSource) is False
+            and isinstance(source_object, InMemorySource) is False
+        ):
             raise ValueError(
                 """
                 You must specify a valid source object for the extraction job.
