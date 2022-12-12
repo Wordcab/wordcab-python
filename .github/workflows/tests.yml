@@ -4,7 +4,7 @@ on:
   - workflow_dispatch
 
 jobs:
-  tests:
+  lint:
     name: ${{ matrix.session }} ${{ matrix.python }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -17,22 +17,10 @@ jobs:
           - { python: "3.9", os: "ubuntu-latest", session: "mypy" }
           - { python: "3.8", os: "ubuntu-latest", session: "mypy" }
           - { python: "3.7", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.10", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.9", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.8", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.7", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.10", os: "windows-latest", session: "tests" }
-          - { python: "3.10", os: "macos-latest", session: "tests" }
-          # - { python: "3.10", os: "ubuntu-latest", session: "typeguard" }  # Deactivated due to runtime errors with Client class
-          - { python: "3.10", os: "ubuntu-latest", session: "xdoctest" }
-          - { python: "3.10", os: "ubuntu-latest", session: "docs-build" }
-
     env:
       NOXSESSION: ${{ matrix.session }}
       FORCE_COLOR: "1"
       PRE_COMMIT_COLOR: "always"
-      WORDCAB_API_KEY: ${{ secrets.WORDCAB_API_KEY }}
-
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3
@@ -95,12 +83,56 @@ jobs:
         run: |
           nox --python=${{ matrix.python }}
 
-      - name: Upload coverage data
-        if: always() && matrix.session == 'tests'
-        uses: "actions/upload-artifact@v3"
+  documentation:
+    name: ${{ matrix.session }} ${{ matrix.python }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { python: "3.10", os: "ubuntu-latest", session: "xdoctest" }
+          - { python: "3.10", os: "ubuntu-latest", session: "docs-build" }
+    env:
+      NOXSESSION: ${{ matrix.session }}
+      FORCE_COLOR: "1"
+      PRE_COMMIT_COLOR: "always"
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v4
         with:
-          name: coverage-data
-          path: ".coverage.*"
+          python-version: ${{ matrix.python }}
+
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=.github/workflows/constraints.txt pip
+          pip --version
+
+      - name: Upgrade pip in virtual environments
+        shell: python
+        run: |
+          import os
+          import pip
+
+          with open(os.environ["GITHUB_ENV"], mode="a") as io:
+              print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
+
+      - name: Install Poetry
+        run: |
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
+          poetry --version
+
+      - name: Install Nox
+        run: |
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
+          nox --version
+
+      - name: Run Nox
+        run: |
+          nox --python=${{ matrix.python }}
 
       - name: Upload documentation
         if: matrix.session == 'docs-build'
@@ -108,6 +140,71 @@ jobs:
         with:
           name: docs
           path: docs/_build
+
+  tests:
+    name: ${{ matrix.session }} ${{ matrix.python }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { python: "3.10", os: "ubuntu-latest", session: "tests" }
+          - { python: "3.9", os: "ubuntu-latest", session: "tests" }
+          - { python: "3.8", os: "ubuntu-latest", session: "tests" }
+          - { python: "3.7", os: "ubuntu-latest", session: "tests" }
+          - { python: "3.10", os: "windows-latest", session: "tests" }
+          - { python: "3.10", os: "macos-latest", session: "tests" }
+          # - { python: "3.10", os: "ubuntu-latest", session: "typeguard" }  # Deactivated due to runtime errors with Client class
+    env:
+      NOXSESSION: ${{ matrix.session }}
+      FORCE_COLOR: "1"
+      PRE_COMMIT_COLOR: "always"
+      WORDCAB_API_KEY: ${{ secrets.WORDCAB_API_KEY }}
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Upgrade pip
+        run: |
+          pip install --constraint=.github/workflows/constraints.txt pip
+          pip --version
+
+      - name: Upgrade pip in virtual environments
+        shell: python
+        run: |
+          import os
+          import pip
+
+          with open(os.environ["GITHUB_ENV"], mode="a") as io:
+              print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
+
+      - name: Install Poetry
+        run: |
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
+          poetry --version
+
+      - name: Install Nox
+        run: |
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
+          nox --version
+
+      - name: Run Nox
+        run: |
+          nox --python=${{ matrix.python }}
+
+      - name: Upload coverage data
+        if: always() && matrix.session == 'tests'
+        uses: "actions/upload-artifact@v3"
+        with:
+          name: coverage-data
+          path: ".coverage.*"
 
   coverage:
     runs-on: ubuntu-latest
