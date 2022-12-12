@@ -4,7 +4,7 @@ on:
   - workflow_dispatch
 
 jobs:
-  lint:
+  quality:
     name: ${{ matrix.session }} ${{ matrix.python }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -145,7 +145,7 @@ jobs:
   tests:
     name: ${{ matrix.session }} ${{ matrix.python }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: [pre-commit, documentation]
+    needs: [quality, documentation]
     strategy:
       fail-fast: true
       matrix:
