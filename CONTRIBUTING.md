@@ -43,6 +43,14 @@ You need Python 3.7+ and the following tools:
 - [Nox]
 - [nox-poetry]
 
+It is recommended to use `pipx` to install these tools to make it system-wide available:
+
+```console
+$ pipx install poetry 
+$ pipx install nox 
+$ pipx inject nox nox-poetry
+```
+
 Install the package with development requirements:
 
 ```console
