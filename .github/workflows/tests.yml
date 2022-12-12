@@ -86,6 +86,7 @@ jobs:
   documentation:
     name: ${{ matrix.session }} ${{ matrix.python }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    needs: lint
     strategy:
       fail-fast: true
       matrix:
@@ -144,6 +145,7 @@ jobs:
   tests:
     name: ${{ matrix.session }} ${{ matrix.python }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    needs: [pre-commit, documentation]
     strategy:
       fail-fast: true
       matrix:
