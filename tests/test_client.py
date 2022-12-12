@@ -58,7 +58,7 @@ def in_memory_source() -> InMemorySource:
     with open("test/sample_1.txt", "rb") as f:
         file = f.read()
     obj = {"transcript": file.decode("utf-8").splitlines()}
-    return InMemorySource(source=obj)
+    return InMemorySource(obj=obj)
 
 
 @pytest.fixture
@@ -253,7 +253,7 @@ def test_start_summary(
                 summary_length=3,
             )
 
-        # Test in memory source
+        # Test in memory source
         in_memory_job = client.start_summary(
             source_object=in_memory_source,
             display_name="test-sdk-in-memory",

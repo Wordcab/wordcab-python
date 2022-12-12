@@ -241,7 +241,7 @@ class Client:
 
     def start_summary(  # noqa: C901
         self,
-        source_object: BaseSource,
+        source_object: Union[BaseSource, InMemorySource],
         display_name: str,
         summary_type: str,
         ephemeral_data: Optional[bool] = False,
@@ -287,7 +287,10 @@ class Client:
             """
             )
 
-        if isinstance(source_object, BaseSource) is False and isinstance(source_object, InMemorySource) is False:
+        if (
+            isinstance(source_object, BaseSource) is False
+            and isinstance(source_object, InMemorySource) is False
+        ):
             raise ValueError(
                 """
                 You must specify a valid source object to summarize.
