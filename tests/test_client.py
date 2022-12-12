@@ -28,6 +28,7 @@ from wordcab.core_objects import (
     BaseTranscript,
     ExtractJob,
     GenericSource,
+    InMemorySource,
     JobSettings,
     ListJobs,
     ListSummaries,
@@ -49,6 +50,15 @@ def client() -> Client:
 def api_key() -> Optional[str]:
     """Fixture for a valid API key."""
     return os.environ.get("WORDCAB_API_KEY")
+
+
+@pytest.fixture
+def in_memory_source() -> InMemorySource:
+    """Fixture for an InMemorySource object."""
+    with open("test/sample_1.txt", "rb") as f:
+        file = f.read()
+    obj = {"transcript": file.decode("utf-8").splitlines()}
+    return InMemorySource(source=obj)
 
 
 @pytest.fixture
@@ -194,6 +204,7 @@ def test_start_summary(
     generic_source_txt: GenericSource,
     generic_source_json: GenericSource,
     audio_source: AudioSource,
+    in_memory_source: InMemorySource,
     api_key: str,
 ) -> None:
     """Test client start_summary method."""
@@ -241,6 +252,24 @@ def test_start_summary(
                 summary_type="narrative",
                 summary_length=3,
             )
+
+        # Test in memory source
+        in_memory_job = client.start_summary(
+            source_object=in_memory_source,
+            display_name="test-sdk-in-memory",
+            summary_type="conversational",
+            summary_length=3,
+        )
+        assert isinstance(in_memory_job, SummarizeJob)
+        assert in_memory_job.display_name == "test-sdk-in-memory"
+        assert in_memory_job.job_name is not None
+        assert in_memory_job.source == "generic"
+        assert in_memory_job.settings == JobSettings(
+            ephemeral_data=False,
+            pipeline="transcribe,summarize",
+            split_long_utterances=False,
+            only_api=True,
+        )
 
         # Test generic source with txt file
         txt_job = client.start_summary(

@@ -34,6 +34,7 @@ from .core_objects import (
     BaseTranscript,
     ConclusionSummary,
     ExtractJob,
+    InMemorySource,
     JobSettings,
     ListJobs,
     ListSummaries,
@@ -286,7 +287,7 @@ class Client:
             """
             )
 
-        if isinstance(source_object, BaseSource) is False:
+        if isinstance(source_object, BaseSource) is False and isinstance(source_object, InMemorySource) is False:
             raise ValueError(
                 """
                 You must specify a valid source object to summarize.
