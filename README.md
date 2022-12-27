@@ -57,7 +57,7 @@ Start using the API with any python script right away!
 
 ## Usage
 
-Check this quick demo video:
+### Quick video demo
 
 [<img src="https://cdn.loom.com/sessions/thumbnails/25150a30c593467fa1632145ff2dea6f-with-play.gif" width="50%">](https://www.loom.com/embed/25150a30c593467fa1632145ff2dea6f "Quick Python Package Demo")
 
@@ -110,7 +110,9 @@ for k, v in summary.summary:
 	print(f"Summary: {v['structured_summary'].summary}")
 ```
 
-Please see the [Documentation](https://wordcab-python.readthedocs.io/) for details.
+### Documentation
+
+Please see the [Documentation](https://wordcab-python.readthedocs.io/) for more details.
 
 ## Contributing
 
