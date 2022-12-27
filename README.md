@@ -94,7 +94,7 @@ while True:
 		break
 	else:
 		time.sleep(3)
-	
+
 # Get the summary id
 summary_id = job.summary_details["summary_id"]
 # Retrieve the summary
