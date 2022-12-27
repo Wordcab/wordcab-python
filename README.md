@@ -53,20 +53,66 @@ You can install _Wordcab Python_ via [pip] from [PyPI]:
 $ pip install wordcab
 ```
 
-Start using the API with any python script right away:
-
-```python
-from wordcab import get_stats
-
-stats = get_stats()
-print(stats)
-```
+Start using the API with any python script right away!
 
 ## Usage
 
+### Quick video demo
+
 [<img src="https://cdn.loom.com/sessions/thumbnails/25150a30c593467fa1632145ff2dea6f-with-play.gif" width="50%">](https://www.loom.com/embed/25150a30c593467fa1632145ff2dea6f "Quick Python Package Demo")
 
-Please see the [Documentation](https://wordcab-python.readthedocs.io/) for details.
+### Start Summary full pipeline
+
+```python
+import time
+from wordcab import retrieve_job, retrieve_summary, start_summary
+from wordcab.core_objects import AudioSource, GenericSource, InMemorySource
+
+
+# Prepare your input source
+## For a transcript stored as a .txt or .json file
+source = GenericSource(filepath="path/to/file.txt")  # Or file.json
+## For a transcript stored as an audio file
+source = AudioSource(filepath="path/to/file.mp3")
+## For a transcript already in memory
+transcript = {"transcript": ["SPEAKER A: Hello.", "SPEAKER B: Hi."]}
+source = InMemorySource(obj=transcript)
+
+# Launch the Summarization job
+job = start_summary(
+	source_object=source,
+	display_name="sample_txt",
+	summary_type="no_speaker",
+	summary_length=3,
+	tags=["sample", "text"],
+)
+
+# Wait for the job completion
+while True:
+	job = retrieve_job(job_name=job.job_name)
+	if job.job_status == "SummaryComplete":
+		break
+	else:
+		time.sleep(3)
+	
+# Get the summary id
+summary_id = job.summary_details["summary_id"]
+# Retrieve the summary
+summary = retrieve_summary(summary_id=summary_id)
+
+# Get all information from the retrieved summary
+for k, v in summary.__dict__.items():
+    print(f"{k}: {v}")
+
+# Get the summary as one block of text
+for k, v in summary.summary:
+	print(f"Summary Length: {k}")
+	print(f"Summary: {v['structured_summary'].summary}")
+```
+
+### Documentation
+
+Please see the [Documentation](https://wordcab-python.readthedocs.io/) for more details.
 
 ## Contributing
 
