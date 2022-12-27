@@ -162,7 +162,7 @@ def start_summary(
     pipelines: Union[str, List[str]] = ["transcribe", "summarize"],  # noqa: B006
     source_lang: Optional[str] = None,
     split_long_utterances: bool = False,
-    summary_lens: Union[int, List[int]] = 3,
+    summary_lens: Optional[Union[int, List[int]]] = None,
     tags: Optional[Union[str, List[str]]] = None,
     api_key: Optional[str] = None,
 ) -> SummarizeJob:
@@ -191,7 +191,7 @@ def start_summary(
     split_long_utterances : bool
         Whether to split long utterances into multiple shorter utterances. The default is False.
     summary_lens : int or list of int, optional
-        The length of the summary. The default is 3. The length should be between 1 and 5. If a list of ints is
+        The length of the summary. The default is None. The length should be between 1 and 5. If a list of ints is
         provided, the summary will be created for each length.
     tags : str or list of str, optional
         The tags to add to the job. The default is None. If None, no tags will be added.
