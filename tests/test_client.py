@@ -220,14 +220,14 @@ def test_start_summary(
                 source_object=generic_source_txt,
                 display_name="test",
                 summary_type="narrative",
-                summary_length=0,
+                summary_lens=0,
             )
         with pytest.raises(ValueError):
             client.start_summary(
                 source_object=generic_source_txt,
                 display_name="test",
                 summary_type="narrative",
-                summary_length=3,
+                summary_lens=3,
                 pipelines=["invalid"],
             )
         with pytest.raises(ValueError):
@@ -235,14 +235,14 @@ def test_start_summary(
                 source_object={"invalid": "invalid"},  # type: ignore
                 display_name="test",
                 summary_type="narrative",
-                summary_length=3,
+                summary_lens=3,
             )
         with pytest.raises(ValueError):
             client.start_summary(
                 source_object=base_source,
                 display_name="test",
                 summary_type="narrative",
-                summary_length=3,
+                summary_lens=3,
             )
         with pytest.raises(ValueError):
             base_source.source = "generic"
@@ -250,7 +250,7 @@ def test_start_summary(
                 source_object=base_source,
                 display_name="test",
                 summary_type="narrative",
-                summary_length=3,
+                summary_lens=3,
             )
 
         # Test in memory source
@@ -258,7 +258,7 @@ def test_start_summary(
             source_object=in_memory_source,
             display_name="test-sdk-in-memory",
             summary_type="conversational",
-            summary_length=3,
+            summary_lens=3,
         )
         assert isinstance(in_memory_job, SummarizeJob)
         assert in_memory_job.display_name == "test-sdk-in-memory"
@@ -293,7 +293,7 @@ def test_start_summary(
             source_object=generic_source_json,
             display_name="test-sdk-json",
             summary_type="narrative",
-            summary_length=3,
+            summary_lens=3,
         )
         assert isinstance(json_job, SummarizeJob)
         assert json_job.display_name == "test-sdk-json"
@@ -311,7 +311,7 @@ def test_start_summary(
             source_object=audio_source,
             display_name="test-sdk-audio",
             summary_type="narrative",
-            summary_length=3,
+            summary_lens=3,
         )
         assert isinstance(audio_job, SummarizeJob)
         assert audio_job.display_name == "test-sdk-audio"
